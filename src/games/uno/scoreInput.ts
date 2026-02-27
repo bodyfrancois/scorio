@@ -1,0 +1,1 @@
+export const unoScorePresets = [0, 10, 20, 50, 100];
