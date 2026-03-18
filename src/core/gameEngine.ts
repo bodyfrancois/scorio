@@ -1,10 +1,14 @@
 import { GameEngine } from './types';
 import { unoEngine } from '../games/uno/logic';
-// import { beloteEngine } from '../games/belote/logic';
+import { beloteEngine } from '../games/belote/logic';
+import { scrabbleEngine } from '../games/scrabble/logic';
+import { flip7Engine } from '../games/flip7/logic';
 
 const engines: Record<string, GameEngine> = {
   UNO: unoEngine,
-  // BELOTE: beloteEngine,
+  BELOTE: beloteEngine,
+  SCRABBLE: scrabbleEngine,
+  'FLIP 7': flip7Engine
 };
 
 export const getGameEngine = (gameName: string) => {

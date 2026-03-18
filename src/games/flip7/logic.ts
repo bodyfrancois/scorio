@@ -1,9 +1,9 @@
 import { GameEngine } from '../../core/types';
-import { sumArray, sortRankingAscending } from '../../core/utils';
-import { unoConfig } from './config';
+import { sumArray, sortRankingDescending } from '../../core/utils';
+import { flip7Config } from './config';
 
-export const unoEngine: GameEngine = {
-  config: unoConfig,
+export const flip7Engine: GameEngine = {
+  config: flip7Config,
 
   initializeScores(players) {
     return players.map(() => [null]);
@@ -34,11 +34,11 @@ export const unoEngine: GameEngine = {
 
     const totals = scores.map((row) => sumArray(row));
 
-    const limit = scoreLimit ?? unoConfig.scoreLimit ?? 500;
+    const limit = scoreLimit ?? flip7Config.scoreLimit ?? 500;
     const hasEnded = totals.some((t) => t >= limit);
     if (!hasEnded) return { hasEnded: false };
 
-    const ranking = sortRankingAscending(
+    const ranking = sortRankingDescending(
       players,
       totals
     );

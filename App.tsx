@@ -5,7 +5,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View, StyleSheet } from 'react-native';
+import { colors } from './src/theme/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from './src/screens/HomeScreen';
 import NewGameScreen from './src/screens/NewGameScreen';
@@ -19,20 +21,69 @@ const Drawer = createDrawerNavigator();
 
 function CustomBackButton({ navigation }: any) {
   return (
-    <Pressable
-      onPress={() => navigation.goBack()}
-      style={{ paddingHorizontal: 10 }}
-    >
-      <Text style={{ fontSize: 22 }}>‹</Text>
+    <Pressable onPress={() => navigation.goBack()}>
+      <Ionicons name="chevron-back" size={26} color={colors.text} />
     </Pressable>
   );
 }
+
+/* ---------------- LOGO HEADER ---------------- */
+
+function HeaderLogo() {
+  return (
+    <View style={logoStyles.row}>
+      <View style={logoStyles.iconBox}>
+        <Text style={logoStyles.iconLetter}>S</Text>
+      </View>
+      <Text style={logoStyles.label}>Scorio</Text>
+    </View>
+  );
+}
+
+const logoStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconLetter: {
+    color: colors.card,
+    fontWeight: '800',
+    fontSize: 16,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+  },
+});
 
 /* ---------------- DRAWER ---------------- */
 
 function MainDrawer() {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator
+      screenOptions={({ navigation }) => ({
+        headerTitle: () => <HeaderLogo />,
+        headerTitleAlign: 'center',
+        headerLeft: () => (
+          <Pressable
+            onPress={() => navigation.openDrawer()}
+            style={{ paddingHorizontal: 16 }}
+          >
+            <Ionicons name="menu-outline" size={24} color={colors.text} />
+          </Pressable>
+        ),
+      })}
+    >
       <Drawer.Screen
         name="Accueil"
         component={HomeScreen}
@@ -66,9 +117,7 @@ export default function App() {
           name="NewGame"
           component={NewGameScreen}
           options={({ route, navigation }) => ({
-            title: route?.params?.gameName
-              ? `Nouvelle partie – ${route.params.gameName}`
-              : 'Nouvelle partie',
+            title: 'Nouvelle partie',
 
             headerBackVisible: false, // ❌ supprime le back natif
             headerLeft: () => (

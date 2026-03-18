@@ -1,9 +1,9 @@
 import { GameEngine } from '../../core/types';
-import { sumArray, sortRankingAscending } from '../../core/utils';
-import { unoConfig } from './config';
+import { sumArray, sortRankingDescending } from '../../core/utils';
+import { beloteConfig } from './config';
 
-export const unoEngine: GameEngine = {
-  config: unoConfig,
+export const beloteEngine: GameEngine = {
+  config: beloteConfig,
 
   initializeScores(players) {
     return players.map(() => [null]);
@@ -27,18 +27,18 @@ export const unoEngine: GameEngine = {
     const lastRound = scores[0].length - 1;
 
     const roundCompleted = scores.every(
-      (row) => row[lastRound] !== null
+      (row) => row[lastRound] !== 0
     );
 
     if (!roundCompleted) return { hasEnded: false };
 
     const totals = scores.map((row) => sumArray(row));
 
-    const limit = scoreLimit ?? unoConfig.scoreLimit ?? 500;
+    const limit = scoreLimit ?? beloteConfig.scoreLimit ?? 1001;
     const hasEnded = totals.some((t) => t >= limit);
     if (!hasEnded) return { hasEnded: false };
 
-    const ranking = sortRankingAscending(
+    const ranking = sortRankingDescending(
       players,
       totals
     );

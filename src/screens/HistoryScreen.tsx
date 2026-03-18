@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   empty: {
-    color: '#6B7280',
+    color: colors.textSecondary,
     marginTop: 40,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   player: {

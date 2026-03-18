@@ -1,8 +1,19 @@
-export type PlayerScoreMatrix = number[][];
+export type PlayerScoreMatrix = (number | null)[][];
 
 export type RankingItem = {
   name: string;
   score: number;
+};
+
+export type QuickAction = {
+  label: string;
+  value: number;
+};
+
+export type TeamConfig = {
+  count: number;
+  minPlayersPerTeam: number;
+  maxPlayersPerTeam: number;
 };
 
 export interface GameConfig {
@@ -14,7 +25,13 @@ export interface GameConfig {
   category?: string;
   description?: string;
   detailedRules?: string;
+  scoreLimit?: number;
+  roundTotal?: number;
   image?: any; // require('...') local asset
+  lowestScoreWins: boolean;
+  quickActionsName?: string;
+  quickActions?: QuickAction[];
+  teams?: TeamConfig;
 }
 
 export interface GameEngine {
@@ -35,7 +52,8 @@ export interface GameEngine {
 
   checkEndGame(
     scores: PlayerScoreMatrix,
-    players: string[]
+    players: string[],
+    scoreLimit?: number
   ): {
     hasEnded: boolean;
     ranking?: RankingItem[];
