@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import SplashScreen from './src/screens/SplashScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
@@ -13,6 +14,9 @@ import HomeScreen from './src/screens/HomeScreen';
 import NewGameScreen from './src/screens/NewGameScreen';
 import ScoreboardScreen from './src/screens/ScoreboardScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import AboutScreen from './src/screens/AboutScreen';
+import CustomDrawer from './src/components/CustomDrawer';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -71,6 +75,7 @@ const logoStyles = StyleSheet.create({
 function MainDrawer() {
   return (
     <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={({ navigation }) => ({
         headerTitle: () => <HeaderLogo />,
         headerTitleAlign: 'center',
@@ -84,14 +89,10 @@ function MainDrawer() {
         ),
       })}
     >
-      <Drawer.Screen
-        name="Accueil"
-        component={HomeScreen}
-      />
-      <Drawer.Screen
-        name="Historique"
-        component={HistoryScreen}
-      />
+      <Drawer.Screen name="Accueil"    component={HomeScreen} />
+      <Drawer.Screen name="Historique" component={HistoryScreen} />
+      <Drawer.Screen name="Paramètres" component={SettingsScreen} />
+      <Drawer.Screen name="A propos"   component={AboutScreen} />
     </Drawer.Navigator>
   );
 }
@@ -99,6 +100,12 @@ function MainDrawer() {
 /* ---------------- APP ROOT ---------------- */
 
 export default function App() {
+  const [splashDone, setSplashDone] = useState(false);
+
+  if (!splashDone) {
+    return <SplashScreen onFinish={() => setSplashDone(true)} />;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -107,22 +114,17 @@ export default function App() {
         <Stack.Screen
           name="Main"
           component={MainDrawer}
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
 
         {/* Nouvelle Partie */}
         <Stack.Screen
           name="NewGame"
           component={NewGameScreen}
-          options={({ route, navigation }) => ({
+          options={({ navigation }) => ({
             title: 'Nouvelle partie',
-
-            headerBackVisible: false, // ❌ supprime le back natif
-            headerLeft: () => (
-              <CustomBackButton navigation={navigation} />
-            ),
+            headerBackVisible: false,
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
 
@@ -132,10 +134,8 @@ export default function App() {
           component={ScoreboardScreen}
           options={({ navigation }) => ({
             title: 'Tableau des scores',
-            headerBackVisible: false, // supprime le back natif
-            headerLeft: () => (
-              <CustomBackButton navigation={navigation} />
-            ),
+            headerBackVisible: false,
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
       </Stack.Navigator>

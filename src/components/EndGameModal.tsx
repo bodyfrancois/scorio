@@ -5,8 +5,12 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../theme/colors';
-import { Ionicons } from '@expo/vector-icons';
+import IconStar from './icons/IconStar';
+import IconCrown from './icons/IconCrown';
+import IconReload from './icons/IconReload';
+import IconHomeFill from './icons/IconHomeFill';
 
 type RankingItem = {
   name: string;
@@ -32,66 +36,66 @@ export default function EndGameModal({
         <View style={styles.card}>
 
           {/* Header */}
-          <Text style={styles.title}>Partie Terminée</Text>
+          <View style={styles.titleRow}>
+            <IconStar size={22} color={colors.gold} />
+            <Text style={styles.title}>Partie Terminée</Text>
+            <IconStar size={22} color={colors.gold} />
+          </View>
           <Text style={styles.subtitle}>Voici le classement final</Text>
 
           {/* Classement */}
           <View style={styles.rankingList}>
             {ranking.map((player, index) => {
               const isWinner = index === 0;
-              const isMuted = index >= 3;
+
+              if (isWinner) {
+                return (
+                  <LinearGradient
+                    key={player.name}
+                    colors={[colors.winnerGradientStart, colors.primary]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.winnerCard}
+                  >
+                    <View style={styles.winnerIconBox}>
+                      <IconCrown size={22} color={colors.white} />
+                    </View>
+                    <View style={styles.winnerInfo}>
+                      <Text style={styles.winnerName}>{player.name}</Text>
+                      <Text style={styles.winnerLabel}>VAINQUEUR</Text>
+                    </View>
+                    <View style={styles.winnerScoreBox}>
+                      <Text style={styles.winnerScore}>{player.score}</Text>
+                      <Text style={styles.winnerUnit}>PTS</Text>
+                    </View>
+                  </LinearGradient>
+                );
+              }
 
               return (
-                <View key={player.name} style={styles.rankContainer}>
-
-                  {/* Badge numéro */}
-                  <View style={[styles.badge, isWinner && styles.badgeGold]}>
-                    <Text style={[styles.badgeText, isWinner && styles.badgeTextGold]}>
-                      {index + 1}
-                    </Text>
+                <View key={player.name} style={styles.rankRow}>
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{index + 1}</Text>
                   </View>
-
-                  {/* Ligne joueur */}
-                  <View style={[styles.rankRow, isWinner && styles.rankRowWinner]}>
-                    {isWinner && (
-                      <Ionicons name="trophy" size={28} color="#F59E0B" style={{ marginRight: 12 }} />
-                    )}
-
-                    <View style={styles.playerInfo}>
-                      <Text style={[styles.playerName, isMuted && styles.playerNameMuted]}>
-                        {player.name}
-                      </Text>
-                      {isWinner && (
-                        <Text style={styles.winnerLabel}>VAINQUEUR</Text>
-                      )}
-                    </View>
-
-                    <View style={styles.scoreInfo}>
-                      <Text style={[
-                        styles.score,
-                        isWinner && styles.scoreWinner,
-                        isMuted && styles.scoreMuted,
-                      ]}>
-                        {player.score}
-                      </Text>
-                      <Text style={styles.scoreUnit}>PTS</Text>
-                    </View>
+                  <Text style={styles.playerName}>{player.name}</Text>
+                  <View style={styles.scoreInfo}>
+                    <Text style={styles.score}>{player.score}</Text>
+                    <Text style={styles.scoreUnit}>PTS</Text>
                   </View>
-
                 </View>
               );
             })}
           </View>
 
-          {/* Boutons */}
-          <Pressable style={styles.homeBtn} onPress={onHome}>
-            <Ionicons name="home" size={18} color="#FFFFFF" />
-            <Text style={styles.homeBtnText}>Retour à l'accueil</Text>
+          {/* Boutons — Rejouer en primaire, accueil en secondaire */}
+          <Pressable style={styles.replayBtn} onPress={onReplay}>
+            <IconReload size={20} color={colors.white} />
+            <Text style={styles.replayBtnText}>Rejouer</Text>
           </Pressable>
 
-          <Pressable style={styles.replayBtn} onPress={onReplay}>
-            <Ionicons name="refresh" size={18} color={colors.primary} />
-            <Text style={styles.replayBtnText}>Rejouer</Text>
+          <Pressable style={styles.homeBtn} onPress={onHome}>
+            <IconHomeFill size={18} color={colors.primary} />
+            <Text style={styles.homeBtnText}>Retour à l'accueil</Text>
           </Pressable>
 
         </View>
@@ -116,19 +120,24 @@ const styles = StyleSheet.create({
   },
 
   /* Header */
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
     color: colors.text,
-    textAlign: 'center',
-    marginBottom: 6,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
     color: colors.textMuted,
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
 
   /* Classement */
@@ -136,88 +145,108 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 24,
   },
-  rankContainer: {
+
+  /* Carte vainqueur */
+  winnerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    borderRadius: 12,
+    borderWidth: 4,
+    borderColor: colors.white,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 14,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 25 },
+    shadowOpacity: 0.25,
+    shadowRadius: 50,
+    elevation: 12,
   },
-  badge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.searchBackground,
+  winnerIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.gold,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeGold: {
-    backgroundColor: '#F59E0B',
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  badgeTextGold: {
-    color: '#FFFFFF',
-  },
-  rankRow: {
+  winnerInfo: {
     flex: 1,
+  },
+  winnerName: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: colors.white,
+  },
+  winnerLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textOnDark,
+    letterSpacing: 0.8,
+    marginTop: 2,
+  },
+  winnerScoreBox: {
+    alignItems: 'flex-end',
+  },
+  winnerScore: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: colors.white,
+    lineHeight: 28,
+  },
+  winnerUnit: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.textOnDark,
+    letterSpacing: 0.5,
+  },
+
+  /* Autres joueurs */
+  rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    gap: 12,
   },
-  rankRowWinner: {
-    backgroundColor: '#FFFBEB',
-    borderWidth: 1.5,
-    borderColor: '#FCD34D',
+  badge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.searchBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  playerInfo: {
-    flex: 1,
+  badgeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.textSecondary,
   },
   playerName: {
+    flex: 1,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '400',
     color: colors.text,
-  },
-  playerNameMuted: {
-    color: colors.textMuted,
-    fontWeight: '500',
-  },
-  winnerLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.primary,
-    letterSpacing: 0.5,
-    marginTop: 2,
   },
   scoreInfo: {
     alignItems: 'flex-end',
   },
   score: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-  },
-  scoreWinner: {
-    fontSize: 22,
-    color: colors.primary,
-  },
-  scoreMuted: {
-    color: colors.textMuted,
+    fontSize: 16,
     fontWeight: '600',
+    color: colors.text,
   },
   scoreUnit: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '400',
     color: colors.textMuted,
     letterSpacing: 0.5,
   },
 
   /* Boutons */
-  homeBtn: {
+  replayBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -232,21 +261,23 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  homeBtnText: {
+  replayBtnText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
   },
-  replayBtn: {
+  homeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: colors.primarySubtle,
+    backgroundColor: colors.card,
     borderRadius: 16,
     paddingVertical: 16,
+    borderWidth: 1.5,
+    borderColor: colors.border,
   },
-  replayBtnText: {
+  homeBtnText: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.primary,

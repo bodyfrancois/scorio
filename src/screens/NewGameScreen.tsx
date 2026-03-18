@@ -13,15 +13,11 @@ import {
   Image,
   Switch,
 } from 'react-native';
-import { colors } from '../theme/colors';
+import { colors, TEAM_COLORS } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { getGameEngine } from '../core/gameEngine';
 import ScoreLimitModal from '../components/ScoreLimitModal';
 
-const TEAM_COLORS = [
-  '#7C48CA', '#EF4444', '#3B82F6', '#10B981',
-  '#F59E0B', '#EC4899', '#06B6D4', '#84CC16',
-];
 
 export default function NewGameScreen({ route, navigation }: any) {
   /* ---------------- INITIALISATION ---------------- */
@@ -346,7 +342,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         <Ionicons
           name="add"
           size={20}
-          color={isValidPlayerCount ? '#FFFFFF' : colors.textMuted}
+          color={isValidPlayerCount ? colors.white : colors.textMuted}
         />
         <Text style={[styles.startText, !isValidPlayerCount && styles.startTextDisabled]}>
           Nouvelle Partie
@@ -642,7 +638,7 @@ const styles = StyleSheet.create({
   startText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   startTextDisabled: {
     color: colors.textMuted,

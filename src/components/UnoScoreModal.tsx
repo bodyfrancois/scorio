@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   displayError: {
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.errorSubtle,
   },
   displayValue: {
     fontSize: 40,
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   btnPrimaryText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   btnSecondary: {
     backgroundColor: colors.searchBackground,

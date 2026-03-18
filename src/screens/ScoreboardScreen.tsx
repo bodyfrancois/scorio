@@ -50,7 +50,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     colors.avatarCiel, colors.avatarBleu, colors.avatarViole, colors.avatarFuchsia,
   ];
   const getAvatarColor = (i: number) => teamColors?.[i] ?? avatarPalette[i % avatarPalette.length];
-  const getAvatarTextColor = (i: number) => teamColors?.[i] ? '#FFFFFF' : colors.textSecondary;
+  const getAvatarTextColor = (i: number) => teamColors?.[i] ? colors.white : colors.textSecondary;
 
   /* ---------------- HEADER ICON RÈGLES ---------------- */
 
@@ -529,6 +529,6 @@ const styles = StyleSheet.create({
   exitBtnPrimaryText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
   },
 });
