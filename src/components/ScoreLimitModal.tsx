@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,10 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
-import { colors } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
+import { lightColors } from '../theme/colors';
 
 type Props = {
   visible: boolean;
@@ -23,12 +25,124 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
+const makeStyles = (c: typeof lightColors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: c.overlay,
+      justifyContent: 'flex-end',
+    },
+    sheet: {
+      backgroundColor: c.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingHorizontal: 24,
+      paddingTop: 28,
+      paddingBottom: 40,
+    },
+    title: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.primary,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 6,
+    },
+    subtitle: {
+      fontSize: 15,
+      color: c.textSecondary,
+      marginBottom: 20,
+    },
+    display: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'center',
+      gap: 6,
+      marginBottom: 16,
+      paddingVertical: 12,
+      backgroundColor: c.background,
+      borderRadius: 16,
+    },
+    displayValue: {
+      fontSize: 40,
+      fontWeight: '800',
+      color: c.text,
+      letterSpacing: -1,
+    },
+    displayPlaceholder: {
+      color: c.textMuted,
+    },
+    displayUnit: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.textMuted,
+      paddingBottom: 4,
+    },
+    keypad: {
+      gap: 8,
+      marginBottom: 20,
+    },
+    keyRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    key: {
+      flex: 1,
+      height: 56,
+      backgroundColor: c.background,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    keyEmpty: {
+      flex: 1,
+    },
+    keyText: {
+      fontSize: 22,
+      fontWeight: '500',
+      color: c.text,
+    },
+    buttons: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    btn: {
+      flex: 1,
+      paddingVertical: 16,
+      borderRadius: 16,
+      alignItems: 'center',
+    },
+    btnPrimary: {
+      backgroundColor: c.primary,
+    },
+    btnDisabled: {
+      backgroundColor: c.searchBackground,
+    },
+    btnPrimaryText: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.white,
+    },
+    btnSecondary: {
+      backgroundColor: c.searchBackground,
+    },
+    btnSecondaryText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.textSecondary,
+    },
+  });
+
 export default function ScoreLimitModal({
   visible,
   currentValue,
   onClose,
   onValidate,
 }: Props) {
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   const [input, setInput] = useState(String(currentValue));
 
   useEffect(() => {
@@ -64,13 +178,9 @@ export default function ScoreLimitModal({
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          {/* En-tête */}
-          <Text style={styles.title}>Limite de score</Text>
-          <Text style={styles.subtitle}>
-            Points requis pour terminer la partie
-          </Text>
+          <Text style={styles.title}>{t.scoreLimitTitle}</Text>
+          <Text style={styles.subtitle}>{t.scoreLimitSubtitle}</Text>
 
-          {/* Affichage */}
           <View style={styles.display}>
             <Text style={[styles.displayValue, !input && styles.displayPlaceholder]}>
               {displayValue}
@@ -78,7 +188,6 @@ export default function ScoreLimitModal({
             <Text style={styles.displayUnit}>pts</Text>
           </View>
 
-          {/* Pavé numérique */}
           <View style={styles.keypad}>
             {PAD_ROWS.map((row, ri) => (
               <View key={ri} style={styles.keyRow}>
@@ -103,18 +212,17 @@ export default function ScoreLimitModal({
             ))}
           </View>
 
-          {/* Boutons */}
           <View style={styles.buttons}>
             <Pressable
               style={[styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled]}
               onPress={validate}
               disabled={!isValid}
             >
-              <Text style={styles.btnPrimaryText}>Valider</Text>
+              <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
             <Pressable style={[styles.btn, styles.btnSecondary]} onPress={cancel}>
-              <Text style={styles.btnSecondaryText}>Annuler</Text>
+              <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>
 
@@ -123,114 +231,3 @@ export default function ScoreLimitModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: 40,
-  },
-
-  title: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    marginBottom: 20,
-  },
-
-  display: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'center',
-    gap: 6,
-    marginBottom: 16,
-    paddingVertical: 12,
-    backgroundColor: colors.background,
-    borderRadius: 16,
-  },
-  displayValue: {
-    fontSize: 40,
-    fontWeight: '800',
-    color: colors.text,
-    letterSpacing: -1,
-  },
-  displayPlaceholder: {
-    color: colors.textMuted,
-  },
-  displayUnit: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.textMuted,
-    paddingBottom: 4,
-  },
-
-  keypad: {
-    gap: 8,
-    marginBottom: 20,
-  },
-  keyRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  key: {
-    flex: 1,
-    height: 56,
-    backgroundColor: colors.background,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  keyEmpty: {
-    flex: 1,
-  },
-  keyText: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: colors.text,
-  },
-
-  buttons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  btn: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  btnPrimary: {
-    backgroundColor: colors.primary,
-  },
-  btnDisabled: {
-    backgroundColor: colors.searchBackground,
-  },
-  btnPrimaryText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  btnSecondary: {
-    backgroundColor: colors.searchBackground,
-  },
-  btnSecondaryText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-});

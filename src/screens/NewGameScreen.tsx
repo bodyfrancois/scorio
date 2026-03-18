@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,24 +13,296 @@ import {
   Image,
   Switch,
 } from 'react-native';
-import { colors, TEAM_COLORS } from '../theme/colors';
+import { TEAM_COLORS } from '../theme/colors';
+import { lightColors } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { getGameEngine } from '../core/gameEngine';
 import ScoreLimitModal from '../components/ScoreLimitModal';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
 
+const makeStyles = (c: typeof lightColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 48,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    sectionLabel: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: c.textSecondary,
+      letterSpacing: 1,
+      marginBottom: 12,
+    },
+    sectionLabelTop: {
+      marginTop: 28,
+    },
+    teamSection: {
+      marginTop: 16,
+      backgroundColor: c.card,
+      borderRadius: 16,
+      borderTopWidth: 3,
+      paddingHorizontal: 14,
+      paddingTop: 14,
+      paddingBottom: 14,
+      shadowColor: c.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+      gap: 12,
+    },
+    teamHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    teamColorDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
+    teamNameInput: {
+      flex: 1,
+      fontSize: 14,
+      fontWeight: '700',
+      color: c.text,
+      padding: 0,
+    },
+    addPlayerBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    addPlayerText: {
+      color: c.primary,
+      fontSize: 13,
+      fontWeight: '600',
+    },
+    playerList: {
+      gap: 8,
+    },
+    playerCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.card,
+      borderRadius: 14,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: 'transparent',
+      shadowColor: c.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      elevation: 1,
+    },
+    teamPlayerCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.background,
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: 'transparent',
+    },
+    playerCardFocused: {
+      borderColor: c.borderActive,
+    },
+    avatar: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: c.textSecondary,
+    },
+    playerInput: {
+      flex: 1,
+      fontSize: 15,
+      color: c.text,
+      padding: 0,
+    },
+    paramCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.card,
+      borderRadius: 14,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      gap: 12,
+      shadowColor: c.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      elevation: 1,
+    },
+    paramIconBox: {
+      width: 34,
+      height: 34,
+      borderRadius: 8,
+      backgroundColor: c.iconBackground,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paramLabel: {
+      flex: 1,
+      fontSize: 15,
+      color: c.text,
+    },
+    paramValue: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: c.text,
+    },
+    stepper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    stepBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      backgroundColor: c.searchBackground,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    stepValue: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: c.text,
+      minWidth: 44,
+      textAlign: 'center',
+    },
+    startButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      marginTop: 28,
+      gap: 6,
+      shadowColor: c.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    startButtonDisabled: {
+      backgroundColor: c.searchBackground,
+      shadowOpacity: 0,
+      elevation: 0,
+    },
+    startText: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.white,
+    },
+    startTextDisabled: {
+      color: c.textMuted,
+    },
+    rulesCard: {
+      backgroundColor: c.card,
+      borderRadius: 16,
+      padding: 16,
+      shadowColor: c.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      elevation: 1,
+    },
+    rulesCardHeader: {
+      flexDirection: 'row',
+      gap: 14,
+      marginBottom: 12,
+    },
+    rulesImage: {
+      width: 60,
+      height: 60,
+      borderRadius: 12,
+    },
+    rulesCardMeta: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    rulesGameName: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.text,
+      marginBottom: 6,
+    },
+    rulesInfoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    rulesInfoText: {
+      fontSize: 12,
+      color: c.textMuted,
+    },
+    rulesBullet: {
+      fontSize: 12,
+      color: c.iconMuted,
+    },
+    rulesDescription: {
+      fontSize: 13,
+      color: c.textSecondary,
+      lineHeight: 18,
+    },
+    expandButton: {
+      marginTop: 12,
+      paddingTop: 12,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+    },
+    expandText: {
+      color: c.primary,
+      fontWeight: '600',
+      fontSize: 13,
+    },
+    rulesDetailed: {
+      marginTop: 10,
+      fontSize: 13,
+      lineHeight: 20,
+      color: c.textSecondary,
+    },
+  });
 
 export default function NewGameScreen({ route, navigation }: any) {
-  /* ---------------- INITIALISATION ---------------- */
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
 
   const { gameName } = route.params ?? { gameName: 'Jeu' };
   const { config } = getGameEngine(gameName);
 
   const isTeamMode = !!config.teams;
 
-  /* Joueurs (mode individuel) */
   const [players, setPlayers] = useState<string[]>(['']);
 
-  /* Équipes (mode équipe) */
   const [teamPlayers, setTeamPlayers] = useState<string[][]>(() => {
     if (!config.teams) return [];
     return Array.from({ length: config.teams.count }, () =>
@@ -46,7 +318,6 @@ export default function NewGameScreen({ route, navigation }: any) {
     (_, i) => TEAM_COLORS[i % TEAM_COLORS.length]
   );
 
-  /* Paramètres de session */
   const [sessionScoreLimit, setSessionScoreLimit] = useState<number>(config.scoreLimit ?? 500);
   const [quickActionsEnabled, setQuickActionsEnabled] = useState<boolean>(!!config.quickActions?.length);
   const [scoreLimitModalVisible, setScoreLimitModalVisible] = useState(false);
@@ -63,21 +334,11 @@ export default function NewGameScreen({ route, navigation }: any) {
     }
   }, []);
 
-  /* ---------------- AVATAR (mode individuel) ---------------- */
-
   const avatarPalette = [
-    colors.avatarViole,
-    colors.avatarRose,
-    colors.avatarPeche,
-    colors.avatarJaune,
-    colors.avatarVert,
-    colors.avatarCiel,
-    colors.avatarBleu,
-    colors.avatarFuchsia,
+    colors.avatarViole, colors.avatarRose, colors.avatarPeche, colors.avatarJaune,
+    colors.avatarVert, colors.avatarCiel, colors.avatarBleu, colors.avatarFuchsia,
   ];
   const getAvatarColor = (index: number) => avatarPalette[index % avatarPalette.length];
-
-  /* ---------------- LOGIQUE JOUEURS (mode individuel) ---------------- */
 
   const updatePlayer = (index: number, value: string) => {
     const updated = [...players];
@@ -94,8 +355,6 @@ export default function NewGameScreen({ route, navigation }: any) {
   };
 
   const validPlayers = players.filter((p) => p.trim().length > 0);
-
-  /* ---------------- LOGIQUE ÉQUIPES ---------------- */
 
   const updateTeamName = (teamIndex: number, value: string) => {
     const updated = [...teamNames];
@@ -125,8 +384,6 @@ export default function NewGameScreen({ route, navigation }: any) {
 
   const validTeams = teamPlayers.map((team) => team.filter((p) => p.trim().length > 0));
 
-  /* ---------------- VALIDATION ---------------- */
-
   const isValidPlayerCount = isTeamMode
     ? validTeams.every(
         (team) =>
@@ -134,8 +391,6 @@ export default function NewGameScreen({ route, navigation }: any) {
           team.length <= (config.teams?.maxPlayersPerTeam ?? 99)
       )
     : validPlayers.length >= config.minPlayers && validPlayers.length <= config.maxPlayers;
-
-  /* ---------------- LANCEMENT PARTIE ---------------- */
 
   const startGame = () => {
     if (!isValidPlayerCount) {
@@ -169,8 +424,6 @@ export default function NewGameScreen({ route, navigation }: any) {
     }
   };
 
-  /* ---------------- UI ---------------- */
-
   const hasSettings = config.scoreLimit != null || !!config.quickActions?.length;
 
   return (
@@ -181,16 +434,14 @@ export default function NewGameScreen({ route, navigation }: any) {
       showsVerticalScrollIndicator={false}
     >
 
-      {/* ===== MODE INDIVIDUEL ===== */}
-
       {!isTeamMode && (
         <>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>JOUEURS</Text>
+            <Text style={styles.sectionLabel}>{t.players}</Text>
             {players.length < config.maxPlayers && (
               <Pressable onPress={addPlayer} style={styles.addPlayerBtn}>
                 <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
-                <Text style={styles.addPlayerText}>Ajouter un joueur</Text>
+                <Text style={styles.addPlayerText}>{t.addPlayer}</Text>
               </Pressable>
             )}
           </View>
@@ -207,7 +458,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                   </Text>
                 </View>
                 <TextInput
-                  placeholder="Nom du joueur"
+                  placeholder={t.playerName}
                   value={player}
                   onChangeText={(text) => updatePlayer(index, text)}
                   onFocus={() => setFocusedKey(`p${index}`)}
@@ -226,11 +477,9 @@ export default function NewGameScreen({ route, navigation }: any) {
         </>
       )}
 
-      {/* ===== MODE ÉQUIPE ===== */}
-
       {isTeamMode && (
         <>
-          <Text style={styles.sectionLabel}>ÉQUIPES</Text>
+          <Text style={styles.sectionLabel}>{t.teams}</Text>
 
           {teamPlayers.map((teamMembers, teamIndex) => {
             const teamColor = teamColors[teamIndex];
@@ -239,7 +488,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             return (
               <View key={teamIndex} style={[styles.teamSection, { borderTopColor: teamColor }]}>
 
-                {/* Nom de l'équipe */}
                 <View style={styles.teamHeader}>
                   <View style={[styles.teamColorDot, { backgroundColor: teamColor }]} />
                   <TextInput
@@ -254,12 +502,11 @@ export default function NewGameScreen({ route, navigation }: any) {
                   {teamMembers.length < (config.teams?.maxPlayersPerTeam ?? 99) && (
                     <Pressable onPress={() => addTeamPlayer(teamIndex)} style={styles.addPlayerBtn}>
                       <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
-                      <Text style={styles.addPlayerText}>Ajouter</Text>
+                      <Text style={styles.addPlayerText}>{t.add}</Text>
                     </Pressable>
                   )}
                 </View>
 
-                {/* Joueurs (sans avatar) */}
                 <View style={styles.playerList}>
                   {teamMembers.map((player, playerIndex) => {
                     const focusKey = `t${teamIndex}_p${playerIndex}`;
@@ -269,7 +516,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                         style={[styles.teamPlayerCard, focusedKey === focusKey && styles.playerCardFocused]}
                       >
                         <TextInput
-                          placeholder="Nom du joueur"
+                          placeholder={t.playerName}
                           value={player}
                           onChangeText={(text) => updateTeamPlayer(teamIndex, playerIndex, text)}
                           onFocus={() => setFocusedKey(focusKey)}
@@ -293,33 +540,29 @@ export default function NewGameScreen({ route, navigation }: any) {
         </>
       )}
 
-      {/* ===== PARAMÈTRES DE SESSION ===== */}
-
       {hasSettings && (
         <>
           <Text style={[styles.sectionLabel, styles.sectionLabelTop]}>
-            PARAMÈTRES DE LA PARTIE
+            {t.gameSettings}
           </Text>
 
-          {/* Limite de score */}
           {config.scoreLimit != null && (
             <Pressable style={styles.paramCard} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.paramIconBox}>
                 <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
               </View>
-              <Text style={styles.paramLabel}>Limite de score</Text>
+              <Text style={styles.paramLabel}>{t.scoreLimit}</Text>
               <Text style={styles.paramValue}>{sessionScoreLimit} pts</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
             </Pressable>
           )}
 
-          {/* Annonces (quick actions) */}
           {!!config.quickActions?.length && (
             <View style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}>
               <View style={styles.paramIconBox}>
                 <Ionicons name="flash-outline" size={18} color={colors.textSecondary} />
               </View>
-              <Text style={styles.paramLabel}>Annonces</Text>
+              <Text style={styles.paramLabel}>{t.announcements}</Text>
               <Switch
                 value={quickActionsEnabled}
                 onValueChange={setQuickActionsEnabled}
@@ -332,8 +575,6 @@ export default function NewGameScreen({ route, navigation }: any) {
         </>
       )}
 
-      {/* ===== BOUTON NOUVELLE PARTIE ===== */}
-
       <Pressable
         style={[styles.startButton, !isValidPlayerCount && styles.startButtonDisabled]}
         onPress={startGame}
@@ -345,14 +586,12 @@ export default function NewGameScreen({ route, navigation }: any) {
           color={isValidPlayerCount ? colors.white : colors.textMuted}
         />
         <Text style={[styles.startText, !isValidPlayerCount && styles.startTextDisabled]}>
-          Nouvelle Partie
+          {t.newGame}
         </Text>
       </Pressable>
 
-      {/* ===== RÈGLES DU JEU ===== */}
-
       <Text style={[styles.sectionLabel, styles.sectionLabelTop]}>
-        RÈGLES DU JEU
+        {t.gameRules}
       </Text>
 
       <View style={styles.rulesCard}>
@@ -402,7 +641,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               }}
             >
               <Text style={styles.expandText}>
-                {rulesExpanded ? 'Masquer les règles' : 'Voir les règles complètes'}
+                {rulesExpanded ? t.hideRules : t.showRules}
               </Text>
               <Ionicons
                 name={rulesExpanded ? 'chevron-up' : 'chevron-down'}
@@ -418,7 +657,6 @@ export default function NewGameScreen({ route, navigation }: any) {
       </View>
     </ScrollView>
 
-    {/* ===== MODAL LIMITE DE SCORE ===== */}
     <ScoreLimitModal
       visible={scoreLimitModalVisible}
       currentValue={sessionScoreLimit}
@@ -428,289 +666,3 @@ export default function NewGameScreen({ route, navigation }: any) {
   </>
   );
 }
-
-/* ================= STYLES ================= */
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 48,
-  },
-
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    letterSpacing: 1,
-    marginBottom: 12,
-  },
-  sectionLabelTop: {
-    marginTop: 28,
-  },
-
-  /* Mode équipe */
-  teamSection: {
-    marginTop: 16,
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    borderTopWidth: 3,
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 14,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-    gap: 12,
-  },
-  teamHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  teamColorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  teamNameInput: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text,
-    padding: 0,
-  },
-
-  /* Bouton ajouter */
-  addPlayerBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  addPlayerText: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '600',
-  },
-
-  /* Joueurs */
-  playerList: {
-    gap: 8,
-  },
-  playerCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    gap: 12,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  teamPlayerCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    gap: 12,
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  playerCardFocused: {
-    borderColor: colors.borderActive,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  playerInput: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.text,
-    padding: 0,
-  },
-
-  /* Paramètres */
-  paramCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 12,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  paramIconBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
-    backgroundColor: colors.iconBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paramLabel: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.text,
-  },
-  paramValue: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
-  },
-
-  /* Stepper score limit */
-  stepper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: colors.searchBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepValue: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
-    minWidth: 44,
-    textAlign: 'center',
-  },
-
-  /* Bouton démarrer */
-  startButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    marginTop: 28,
-    gap: 6,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  startButtonDisabled: {
-    backgroundColor: colors.searchBackground,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  startText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  startTextDisabled: {
-    color: colors.textMuted,
-  },
-
-  /* Règles */
-  rulesCard: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  rulesCardHeader: {
-    flexDirection: 'row',
-    gap: 14,
-    marginBottom: 12,
-  },
-  rulesImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-  },
-  rulesCardMeta: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  rulesGameName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 6,
-  },
-  rulesInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  rulesInfoText: {
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  rulesBullet: {
-    fontSize: 12,
-    color: colors.iconMuted,
-  },
-  rulesDescription: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    lineHeight: 18,
-  },
-  expandButton: {
-    marginTop: 12,
-    paddingTop: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  expandText: {
-    color: colors.primary,
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  rulesDetailed: {
-    marginTop: 10,
-    fontSize: 13,
-    lineHeight: 20,
-    color: colors.textSecondary,
-  },
-});

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { colors } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
+import { lightColors } from '../theme/colors';
 import { QuickAction } from '../core/types';
 
 type Props = {
@@ -30,6 +32,179 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
+const makeStyles = (c: typeof lightColors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: c.overlay,
+      justifyContent: 'flex-end',
+    },
+    sheet: {
+      backgroundColor: c.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingHorizontal: 24,
+      paddingTop: 28,
+      paddingBottom: 40,
+    },
+    roundLabel: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.primary,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 6,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: c.textSecondary,
+      marginBottom: 20,
+    },
+    playerHighlight: {
+      fontWeight: '700',
+      color: c.text,
+    },
+    display: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+      paddingVertical: 12,
+      backgroundColor: c.background,
+      borderRadius: 16,
+    },
+    displayError: {
+      backgroundColor: c.errorSubtle,
+    },
+    displayValue: {
+      fontSize: 40,
+      fontWeight: '800',
+      color: c.text,
+      letterSpacing: -1,
+    },
+    displayPlaceholder: {
+      color: c.textMuted,
+    },
+    displayBreakdown: {
+      fontSize: 12,
+      color: c.textMuted,
+      marginTop: 2,
+    },
+    remainingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    remainingRowError: {},
+    remainingText: {
+      fontSize: 12,
+      color: c.textMuted,
+    },
+    remainingTextError: {
+      color: c.danger,
+      fontWeight: '600',
+    },
+    keypad: {
+      gap: 8,
+      marginBottom: 16,
+    },
+    keyRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    key: {
+      flex: 1,
+      height: 56,
+      backgroundColor: c.background,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    keyEmpty: {
+      flex: 1,
+    },
+    keyText: {
+      fontSize: 22,
+      fontWeight: '500',
+      color: c.text,
+    },
+    quickActionsSection: {
+      marginBottom: 16,
+    },
+    quickActionsLabel: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: c.textMuted,
+      letterSpacing: 1,
+      marginBottom: 8,
+    },
+    quickActionsRow: {
+      gap: 8,
+      flexDirection: 'row',
+    },
+    chip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 20,
+      backgroundColor: c.background,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    chipActive: {
+      backgroundColor: c.primarySubtle,
+      borderColor: c.primary,
+    },
+    chipLabel: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: c.textSecondary,
+    },
+    chipLabelActive: {
+      color: c.primary,
+    },
+    chipValue: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: c.textMuted,
+    },
+    chipValueActive: {
+      color: c.primary,
+    },
+    buttons: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    btn: {
+      flex: 1,
+      paddingVertical: 16,
+      borderRadius: 16,
+      alignItems: 'center',
+    },
+    btnPrimary: {
+      backgroundColor: c.primary,
+    },
+    btnDisabled: {
+      backgroundColor: c.searchBackground,
+    },
+    btnPrimaryText: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.white,
+    },
+    btnSecondary: {
+      backgroundColor: c.searchBackground,
+    },
+    btnSecondaryText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.textSecondary,
+    },
+  });
+
 export default function UnoScoreModal({
   visible,
   playerName,
@@ -41,10 +216,13 @@ export default function UnoScoreModal({
   onClose,
   onValidate,
 }: Props) {
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   const [input, setInput] = useState('');
   const [activeActions, setActiveActions] = useState<Set<number>>(new Set());
 
-  /* ---- calcul des points restants ---- */
   const remaining = (() => {
     if (roundTotal == null || playerIndex == null || !currentRoundBases) return null;
     const othersSum = currentRoundBases.reduce<number>((sum, v, i) => {
@@ -59,7 +237,6 @@ export default function UnoScoreModal({
     currentRoundBases != null &&
     currentRoundBases.every((v, i) => i === playerIndex || v !== null);
 
-  /* ---- reset + auto-fill à l'ouverture ---- */
   useEffect(() => {
     if (!visible) return;
     setActiveActions(new Set());
@@ -70,7 +247,6 @@ export default function UnoScoreModal({
     }
   }, [visible]);
 
-  /* ---- dérivés ---- */
   const actionsTotal = Array.from(activeActions).reduce(
     (sum, i) => sum + (quickActions?.[i]?.value ?? 0),
     0
@@ -82,7 +258,6 @@ export default function UnoScoreModal({
   const isOver = remaining !== null && keypadValue > remaining;
   const isValid = hasValue && !isOver;
 
-  /* ---- keypad ---- */
   const pressKey = (key: string) => {
     if (input.length >= 4) return;
     setInput((prev) => prev + key);
@@ -105,23 +280,17 @@ export default function UnoScoreModal({
     onClose();
   };
 
-  const cancel = () => {
-    onClose();
-  };
-
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          {/* En-tête */}
-          <Text style={styles.roundLabel}>Manche {roundNumber}</Text>
+          <Text style={styles.roundLabel}>{t.round} {roundNumber}</Text>
           <Text style={styles.subtitle}>
-            Saisissez le score de{' '}
+            {t.enterScore}{' '}
             <Text style={styles.playerHighlight}>{playerName}</Text>
           </Text>
 
-          {/* Affichage total */}
           <View style={[styles.display, isOver && styles.displayError]}>
             <Text style={[styles.displayValue, !hasValue && styles.displayPlaceholder]}>
               {hasValue ? total : '0'}
@@ -133,7 +302,6 @@ export default function UnoScoreModal({
             )}
           </View>
 
-          {/* Indicateur points restants */}
           {remaining !== null && (
             <View style={[styles.remainingRow, isOver && styles.remainingRowError]}>
               <Ionicons
@@ -151,7 +319,6 @@ export default function UnoScoreModal({
             </View>
           )}
 
-          {/* Pavé numérique */}
           <View style={styles.keypad}>
             {PAD_ROWS.map((row, ri) => (
               <View key={ri} style={styles.keyRow}>
@@ -176,11 +343,9 @@ export default function UnoScoreModal({
             ))}
           </View>
 
-        
-          {/* Actions rapides */}
           {quickActions && quickActions.length > 0 && (
             <View style={styles.quickActionsSection}>
-              <Text style={styles.quickActionsLabel}>Annonces</Text>
+              <Text style={styles.quickActionsLabel}>{t.announceLabel}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -207,18 +372,17 @@ export default function UnoScoreModal({
             </View>
           )}
 
-          {/* Boutons Valider / Annuler */}
           <View style={styles.buttons}>
             <Pressable
               style={[styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled]}
               onPress={validate}
               disabled={!isValid}
             >
-              <Text style={styles.btnPrimaryText}>Valider</Text>
+              <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
-            <Pressable style={[styles.btn, styles.btnSecondary]} onPress={cancel}>
-              <Text style={styles.btnSecondaryText}>Annuler</Text>
+            <Pressable style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
+              <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>
 
@@ -227,187 +391,3 @@ export default function UnoScoreModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: 40,
-  },
-
-  /* En-tête */
-  roundLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginBottom: 20,
-  },
-  playerHighlight: {
-    fontWeight: '700',
-    color: colors.text,
-  },
-
-  /* Affichage */
-  display: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-    paddingVertical: 12,
-    backgroundColor: colors.background,
-    borderRadius: 16,
-  },
-  displayError: {
-    backgroundColor: colors.errorSubtle,
-  },
-  displayValue: {
-    fontSize: 40,
-    fontWeight: '800',
-    color: colors.text,
-    letterSpacing: -1,
-  },
-  displayPlaceholder: {
-    color: colors.textMuted,
-  },
-  displayBreakdown: {
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-
-  /* Indicateur points restants */
-  remainingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  remainingRowError: {},
-  remainingText: {
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  remainingTextError: {
-    color: colors.danger,
-    fontWeight: '600',
-  },
-
-  /* Pavé numérique */
-  keypad: {
-    gap: 8,
-    marginBottom: 16,
-  },
-  keyRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  key: {
-    flex: 1,
-    height: 56,
-    backgroundColor: colors.background,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  keyEmpty: {
-    flex: 1,
-  },
-  keyText: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: colors.text,
-  },
-
-  /* Actions rapides */
-  quickActionsSection: {
-    marginBottom: 16,
-  },
-  quickActionsLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textMuted,
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
-  quickActionsRow: {
-    gap: 8,
-    flexDirection: 'row',
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  chipActive: {
-    backgroundColor: colors.primarySubtle,
-    borderColor: colors.primary,
-  },
-  chipLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  chipLabelActive: {
-    color: colors.primary,
-  },
-  chipValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textMuted,
-  },
-  chipValueActive: {
-    color: colors.primary,
-  },
-
-  /* Boutons */
-  buttons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  btn: {
-    flex: 1,
-    paddingVertical: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  btnPrimary: {
-    backgroundColor: colors.primary,
-  },
-  btnDisabled: {
-    backgroundColor: colors.searchBackground,
-  },
-  btnPrimaryText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  btnSecondary: {
-    backgroundColor: colors.searchBackground,
-  },
-  btnSecondaryText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-});

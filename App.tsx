@@ -2,12 +2,11 @@ import 'react-native-gesture-handler';
 import 'react-native-get-random-values';
 
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import SplashScreen from './src/screens/SplashScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
-import { colors } from './src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from './src/screens/HomeScreen';
@@ -17,6 +16,7 @@ import HistoryScreen from './src/screens/HistoryScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import CustomDrawer from './src/components/CustomDrawer';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,6 +24,7 @@ const Drawer = createDrawerNavigator();
 /* ---------------- FLÈCHE CUSTOM ---------------- */
 
 function CustomBackButton({ navigation }: any) {
+  const { colors } = useTheme();
   return (
     <Pressable onPress={() => navigation.goBack()}>
       <Ionicons name="chevron-back" size={26} color={colors.text} />
@@ -34,12 +35,13 @@ function CustomBackButton({ navigation }: any) {
 /* ---------------- LOGO HEADER ---------------- */
 
 function HeaderLogo() {
+  const { colors } = useTheme();
   return (
     <View style={logoStyles.row}>
-      <View style={logoStyles.iconBox}>
-        <Text style={logoStyles.iconLetter}>S</Text>
+      <View style={[logoStyles.iconBox, { backgroundColor: colors.primary }]}>
+        <Text style={[logoStyles.iconLetter, { color: colors.white }]}>S</Text>
       </View>
-      <Text style={logoStyles.label}>Scorio</Text>
+      <Text style={[logoStyles.label, { color: colors.text }]}>Scorio</Text>
     </View>
   );
 }
@@ -54,31 +56,31 @@ const logoStyles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 8,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconLetter: {
-    color: colors.card,
     fontWeight: '800',
     fontSize: 16,
   },
   label: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
   },
 });
 
 /* ---------------- DRAWER ---------------- */
 
 function MainDrawer() {
+  const { colors } = useTheme();
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={({ navigation }) => ({
         headerTitle: () => <HeaderLogo />,
         headerTitleAlign: 'center',
+        headerStyle: { backgroundColor: colors.card },
+        headerShadowVisible: false,
         headerLeft: () => (
           <Pressable
             onPress={() => navigation.openDrawer()}
@@ -97,17 +99,22 @@ function MainDrawer() {
   );
 }
 
-/* ---------------- APP ROOT ---------------- */
+/* ---------------- APP INNER (needs ThemeContext) ---------------- */
 
-export default function App() {
+function AppInner() {
+  const { isDark, colors } = useTheme();
   const [splashDone, setSplashDone] = useState(false);
 
   if (!splashDone) {
     return <SplashScreen onFinish={() => setSplashDone(true)} />;
   }
 
+  const navTheme = isDark
+    ? { ...DarkTheme, colors: { ...DarkTheme.colors, background: colors.background, card: colors.card, text: colors.text, border: colors.border, primary: colors.primary, notification: colors.primary } }
+    : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: colors.background, card: colors.card, text: colors.text, border: colors.border, primary: colors.primary, notification: colors.primary } };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navTheme}>
       <Stack.Navigator>
 
         {/* Partie Drawer */}
@@ -140,5 +147,15 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+}
+
+/* ---------------- APP ROOT ---------------- */
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppInner />
+    </ThemeProvider>
   );
 }

@@ -11,15 +11,146 @@ import {
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
 import { getAvailableGames } from '../core/gameEngine';
 import { RootStackParamList } from '../types/navigations';
+import { lightColors } from '../theme/colors';
+
+const makeStyles = (c: typeof lightColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 48,
+    },
+    searchWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.searchBackground,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      gap: 8,
+      marginBottom: 28,
+      height: 50,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 15,
+      color: c.text,
+      padding: 0,
+    },
+    sectionLabel: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: c.textSecondary,
+      letterSpacing: 1,
+      marginBottom: 12,
+    },
+    card: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.card,
+      borderRadius: 16,
+      padding: 14,
+      marginBottom: 12,
+      shadowColor: c.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.07,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    cardPressed: {
+      opacity: 0.85,
+    },
+    gameImage: {
+      width: 64,
+      height: 64,
+      borderRadius: 12,
+      marginRight: 14,
+    },
+    cardContent: {
+      flex: 1,
+    },
+    gameTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.text,
+      marginBottom: 6,
+    },
+    infoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    infoText: {
+      fontSize: 13,
+      color: c.textMuted,
+    },
+    bullet: {
+      fontSize: 13,
+      color: c.iconMuted,
+    },
+    noResult: {
+      textAlign: 'center',
+      marginTop: 32,
+      color: c.textMuted,
+      fontSize: 14,
+    },
+    footer: {
+      marginTop: 40,
+      alignItems: 'center',
+      gap: 8,
+    },
+    footerLogo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginBottom: 4,
+    },
+    footerLogoIcon: {
+      width: 26,
+      height: 26,
+      borderRadius: 6,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    footerLogoLetter: {
+      color: c.card,
+      fontWeight: '800',
+      fontSize: 14,
+    },
+    footerLogoText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: c.textMuted,
+    },
+    footerTagline: {
+      fontSize: 12,
+      color: c.textMuted,
+      textAlign: 'center',
+      lineHeight: 18,
+    },
+    footerLink: {
+      fontSize: 12,
+      color: c.textMuted,
+      textDecorationLine: 'underline',
+    },
+  });
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
+  const styles = useMemo(() => makeStyles(colors), [colors]);
 
   const games = getAvailableGames();
-
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredGames = useMemo(() => {
@@ -43,7 +174,7 @@ export default function HomeScreen() {
         <Ionicons name="search-outline" size={18} color={colors.textMuted} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Rechercher un jeu..."
+          placeholder={t.searchPlaceholder}
           placeholderTextColor={colors.textMuted}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -51,11 +182,11 @@ export default function HomeScreen() {
       </View>
 
       {/* Section label */}
-      <Text style={styles.sectionLabel}>LISTE DE JEUX</Text>
+      <Text style={styles.sectionLabel}>{t.gameList}</Text>
 
       {/* Liste des jeux */}
       {filteredGames.length === 0 && (
-        <Text style={styles.noResult}>Aucun jeu trouvé</Text>
+        <Text style={styles.noResult}>{t.noResult}</Text>
       )}
 
       {filteredGames.map((game) => (
@@ -67,7 +198,6 @@ export default function HomeScreen() {
           ]}
           onPress={() => handleStartGame(game.name)}
         >
-          {/* Image */}
           {game.image && (
             <Image
               source={game.image}
@@ -76,7 +206,6 @@ export default function HomeScreen() {
             />
           )}
 
-          {/* Contenu */}
           <View style={styles.cardContent}>
             <Text style={styles.gameTitle}>{game.name}</Text>
 
@@ -100,7 +229,6 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Chevron */}
           <Ionicons name="chevron-forward" size={18} color={colors.iconMuted} />
         </Pressable>
       ))}
@@ -114,150 +242,12 @@ export default function HomeScreen() {
           <Text style={styles.footerLogoText}>Scorio</Text>
         </View>
 
-        <Text style={styles.footerTagline}>
-          Scorio est une application gratuite et sans pub.{'\n'}
-          Si vous aimez cette application
-        </Text>
+        <Text style={styles.footerTagline}>{t.freeApp}</Text>
 
         <Pressable>
-          <Text style={styles.footerLink}>Soutenez moi</Text>
+          <Text style={styles.footerLink}>{t.supportMe}</Text>
         </Pressable>
       </View>
     </ScrollView>
   );
 }
-
-/* ---------------- STYLES ---------------- */
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 48,
-  },
-
-  /* Recherche */
-  searchWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.searchBackground,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
-    marginBottom: 28,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.text,
-    padding: 0,
-  },
-
-  /* Section */
-  sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    letterSpacing: 1,
-    marginBottom: 12,
-  },
-  /* Carte jeu */
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardPressed: {
-    opacity: 0.85,
-  },
-  gameImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    marginRight: 14,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  gameTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 6,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  infoText: {
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  bullet: {
-    fontSize: 13,
-    color: colors.iconMuted,
-  },
-
-  noResult: {
-    textAlign: 'center',
-    marginTop: 32,
-    color: colors.textMuted,
-    fontSize: 14,
-  },
-
-  /* Footer */
-  footer: {
-    marginTop: 40,
-    alignItems: 'center',
-    gap: 8,
-  },
-  footerLogo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
-  },
-  footerLogoIcon: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerLogoLetter: {
-    color: colors.card,
-    fontWeight: '800',
-    fontSize: 14,
-  },
-  footerLogoText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.textMuted,
-  },
-  footerTagline: {
-    fontSize: 12,
-    color: colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  footerLink: {
-    fontSize: 12,
-    color: colors.textMuted,
-    textDecorationLine: 'underline',
-  },
-});

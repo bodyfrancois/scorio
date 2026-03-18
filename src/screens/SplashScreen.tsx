@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 
 interface Props {
   onFinish: () => void;
 }
 
 export default function SplashScreen({ onFinish }: Props) {
+  const { colors } = useTheme();
+
   const opacity = new Animated.Value(0);
   const scale = new Animated.Value(0.85);
 
@@ -36,17 +38,17 @@ export default function SplashScreen({ onFinish }: Props) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.splashBg }]}>
       <Animated.View style={[styles.content, { opacity, transform: [{ scale }] }]}>
         <View style={styles.row}>
-          <View style={styles.iconBox}>
-            <Text style={styles.iconLetter}>S</Text>
+          <View style={[styles.iconBox, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.iconLetter, { color: colors.white }]}>S</Text>
           </View>
-          <Text style={styles.appName}>Scorio</Text>
+          <Text style={[styles.appName, { color: colors.white }]}>Scorio</Text>
         </View>
       </Animated.View>
 
-      <Animated.Text style={[styles.credit, { opacity }]}>
+      <Animated.Text style={[styles.credit, { opacity, color: colors.textOnDark }]}>
         by @MisterBuddy
       </Animated.Text>
     </View>
@@ -58,7 +60,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.splashBg,
   },
   content: {
     alignItems: 'center',
@@ -73,26 +74,22 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 16,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconLetter: {
-    color: colors.white,
     fontWeight: '800',
     fontSize: 34,
   },
   appName: {
     fontSize: 42,
     fontWeight: '800',
-    color: colors.text,
     letterSpacing: -1,
   },
   credit: {
     position: 'absolute',
     bottom: 48,
     fontSize: 13,
-    color: colors.textOnDark,
     letterSpacing: 0.3,
   },
 });

@@ -1,4 +1,4 @@
-export const colors = {
+export const lightColors = {
   // ── Marque ───────────────────────────────────────────────
   primary:             '#7C48CA',
   primaryLight:        '#C4B5E8',
@@ -25,6 +25,7 @@ export const colors = {
   textMuted:           '#94A3B8',
   white:               '#FFFFFF',   // texte/icône sur fond coloré
   textOnDark:          'rgba(255,255,255,0.7)', // secondaire sur fond sombre
+  textOnLight:         '#FFFFFF',
 
   // ── Icônes & états ───────────────────────────────────────
   iconMuted:           '#D1D5DB',
@@ -47,6 +48,60 @@ export const colors = {
   avatarBleu:          '#dde1fe',
   avatarViole:         '#F2EDFA',
   avatarFuchsia:       '#ffd9f3',
+};
+
+export const colors = lightColors;
+
+export const darkColors: typeof lightColors = {
+  // ── Marque ───────────────────────────────────────────────
+  primary:             '#9D6FE8',
+  primaryLight:        '#4A2E8A',
+  primarySubtle:       '#2D1F4A',
+  winnerGradientStart: '#B88AF8',
+
+  // ── Fonds ────────────────────────────────────────────────
+  background:          '#0F172A',
+  card:                '#1E293B',
+  inputBackground:     '#1E293B',
+  searchBackground:    '#334155',
+  surfaceAlt:          '#1E293B',
+  iconBackground:      '#334155',
+  splashBg:            '#B094DA',
+
+  // ── Bordures ─────────────────────────────────────────────
+  border:              '#334155',
+  borderActive:        '#64748B',
+  rowAlt:              '#243044',
+
+  // ── Texte ────────────────────────────────────────────────
+  text:                '#F1F5F9',
+  textSecondary:       '#94A3B8',
+  textMuted:           '#64748B',
+  white:               '#FFFFFF',
+  textOnDark:          'rgba(255, 255, 255, 0.7)',
+  textOnLight:         '#0F172A',
+
+  // ── Icônes & états ───────────────────────────────────────
+  iconMuted:           '#475569',
+  danger:              '#EF4444',
+  errorSubtle:         '#3B1515',
+  overlay:             'rgba(0,0,0,0.7)',
+  shadow:              '#000000',
+
+  // ── Or / Récompenses ─────────────────────────────────────
+  gold:                '#F59E0B',
+  goldSubtle:          '#3B2A00',
+  goldText:            '#F59E0B',
+
+  // ── Avatars (pastels sombres) ─────────────────────────────
+  avatarRose:          '#3D2020',
+  avatarPeche:         '#3D2D1A',
+  avatarJaune:         '#3D3310',
+  avatarVert:          '#1A3D2A',
+  avatarCiel:          '#1A3340',
+  avatarBleu:          '#1E2550',
+  avatarViole:         '#2A1F3D',
+  avatarFuchsia:       '#3D1F35',
 };
 
 // ── Couleurs d'équipe ────────────────────────────────────
