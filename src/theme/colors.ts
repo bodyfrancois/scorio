@@ -22,13 +22,14 @@ export const lightColors = {
   // ── Texte ────────────────────────────────────────────────
   text:                '#1E293B',
   textSecondary:       '#64748B',
-  textMuted:           '#94A3B8',
+  textMuted:           '#64748B',
   white:               '#FFFFFF',   // texte/icône sur fond coloré
   textOnDark:          'rgba(255,255,255,0.7)', // secondaire sur fond sombre
   textOnLight:         '#FFFFFF',
 
   // ── Icônes & états ───────────────────────────────────────
   iconMuted:           '#D1D5DB',
+  iconNavigation:      '#4A2E8A',
   danger:              '#EF4444',
   errorSubtle:         '#FEF2F2',   // fond erreur légère
   overlay:             'rgba(0,0,0,0.4)',
@@ -78,11 +79,12 @@ export const darkColors: typeof lightColors = {
   textSecondary:       '#94A3B8',
   textMuted:           '#64748B',
   white:               '#FFFFFF',
-  textOnDark:          'rgba(255, 255, 255, 0.7)',
+  textOnDark:          'rgba(21, 20, 20, 0.7)',
   textOnLight:         '#0F172A',
 
   // ── Icônes & états ───────────────────────────────────────
   iconMuted:           '#475569',
+  iconNavigation:      '#9D6FE8',
   danger:              '#EF4444',
   errorSubtle:         '#3B1515',
   overlay:             'rgba(0,0,0,0.7)',

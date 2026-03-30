@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.scorio"
+      "bundleIdentifier": "com.bodyfrancois.scorio"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +30,12 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f3284c79-4a3b-49f1-9ac0-448eb0a18a7b"
+      }
+    },
+    "owner": "fbo44"
   }
 }

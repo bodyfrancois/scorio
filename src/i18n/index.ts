@@ -24,6 +24,7 @@ const translations = {
     add: 'Ajouter',
     playerName: 'Nom du joueur',
     scoreLimit: 'Limite de score',
+    roundLimit: 'Nombre de manches',
     announcements: 'Annonces',
     newGame: 'Nouvelle Partie',
     hideRules: 'Masquer les règles',
@@ -67,9 +68,11 @@ const translations = {
     validate: 'Valider',
     announceLabel: 'Annonces',
 
-    // ScoreLimitModal
+    // ScoreLimitModal / RoundLimitModal
     scoreLimitTitle: 'LIMITE DE SCORE',
     scoreLimitSubtitle: 'Points requis pour terminer la partie',
+    roundLimitTitle: 'NOMBRE DE MANCHES',
+    roundLimitSubtitle: 'Nombre de manches pour terminer la partie',
 
     // SettingsScreen
     language: 'LANGUE',
@@ -104,6 +107,7 @@ const translations = {
     add: 'Add',
     playerName: 'Player name',
     scoreLimit: 'Score limit',
+    roundLimit: 'Number of rounds',
     announcements: 'Announcements',
     newGame: 'New Game',
     hideRules: 'Hide rules',
@@ -147,9 +151,11 @@ const translations = {
     validate: 'Confirm',
     announceLabel: 'Announcements',
 
-    // ScoreLimitModal
+    // ScoreLimitModal / RoundLimitModal
     scoreLimitTitle: 'SCORE LIMIT',
     scoreLimitSubtitle: 'Points required to end the game',
+    roundLimitTitle: 'NUMBER OF ROUNDS',
+    roundLimitSubtitle: 'Number of rounds to end the game',
 
     // SettingsScreen
     language: 'LANGUAGE',

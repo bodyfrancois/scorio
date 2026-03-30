@@ -32,7 +32,7 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.searchBackground,
-      borderRadius: 12,
+      borderRadius: 16,
       paddingHorizontal: 12,
       paddingVertical: 10,
       gap: 8,
@@ -56,23 +56,25 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.card,
-      borderRadius: 16,
+      borderRadius: 24,
       padding: 14,
       marginBottom: 12,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.07,
+      shadowColor: '#3F2547',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
       shadowRadius: 4,
-      elevation: 2,
+      elevation: 1,
     },
     cardPressed: {
       opacity: 0.85,
     },
     gameImage: {
-      width: 64,
-      height: 64,
+      width: 72,
+      height: 72,
       borderRadius: 12,
       marginRight: 14,
+      borderWidth: 1,
+      borderColor: c.border,
     },
     cardContent: {
       flex: 1,
@@ -90,7 +92,7 @@ const makeStyles = (c: typeof lightColors) =>
     },
     infoText: {
       fontSize: 13,
-      color: c.textMuted,
+      color: c.textSecondary,
     },
     bullet: {
       fontSize: 13,
@@ -210,7 +212,7 @@ export default function HomeScreen() {
             <Text style={styles.gameTitle}>{game.name}</Text>
 
             <View style={styles.infoRow}>
-              <Ionicons name="people-outline" size={13} color={colors.textMuted} />
+              <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
               <Text style={styles.infoText}>
                 {game.minPlayers === game.maxPlayers
                   ? game.minPlayers
@@ -220,7 +222,7 @@ export default function HomeScreen() {
               {game.estimatedDuration && (
                 <>
                   <Text style={styles.bullet}>·</Text>
-                  <Ionicons name="time-outline" size={13} color={colors.textMuted} />
+                  <Ionicons name="time-outline" size={13} color={colors.textSecondary} />
                   <Text style={styles.infoText}>
                     {game.estimatedDuration} min
                   </Text>
@@ -229,7 +231,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward" size={18} color={colors.iconMuted} />
+          <Ionicons name="chevron-forward" size={18} color={colors.iconNavigation} />
         </Pressable>
       ))}
 

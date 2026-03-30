@@ -23,7 +23,7 @@ export const flip7Engine: GameEngine = {
     return scores.map((row) => sumArray(row));
   },
 
-  checkEndGame(scores, players, scoreLimit?) {
+  checkEndGame(scores, players, scoreLimit?, roundLimit?) {
     const lastRound = scores[0].length - 1;
 
     const roundCompleted = scores.every(
@@ -34,15 +34,16 @@ export const flip7Engine: GameEngine = {
 
     const totals = scores.map((row) => sumArray(row));
 
+    const effectiveRoundLimit = roundLimit ?? flip7Config.roundLimit;
+    if (effectiveRoundLimit != null) {
+      if (scores[0].length < effectiveRoundLimit) return { hasEnded: false };
+      return { hasEnded: true, ranking: sortRankingDescending(players, totals) };
+    }
+
     const limit = scoreLimit ?? flip7Config.scoreLimit ?? 500;
     const hasEnded = totals.some((t) => t >= limit);
     if (!hasEnded) return { hasEnded: false };
 
-    const ranking = sortRankingDescending(
-      players,
-      totals
-    );
-
-    return { hasEnded: true, ranking };
+    return { hasEnded: true, ranking: sortRankingDescending(players, totals) };
   },
 };

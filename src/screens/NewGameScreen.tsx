@@ -97,7 +97,7 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.card,
-      borderRadius: 14,
+      borderRadius: 24,
       paddingVertical: 12,
       paddingHorizontal: 14,
       gap: 12,
@@ -113,7 +113,7 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.background,
-      borderRadius: 12,
+      borderRadius: 14,
       paddingVertical: 10,
       paddingHorizontal: 12,
       gap: 12,
@@ -145,7 +145,7 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.card,
-      borderRadius: 14,
+      borderRadius: 24,
       paddingVertical: 14,
       paddingHorizontal: 16,
       gap: 12,
@@ -223,7 +223,7 @@ const makeStyles = (c: typeof lightColors) =>
     },
     rulesCard: {
       backgroundColor: c.card,
-      borderRadius: 16,
+      borderRadius: 24,
       padding: 16,
       shadowColor: c.shadow,
       shadowOffset: { width: 0, height: 1 },
@@ -237,8 +237,8 @@ const makeStyles = (c: typeof lightColors) =>
       marginBottom: 12,
     },
     rulesImage: {
-      width: 60,
-      height: 60,
+      width: 72,
+      height: 72,
       borderRadius: 12,
     },
     rulesCardMeta: {
@@ -319,8 +319,10 @@ export default function NewGameScreen({ route, navigation }: any) {
   );
 
   const [sessionScoreLimit, setSessionScoreLimit] = useState<number>(config.scoreLimit ?? 500);
+  const [sessionRoundLimit, setSessionRoundLimit] = useState<number>(config.roundLimit ?? 10);
   const [quickActionsEnabled, setQuickActionsEnabled] = useState<boolean>(!!config.quickActions?.length);
   const [scoreLimitModalVisible, setScoreLimitModalVisible] = useState(false);
+  const [roundLimitModalVisible, setRoundLimitModalVisible] = useState(false);
 
   const [rulesExpanded, setRulesExpanded] = useState(false);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
@@ -412,6 +414,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         teams: validTeams,
         teamColors,
         sessionScoreLimit: config.scoreLimit != null ? sessionScoreLimit : undefined,
+        sessionRoundLimit: config.roundLimit != null ? sessionRoundLimit : undefined,
         sessionQuickActions,
       });
     } else {
@@ -419,12 +422,13 @@ export default function NewGameScreen({ route, navigation }: any) {
         gameName,
         players: validPlayers,
         sessionScoreLimit: config.scoreLimit != null ? sessionScoreLimit : undefined,
+        sessionRoundLimit: config.roundLimit != null ? sessionRoundLimit : undefined,
         sessionQuickActions,
       });
     }
   };
 
-  const hasSettings = config.scoreLimit != null || !!config.quickActions?.length;
+  const hasSettings = config.scoreLimit != null || config.roundLimit != null || !!config.quickActions?.length;
 
   return (
     <>
@@ -557,6 +561,17 @@ export default function NewGameScreen({ route, navigation }: any) {
             </Pressable>
           )}
 
+          {config.roundLimit != null && (
+            <Pressable style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]} onPress={() => setRoundLimitModalVisible(true)}>
+              <View style={styles.paramIconBox}>
+                <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
+              </View>
+              <Text style={styles.paramLabel}>{t.roundLimit}</Text>
+              <Text style={styles.paramValue}>{sessionRoundLimit}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+            </Pressable>
+          )}
+
           {!!config.quickActions?.length && (
             <View style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}>
               <View style={styles.paramIconBox}>
@@ -580,11 +595,6 @@ export default function NewGameScreen({ route, navigation }: any) {
         onPress={startGame}
         disabled={!isValidPlayerCount}
       >
-        <Ionicons
-          name="add"
-          size={20}
-          color={isValidPlayerCount ? colors.white : colors.textMuted}
-        />
         <Text style={[styles.startText, !isValidPlayerCount && styles.startTextDisabled]}>
           {t.newGame}
         </Text>
@@ -662,6 +672,17 @@ export default function NewGameScreen({ route, navigation }: any) {
       currentValue={sessionScoreLimit}
       onClose={() => setScoreLimitModalVisible(false)}
       onValidate={(value) => setSessionScoreLimit(value)}
+    />
+
+    <ScoreLimitModal
+      visible={roundLimitModalVisible}
+      currentValue={sessionRoundLimit}
+      onClose={() => setRoundLimitModalVisible(false)}
+      onValidate={(value) => setSessionRoundLimit(value)}
+      title={t.roundLimitTitle}
+      subtitle={t.roundLimitSubtitle}
+      unit=""
+      minValue={1}
     />
   </>
   );

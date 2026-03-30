@@ -186,6 +186,11 @@ const makeStyles = (c: typeof lightColors) =>
     },
     btnPrimary: {
       backgroundColor: c.primary,
+      shadowColor: '#7B3FBE',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 9,
+      elevation: 10,
     },
     btnDisabled: {
       backgroundColor: c.searchBackground,

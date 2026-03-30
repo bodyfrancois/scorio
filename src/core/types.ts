@@ -26,6 +26,7 @@ export interface GameConfig {
   description?: string;
   detailedRules?: string;
   scoreLimit?: number;
+  roundLimit?: number;
   roundTotal?: number;
   image?: any; // require('...') local asset
   lowestScoreWins: boolean;
@@ -53,7 +54,8 @@ export interface GameEngine {
   checkEndGame(
     scores: PlayerScoreMatrix,
     players: string[],
-    scoreLimit?: number
+    scoreLimit?: number,
+    roundLimit?: number
   ): {
     hasEnded: boolean;
     ranking?: RankingItem[];

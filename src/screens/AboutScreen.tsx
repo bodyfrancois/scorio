@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
@@ -66,6 +67,11 @@ export default function AboutScreen() {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
   const styles = useMemo(() => makeStyles(colors), [colors]);
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: t.about });
+  }, [navigation, t.about]);
 
   return (
     <View style={styles.container}>

@@ -23,7 +23,7 @@ export const beloteEngine: GameEngine = {
     return scores.map((row) => sumArray(row));
   },
 
-  checkEndGame(scores, players, scoreLimit?) {
+  checkEndGame(scores, players, scoreLimit?, roundLimit?) {
     const lastRound = scores[0].length - 1;
 
     const roundCompleted = scores.every(
@@ -34,15 +34,16 @@ export const beloteEngine: GameEngine = {
 
     const totals = scores.map((row) => sumArray(row));
 
+    const effectiveRoundLimit = roundLimit ?? beloteConfig.roundLimit;
+    if (effectiveRoundLimit != null) {
+      if (scores[0].length < effectiveRoundLimit) return { hasEnded: false };
+      return { hasEnded: true, ranking: sortRankingDescending(players, totals) };
+    }
+
     const limit = scoreLimit ?? beloteConfig.scoreLimit ?? 1001;
     const hasEnded = totals.some((t) => t >= limit);
     if (!hasEnded) return { hasEnded: false };
 
-    const ranking = sortRankingDescending(
-      players,
-      totals
-    );
-
-    return { hasEnded: true, ranking };
+    return { hasEnded: true, ranking: sortRankingDescending(players, totals) };
   },
 };

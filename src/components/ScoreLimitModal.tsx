@@ -16,6 +16,10 @@ type Props = {
   currentValue: number;
   onClose: () => void;
   onValidate: (value: number) => void;
+  title?: string;
+  subtitle?: string;
+  unit?: string;
+  minValue?: number;
 };
 
 const PAD_ROWS = [
@@ -61,7 +65,7 @@ const makeStyles = (c: typeof lightColors) =>
       marginBottom: 16,
       paddingVertical: 12,
       backgroundColor: c.background,
-      borderRadius: 16,
+      borderRadius: 24,
     },
     displayValue: {
       fontSize: 40,
@@ -90,7 +94,7 @@ const makeStyles = (c: typeof lightColors) =>
       flex: 1,
       height: 56,
       backgroundColor: c.background,
-      borderRadius: 14,
+      borderRadius: 140,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -114,6 +118,11 @@ const makeStyles = (c: typeof lightColors) =>
     },
     btnPrimary: {
       backgroundColor: c.primary,
+      shadowColor: '#7B3FBE',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 9,
+      elevation: 10,
     },
     btnDisabled: {
       backgroundColor: c.searchBackground,
@@ -138,10 +147,18 @@ export default function ScoreLimitModal({
   currentValue,
   onClose,
   onValidate,
+  title: titleProp,
+  subtitle: subtitleProp,
+  unit: unitProp,
+  minValue = 1,
 }: Props) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
   const styles = useMemo(() => makeStyles(colors), [colors]);
+
+  const title = titleProp ?? t.scoreLimitTitle;
+  const subtitle = subtitleProp ?? t.scoreLimitSubtitle;
+  const unit = unitProp ?? 'pts';
 
   const [input, setInput] = useState(String(currentValue));
 
@@ -158,7 +175,7 @@ export default function ScoreLimitModal({
 
   const validate = () => {
     const value = parseInt(input, 10);
-    if (!isNaN(value) && value >= 50) {
+    if (!isNaN(value) && value >= minValue) {
       onValidate(value);
       onClose();
     }
@@ -171,21 +188,21 @@ export default function ScoreLimitModal({
 
   const displayValue = input || '0';
   const parsedValue = parseInt(input, 10);
-  const isValid = !isNaN(parsedValue) && parsedValue >= 50;
+  const isValid = !isNaN(parsedValue) && parsedValue >= minValue;
 
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          <Text style={styles.title}>{t.scoreLimitTitle}</Text>
-          <Text style={styles.subtitle}>{t.scoreLimitSubtitle}</Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
 
           <View style={styles.display}>
             <Text style={[styles.displayValue, !input && styles.displayPlaceholder]}>
               {displayValue}
             </Text>
-            <Text style={styles.displayUnit}>pts</Text>
+            <Text style={styles.displayUnit}>{unit}</Text>
           </View>
 
           <View style={styles.keypad}>

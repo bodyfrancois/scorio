@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useState, useMemo, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -322,9 +323,8 @@ export default function HistoryScreen({ navigation }: any) {
     videIcone:     { fontSize: 40 },
     videTitre:     { fontSize: 17, fontWeight: '700', color: colors.text },
     videSous:      { fontSize: 14, color: colors.textMuted, textAlign: 'center', paddingHorizontal: 32 },
-    hdrBtn:        { width: 34, height: 34, borderRadius: 9, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
-    hdrBtnActif:   { borderColor: colors.primary, backgroundColor: colors.primarySubtle },
-    hdrPoint:      { position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: 4, backgroundColor: colors.primary },
+    hdrBtn:        { width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+    hdrPoint:      { position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: 4, backgroundColor: '#fff' },
   }), [colors]);
 
   const [historique, setHistorique]    = useState<GameHistoryItem[]>([]);
@@ -332,7 +332,7 @@ export default function HistoryScreen({ navigation }: any) {
   const [filtres, setFiltres]          = useState<Filtres>({ jeu: null, date: null });
 
   const charger = useCallback(() => { getHistory().then(setHistorique); }, []);
-  useEffect(() => { charger(); }, [charger]);
+  useFocusEffect(charger);
 
   const aDesFiltres = filtres.jeu !== null || filtres.date !== null;
 
@@ -360,23 +360,11 @@ export default function HistoryScreen({ navigation }: any) {
       headerTitle: t.history,
       headerRight: () => (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingRight: 16 }}>
-          <Pressable
-            onPress={confirmerEffacement}
-            style={styles.hdrBtn}
-            hitSlop={8}
-          >
-            <Ionicons name="trash-outline" size={20} color={colors.danger} />
+          <Pressable onPress={confirmerEffacement} style={styles.hdrBtn} hitSlop={8}>
+            <Ionicons name="trash-outline" size={20} color="#fff" />
           </Pressable>
-          <Pressable
-            onPress={() => setFiltresOuverts(true)}
-            style={[styles.hdrBtn, aDesFiltres && styles.hdrBtnActif]}
-            hitSlop={8}
-          >
-            <Ionicons
-              name="filter-outline"
-              size={20}
-              color={aDesFiltres ? colors.primary : colors.textSecondary}
-            />
+          <Pressable onPress={() => setFiltresOuverts(true)} style={styles.hdrBtn} hitSlop={8}>
+            <Ionicons name="filter-outline" size={20} color="#fff" />
             {aDesFiltres && <View style={styles.hdrPoint} />}
           </Pressable>
         </View>

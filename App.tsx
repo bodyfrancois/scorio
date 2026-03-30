@@ -4,10 +4,26 @@ import 'react-native-get-random-values';
 import React, { useState } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import SplashScreen from './src/screens/SplashScreen';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+
+const HEADER_GRADIENT_COLORS: [string, string, string] = ['#5B2D9E', '#7B3FBE', '#A855F7'];
+const HEADER_GRADIENT_START = { x: 0.15, y: 0 };
+const HEADER_GRADIENT_END = { x: 0.85, y: 1 };
+
+function HeaderGradient() {
+  return (
+    <LinearGradient
+      colors={HEADER_GRADIENT_COLORS}
+      start={HEADER_GRADIENT_START}
+      end={HEADER_GRADIENT_END}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
 
 import HomeScreen from './src/screens/HomeScreen';
 import NewGameScreen from './src/screens/NewGameScreen';
@@ -18,16 +34,18 @@ import AboutScreen from './src/screens/AboutScreen';
 import CustomDrawer from './src/components/CustomDrawer';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 /* ---------------- FLÈCHE CUSTOM ---------------- */
 
 function CustomBackButton({ navigation }: any) {
-  const { colors } = useTheme();
   return (
-    <Pressable onPress={() => navigation.goBack()}>
-      <Ionicons name="chevron-back" size={26} color={colors.text} />
+    <Pressable
+      onPress={() => navigation.goBack()}
+      style={{ marginLeft: 16, width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' }}
+    >
+      <Ionicons name="chevron-back" size={22} color="#fff" />
     </Pressable>
   );
 }
@@ -35,13 +53,12 @@ function CustomBackButton({ navigation }: any) {
 /* ---------------- LOGO HEADER ---------------- */
 
 function HeaderLogo() {
-  const { colors } = useTheme();
   return (
     <View style={logoStyles.row}>
-      <View style={[logoStyles.iconBox, { backgroundColor: colors.primary }]}>
-        <Text style={[logoStyles.iconLetter, { color: colors.white }]}>S</Text>
+      <View style={[logoStyles.iconBox, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+        <Text style={[logoStyles.iconLetter, { color: '#fff' }]}>S</Text>
       </View>
-      <Text style={[logoStyles.label, { color: colors.text }]}>Scorio</Text>
+      <Text style={[logoStyles.label, { color: '#fff' }]}>Scorio</Text>
     </View>
   );
 }
@@ -79,14 +96,20 @@ function MainDrawer() {
       screenOptions={({ navigation }) => ({
         headerTitle: () => <HeaderLogo />,
         headerTitleAlign: 'center',
-        headerStyle: { backgroundColor: colors.card },
+        headerBackground: () => <HeaderGradient />,
+        headerTintColor: '#fff',
+        headerTitleStyle: { color: '#fff' },
         headerShadowVisible: false,
+        headerStyle: { height: 110 },
+        headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20  },
+        headerLeftContainerStyle: { paddingBottom: 20, paddingTop: 20  },
+        headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20  },
         headerLeft: () => (
           <Pressable
             onPress={() => navigation.openDrawer()}
             style={{ paddingHorizontal: 16 }}
           >
-            <Ionicons name="menu-outline" size={24} color={colors.text} />
+            <Ionicons name="menu-outline" size={24} color="#fff" />
           </Pressable>
         ),
       })}
@@ -128,9 +151,14 @@ function AppInner() {
         <Stack.Screen
           name="NewGame"
           component={NewGameScreen}
-          options={({ navigation }) => ({
+          options={({ navigation }: any) => ({
             title: 'Nouvelle partie',
-            headerBackVisible: false,
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -139,9 +167,14 @@ function AppInner() {
         <Stack.Screen
           name="Scoreboard"
           component={ScoreboardScreen}
-          options={({ navigation }) => ({
+          options={({ navigation }: any) => ({
             title: 'Tableau des scores',
-            headerBackVisible: false,
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />

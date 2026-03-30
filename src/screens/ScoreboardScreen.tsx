@@ -31,7 +31,6 @@ const makeStyles = (c: typeof lightColors) =>
       backgroundColor: c.background,
     },
     tableCard: {
-      marginTop: 24,
       overflow: 'hidden',
       backgroundColor: c.card,
       shadowColor: c.shadow,
@@ -233,7 +232,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const t = useTranslation(language);
   const styles = useMemo(() => makeStyles(colors), [colors]);
 
-  const { players, gameName, teamColors, sessionScoreLimit, sessionQuickActions } = route.params;
+  const { players, gameName, teamColors, sessionScoreLimit, sessionRoundLimit, sessionQuickActions } = route.params;
   const engine = getGameEngine(gameName);
   const { config } = engine;
 
@@ -266,9 +265,10 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       headerRight: () => (
         <Pressable
           onPress={() => setRulesModalVisible(true)}
-          style={{ paddingHorizontal: 16 }}
+          style={{ width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', marginRight: 16 }}
+          hitSlop={8}
         >
-          <Ionicons name="information-circle-outline" size={24} color={colors.text} />
+          <Ionicons name="information-circle-outline" size={20} color="#fff" />
         </Pressable>
       ),
     });
@@ -289,7 +289,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     setBaseScores(prev => engine.updateScore(prev, playerIndex, roundIndex, base));
     const updated = engine.updateScore(scores, playerIndex, roundIndex, value);
     setScores(updated);
-    const result = engine.checkEndGame(updated, players, sessionScoreLimit);
+    const result = engine.checkEndGame(updated, players, sessionScoreLimit, sessionRoundLimit);
     if (result.hasEnded) {
       setRanking(result.ranking!);
       setEndGameVisible(true);

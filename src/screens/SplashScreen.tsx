@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../theme/ThemeContext';
 
 interface Props {
@@ -38,10 +39,16 @@ export default function SplashScreen({ onFinish }: Props) {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.splashBg }]}>
+    <LinearGradient
+      colors={['#5B2D9E', '#7B3FBE', '#A855F7', '#EC4899', '#F97316']}
+      locations={[0, 0.25, 0.55, 0.80, 1]}
+      start={{ x: 0.15, y: 0 }}
+      end={{ x: 0.85, y: 1 }}
+      style={styles.container}
+    >
       <Animated.View style={[styles.content, { opacity, transform: [{ scale }] }]}>
         <View style={styles.row}>
-          <View style={[styles.iconBox, { backgroundColor: colors.primary }]}>
+          <View style={[styles.iconBox, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
             <Text style={[styles.iconLetter, { color: colors.white }]}>S</Text>
           </View>
           <Text style={[styles.appName, { color: colors.white }]}>Scorio</Text>
@@ -51,7 +58,7 @@ export default function SplashScreen({ onFinish }: Props) {
       <Animated.Text style={[styles.credit, { opacity, color: colors.textOnDark }]}>
         by @MisterBuddy
       </Animated.Text>
-    </View>
+    </LinearGradient>
   );
 }
 

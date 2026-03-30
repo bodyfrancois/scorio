@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, Switch, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
@@ -22,17 +23,17 @@ const makeStyles = (c: typeof lightColors) =>
       color: c.textMuted,
       letterSpacing: 1,
       marginBottom: 10,
-      marginTop: 24,
     },
     card: {
       backgroundColor: c.card,
-      borderRadius: 16,
+      borderRadius: 24,
       overflow: 'hidden',
       shadowColor: c.shadow,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.06,
       shadowRadius: 4,
       elevation: 2,
+      marginBottom: 24,
     },
     row: {
       flexDirection: 'row',
@@ -83,6 +84,11 @@ export default function SettingsScreen() {
   const { colors, isDark, toggleDark, language, setLanguage } = useTheme();
   const t = useTranslation(language);
   const styles = useMemo(() => makeStyles(colors), [colors]);
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: t.settings });
+  }, [navigation, t.settings]);
 
   return (
     <View style={styles.container}>
