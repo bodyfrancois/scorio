@@ -16,18 +16,12 @@ import { useTranslation } from '../i18n';
 import { getAvailableGames } from '../core/gameEngine';
 import { RootStackParamList } from '../types/navigations';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
+import { IllustrationCartes } from './HistoryScreen';
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.background,
-    },
-    scrollContent: {
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      paddingBottom: 48,
-    },
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     searchWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -44,26 +38,6 @@ const makeStyles = (c: typeof lightColors) =>
       fontSize: 15,
       color: c.text,
       padding: 0,
-    },
-    sectionLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: c.textSecondary,
-      letterSpacing: 1,
-      marginBottom: 12,
-    },
-    card: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: 24,
-      padding: 14,
-      marginBottom: 12,
-      shadowColor: '#3F2547',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
-      elevation: 1,
     },
     cardPressed: {
       opacity: 0.85,
@@ -144,7 +118,8 @@ const makeStyles = (c: typeof lightColors) =>
       color: c.textMuted,
       textDecorationLine: 'underline',
     },
-  });
+  }),
+});
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -186,9 +161,12 @@ export default function HomeScreen() {
       {/* Section label */}
       <Text style={styles.sectionLabel}>{t.gameList}</Text>
 
-      {/* Liste des jeux */}
+      {/* Liste des jeux — état vide */}
       {filteredGames.length === 0 && (
-        <Text style={styles.noResult}>{t.noResult}</Text>
+        <View style={{ alignItems: 'center', marginTop: 32 }}>
+          <IllustrationCartes colors={colors} />
+          <Text style={styles.noResult}>{t.noResult}</Text>
+        </View>
       )}
 
       {filteredGames.map((game) => (
@@ -231,7 +209,9 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward" size={18} color={colors.iconNavigation} />
+          <View style={[styles.btnPrimary]}>
+            <Text style={styles.btnPrimaryTextSmall}>{t.play}</Text>
+          </View>
         </Pressable>
       ))}
 

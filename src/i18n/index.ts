@@ -26,6 +26,7 @@ const translations = {
     scoreLimit: 'Limite de score',
     roundLimit: 'Nombre de manches',
     announcements: 'Annonces',
+    play: 'JOUER',
     newGame: 'Nouvelle Partie',
     hideRules: 'Masquer les règles',
     showRules: 'Voir les règles complètes',
@@ -33,6 +34,7 @@ const translations = {
     // ScoreboardScreen
     addRound: 'Ajouter une manche',
     finish: 'terminer',
+    endGameBtn: 'Terminer la partie',
     rules: 'Règles',
     quitGame: 'Quitter la partie ?',
     progressLost: 'Votre progression sera perdue.',
@@ -46,10 +48,14 @@ const translations = {
     filterGames: 'Filtrer les parties',
     game: 'Jeu',
     date: 'Date',
+    month: 'Mois',
+    year: 'Année',
     allGames: 'Tous les jeux',
     reset: 'Réinitialiser',
     apply: 'Appliquer',
     clearDate: 'Effacer',
+    seeMore: 'Voir plus',
+    seeLess: 'Voir moins',
     clearHistory: 'Effacer l\'historique',
     clearHistoryMsg: 'Toutes les parties seront supprimées définitivement.',
     cancel: 'Annuler',
@@ -62,7 +68,7 @@ const translations = {
     replay: 'Rejouer',
     backHome: 'Retour à l\'accueil',
 
-    // UnoScoreModal
+    // EditScoreModal
     round: 'Manche',
     enterScore: 'Saisissez le score de',
     validate: 'Valider',
@@ -109,6 +115,7 @@ const translations = {
     scoreLimit: 'Score limit',
     roundLimit: 'Number of rounds',
     announcements: 'Announcements',
+    play: 'PLAY',
     newGame: 'New Game',
     hideRules: 'Hide rules',
     showRules: 'View full rules',
@@ -116,6 +123,7 @@ const translations = {
     // ScoreboardScreen
     addRound: 'Add a round',
     finish: 'finish',
+    endGameBtn: 'End game',
     rules: 'Rules',
     quitGame: 'Quit the game?',
     progressLost: 'Your progress will be lost.',
@@ -129,10 +137,14 @@ const translations = {
     filterGames: 'Filter games',
     game: 'Game',
     date: 'Date',
+    month: 'Month',
+    year: 'Year',
     allGames: 'All games',
     reset: 'Reset',
     apply: 'Apply',
     clearDate: 'Clear',
+    seeMore: 'See more',
+    seeLess: 'See less',
     clearHistory: 'Clear history',
     clearHistoryMsg: 'All games will be permanently deleted.',
     cancel: 'Cancel',
@@ -145,7 +157,7 @@ const translations = {
     replay: 'Play again',
     backHome: 'Back to home',
 
-    // UnoScoreModal
+    // EditScoreModal
     round: 'Round',
     enterScore: 'Enter the score for',
     validate: 'Confirm',

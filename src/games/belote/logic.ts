@@ -27,7 +27,7 @@ export const beloteEngine: GameEngine = {
     const lastRound = scores[0].length - 1;
 
     const roundCompleted = scores.every(
-      (row) => row[lastRound] !== 0
+      (row) => row[lastRound] !== null
     );
 
     if (!roundCompleted) return { hasEnded: false };

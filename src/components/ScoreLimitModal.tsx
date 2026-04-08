@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 
 type Props = {
   visible: boolean;
@@ -29,20 +30,28 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    overlay: {
-      flex: 1,
-      backgroundColor: c.overlay,
-      justifyContent: 'flex-end',
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
+    // keypad override : marginBottom différent du partagé
+    keypad: {
+      gap: 8,
+      marginBottom: 20,
     },
-    sheet: {
+    // key override : fond card + bordure au lieu de fond background
+    key: {
+      flex: 1,
+      height: 56,
       backgroundColor: c.card,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      paddingHorizontal: 24,
-      paddingTop: 28,
-      paddingBottom: 40,
+      borderRadius: 16,
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.05,
+      shadowRadius: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: c.borderSubtle,
     },
     title: {
       fontSize: 13,
@@ -82,65 +91,8 @@ const makeStyles = (c: typeof lightColors) =>
       color: c.textMuted,
       paddingBottom: 4,
     },
-    keypad: {
-      gap: 8,
-      marginBottom: 20,
-    },
-    keyRow: {
-      flexDirection: 'row',
-      gap: 8,
-    },
-    key: {
-      flex: 1,
-      height: 56,
-      backgroundColor: c.background,
-      borderRadius: 140,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    keyEmpty: {
-      flex: 1,
-    },
-    keyText: {
-      fontSize: 22,
-      fontWeight: '500',
-      color: c.text,
-    },
-    buttons: {
-      flexDirection: 'row',
-      gap: 12,
-    },
-    btn: {
-      flex: 1,
-      paddingVertical: 16,
-      borderRadius: 16,
-      alignItems: 'center',
-    },
-    btnPrimary: {
-      backgroundColor: c.primary,
-      shadowColor: '#7B3FBE',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.4,
-      shadowRadius: 9,
-      elevation: 10,
-    },
-    btnDisabled: {
-      backgroundColor: c.searchBackground,
-    },
-    btnPrimaryText: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.white,
-    },
-    btnSecondary: {
-      backgroundColor: c.searchBackground,
-    },
-    btnSecondaryText: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: c.textSecondary,
-    },
-  });
+  }),
+});
 
 export default function ScoreLimitModal({
   visible,
@@ -214,13 +166,13 @@ export default function ScoreLimitModal({
                   }
                   if (key === '⌫') {
                     return (
-                      <Pressable key={ci} style={styles.key} onPress={backspace}>
+                      <Pressable key={ci} style={({ pressed }) => [styles.key, pressed && styles.keyPressed]} onPress={backspace}>
                         <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
                       </Pressable>
                     );
                   }
                   return (
-                    <Pressable key={ci} style={styles.key} onPress={() => pressKey(key)}>
+                    <Pressable key={ci} style={({ pressed: p }) => [styles.key, p && styles.keyPressed]} onPress={() => pressKey(key)}>
                       <Text style={styles.keyText}>{key}</Text>
                     </Pressable>
                   );
@@ -231,14 +183,14 @@ export default function ScoreLimitModal({
 
           <View style={styles.buttons}>
             <Pressable
-              style={[styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled]}
+              style={({ pressed }) => [styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled, pressed && isValid && styles.pressed]}
               onPress={validate}
               disabled={!isValid}
             >
               <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
-            <Pressable style={[styles.btn, styles.btnSecondary]} onPress={cancel}>
+            <Pressable style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={cancel}>
               <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>

@@ -5,17 +5,19 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 
 const version = Constants.expoConfig?.version ?? '1.0.0';
 const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? '1';
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: c.background,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
       paddingHorizontal: 32,
     },
     iconBox: {
@@ -61,7 +63,8 @@ const makeStyles = (c: typeof lightColors) =>
       fontSize: 13,
       color: c.textMuted,
     },
-  });
+  }),
+});
 
 export default function AboutScreen() {
   const { colors, language } = useTheme();

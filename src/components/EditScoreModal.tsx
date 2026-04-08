@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 import { QuickAction } from '../core/types';
 
 type Props = {
@@ -32,21 +33,9 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    overlay: {
-      flex: 1,
-      backgroundColor: c.overlay,
-      justifyContent: 'flex-end',
-    },
-    sheet: {
-      backgroundColor: c.card,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      paddingHorizontal: 24,
-      paddingTop: 28,
-      paddingBottom: 40,
-    },
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     roundLabel: {
       fontSize: 13,
       fontWeight: '700',
@@ -105,30 +94,6 @@ const makeStyles = (c: typeof lightColors) =>
       color: c.danger,
       fontWeight: '600',
     },
-    keypad: {
-      gap: 8,
-      marginBottom: 16,
-    },
-    keyRow: {
-      flexDirection: 'row',
-      gap: 8,
-    },
-    key: {
-      flex: 1,
-      height: 56,
-      backgroundColor: c.background,
-      borderRadius: 14,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    keyEmpty: {
-      flex: 1,
-    },
-    keyText: {
-      fontSize: 22,
-      fontWeight: '500',
-      color: c.text,
-    },
     quickActionsSection: {
       marginBottom: 16,
     },
@@ -154,6 +119,24 @@ const makeStyles = (c: typeof lightColors) =>
       borderWidth: 1,
       borderColor: c.border,
     },
+    keypad: {
+      gap: 8,
+      marginBottom: 20,
+    },
+    key: {
+      flex: 1,
+      height: 56,
+      backgroundColor: c.card,
+      borderRadius: 16,
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.05,
+      shadowRadius: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: c.borderSubtle,
+    },
     chipActive: {
       backgroundColor: c.primarySubtle,
       borderColor: c.primary,
@@ -174,43 +157,10 @@ const makeStyles = (c: typeof lightColors) =>
     chipValueActive: {
       color: c.primary,
     },
-    buttons: {
-      flexDirection: 'row',
-      gap: 12,
-    },
-    btn: {
-      flex: 1,
-      paddingVertical: 16,
-      borderRadius: 16,
-      alignItems: 'center',
-    },
-    btnPrimary: {
-      backgroundColor: c.primary,
-      shadowColor: '#7B3FBE',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.4,
-      shadowRadius: 9,
-      elevation: 10,
-    },
-    btnDisabled: {
-      backgroundColor: c.searchBackground,
-    },
-    btnPrimaryText: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.white,
-    },
-    btnSecondary: {
-      backgroundColor: c.searchBackground,
-    },
-    btnSecondaryText: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: c.textSecondary,
-    },
-  });
+  }),
+});
 
-export default function UnoScoreModal({
+export default function EditScoreModal({
   visible,
   playerName,
   roundNumber,
@@ -234,6 +184,8 @@ export default function UnoScoreModal({
       if (i === playerIndex || v === null) return sum + 0;
       return sum + v;
     }, 0);
+    // Capot: l'équipe adverse a marqué plus que le total — l'équipe courante marque 0
+    if (othersSum > roundTotal) return 0;
     return roundTotal - othersSum;
   })();
 
@@ -252,10 +204,13 @@ export default function UnoScoreModal({
     }
   }, [visible]);
 
-  const actionsTotal = Array.from(activeActions).reduce(
-    (sum, i) => sum + (quickActions?.[i]?.value ?? 0),
-    0
-  );
+  const actionsTotal = Array.from(activeActions).reduce((sum, i) => {
+    const action = quickActions?.[i];
+    if (!action) return sum;
+    // Capot : la base est déjà forcée à roundTotal → le bonus effectif = value - roundTotal
+    if (action.isCapot && roundTotal != null) return sum + (action.value - roundTotal);
+    return sum + action.value;
+  }, 0);
   const keypadValue = parseInt(input, 10) || 0;
   const total = keypadValue + actionsTotal;
   const hasValue = input.length > 0 || activeActions.size > 0;
@@ -271,10 +226,18 @@ export default function UnoScoreModal({
   const backspace = () => setInput((prev) => prev.slice(0, -1));
 
   const toggleAction = (index: number) => {
+    const action = quickActions?.[index];
     setActiveActions((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
+      if (next.has(index)) {
+        next.delete(index);
+        // Si capot désactivé, effacer la base auto-remplie
+        if (action?.isCapot) setInput('');
+      } else {
+        next.add(index);
+        // Capot : forcer la base à roundTotal (162) pour que l'équipe adverse voie remaining=0
+        if (action?.isCapot && roundTotal != null) setInput(String(roundTotal));
+      }
       return next;
     });
   };
@@ -333,13 +296,13 @@ export default function UnoScoreModal({
                   }
                   if (key === '⌫') {
                     return (
-                      <Pressable key={ci} style={styles.key} onPress={backspace}>
+                      <Pressable key={ci} style={({ pressed }) => [styles.key, pressed && styles.keyPressed]} onPress={backspace}>
                         <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
                       </Pressable>
                     );
                   }
                   return (
-                    <Pressable key={ci} style={styles.key} onPress={() => pressKey(key)}>
+                    <Pressable key={ci} style={({ pressed: p }) => [styles.key, p && styles.keyPressed]} onPress={() => pressKey(key)}>
                       <Text style={styles.keyText}>{key}</Text>
                     </Pressable>
                   );
@@ -361,14 +324,11 @@ export default function UnoScoreModal({
                   return (
                     <Pressable
                       key={index}
-                      style={[styles.chip, isActive && styles.chipActive]}
+                      style={({ pressed }) => [styles.chip, isActive && styles.chipActive, pressed && styles.pressed]}
                       onPress={() => toggleAction(index)}
                     >
                       <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
                         {action.label}
-                      </Text>
-                      <Text style={[styles.chipValue, isActive && styles.chipValueActive]}>
-                        +{action.value}
                       </Text>
                     </Pressable>
                   );
@@ -379,14 +339,14 @@ export default function UnoScoreModal({
 
           <View style={styles.buttons}>
             <Pressable
-              style={[styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled]}
+              style={({ pressed }) => [styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled, pressed && isValid && styles.pressed]}
               onPress={validate}
               disabled={!isValid}
             >
               <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
-            <Pressable style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
+            <Pressable style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={onClose}>
               <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>

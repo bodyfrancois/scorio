@@ -18,7 +18,7 @@ export const beloteConfig: GameConfig = {
     { label: 'Cent', value: 100 },
     { label: 'Carré', value: 100 },
     { label: 'Carré Valet', value: 200 },
-    { label: 'Capot', value: 252 },
+    { label: 'Capot', value: 252, isCapot: true },
   ],
   teams: {
     count: 2,

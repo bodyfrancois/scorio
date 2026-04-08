@@ -20,33 +20,22 @@ import { getGameEngine } from '../core/gameEngine';
 import ScoreLimitModal from '../components/ScoreLimitModal';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
+import { makeSharedStyles } from '../theme/styles';
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.background,
-    },
-    scrollContent: {
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      paddingBottom: 48,
-    },
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     sectionHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 12,
     },
-    sectionLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: c.textSecondary,
-      letterSpacing: 1,
-      marginBottom: 12,
-    },
     sectionLabelTop: {
       marginTop: 28,
+    },
+    sectionLabelNoMargin: {
+      marginBottom: 0,
     },
     teamSection: {
       marginTop: 16,
@@ -193,33 +182,15 @@ const makeStyles = (c: typeof lightColors) =>
       minWidth: 44,
       textAlign: 'center',
     },
-    startButton: {
+    startButtonLayout: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.primary,
-      borderRadius: 16,
-      paddingVertical: 16,
       marginTop: 28,
       gap: 6,
-      shadowColor: c.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 4,
     },
     startButtonDisabled: {
-      backgroundColor: c.searchBackground,
-      shadowOpacity: 0,
-      elevation: 0,
-    },
-    startText: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.white,
-    },
-    startTextDisabled: {
-      color: c.textMuted,
+      opacity: 0.4,
     },
     rulesCard: {
       backgroundColor: c.card,
@@ -261,11 +232,11 @@ const makeStyles = (c: typeof lightColors) =>
       color: c.textMuted,
     },
     rulesBullet: {
-      fontSize: 12,
+      fontSize: 14,
       color: c.iconMuted,
     },
     rulesDescription: {
-      fontSize: 13,
+      fontSize: 14,
       color: c.textSecondary,
       lineHeight: 18,
     },
@@ -281,15 +252,16 @@ const makeStyles = (c: typeof lightColors) =>
     expandText: {
       color: c.primary,
       fontWeight: '600',
-      fontSize: 13,
+      fontSize: 14,
     },
     rulesDetailed: {
       marginTop: 10,
-      fontSize: 13,
+      fontSize: 14,
       lineHeight: 20,
       color: c.textSecondary,
     },
-  });
+  }),
+});
 
 export default function NewGameScreen({ route, navigation }: any) {
   const { colors, language } = useTheme();
@@ -441,7 +413,7 @@ export default function NewGameScreen({ route, navigation }: any) {
       {!isTeamMode && (
         <>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>{t.players}</Text>
+            <Text style={[styles.sectionLabel, styles.sectionLabelNoMargin]}>{t.players}</Text>
             {players.length < config.maxPlayers && (
               <Pressable onPress={addPlayer} style={styles.addPlayerBtn}>
                 <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
@@ -591,11 +563,11 @@ export default function NewGameScreen({ route, navigation }: any) {
       )}
 
       <Pressable
-        style={[styles.startButton, !isValidPlayerCount && styles.startButtonDisabled]}
+        style={({ pressed }) => [styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout, !isValidPlayerCount && styles.startButtonDisabled, pressed && isValidPlayerCount && styles.pressed]}
         onPress={startGame}
         disabled={!isValidPlayerCount}
       >
-        <Text style={[styles.startText, !isValidPlayerCount && styles.startTextDisabled]}>
+        <Text style={styles.btnPrimaryTextBig}>
           {t.newGame}
         </Text>
       </Pressable>

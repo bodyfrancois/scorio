@@ -5,13 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.background,
-    },
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     scroll: {
       paddingHorizontal: 20,
       paddingTop: 28,
@@ -24,16 +22,18 @@ const makeStyles = (c: typeof lightColors) =>
       letterSpacing: 1,
       marginBottom: 10,
     },
-    card: {
+    card2: {
       backgroundColor: c.card,
       borderRadius: 24,
-      overflow: 'hidden',
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.06,
-      shadowRadius: 4,
-      elevation: 2,
-      marginBottom: 24,
+      padding: 8,
+      marginBottom: 32,
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.05,
+      shadowRadius: 0,
+      elevation: 3,
+      borderWidth: 2,
+      borderColor: c.borderSubtle,
     },
     row: {
       flexDirection: 'row',
@@ -78,7 +78,8 @@ const makeStyles = (c: typeof lightColors) =>
     checkIcon: {
       marginLeft: 8,
     },
-  });
+  }),
+});
 
 export default function SettingsScreen() {
   const { colors, isDark, toggleDark, language, setLanguage } = useTheme();
@@ -96,10 +97,10 @@ export default function SettingsScreen() {
 
         {/* ── LANGUE ── */}
         <Text style={styles.sectionLabel}>{t.language}</Text>
-        <View style={styles.card}>
+        <View style={styles.card2}>
 
           <Pressable
-            style={styles.optionRow}
+            style={({ pressed }) => [styles.optionRow, pressed && styles.pressed]}
             onPress={() => setLanguage('fr')}
           >
             <View style={styles.rowIcon}>
@@ -116,7 +117,7 @@ export default function SettingsScreen() {
           <View style={styles.rowDivider} />
 
           <Pressable
-            style={styles.optionRow}
+            style={({ pressed }) => [styles.optionRow, pressed && styles.pressed]}
             onPress={() => setLanguage('en')}
           >
             <View style={styles.rowIcon}>
@@ -134,7 +135,7 @@ export default function SettingsScreen() {
 
         {/* ── APPARENCE ── */}
         <Text style={styles.sectionLabel}>{t.appearance}</Text>
-        <View style={styles.card}>
+        <View style={styles.card2}>
           <View style={styles.row}>
             <View style={styles.rowIcon}>
               <Ionicons

@@ -8,6 +8,8 @@ export type RankingItem = {
 export type QuickAction = {
   label: string;
   value: number;
+  /** Capot : remporter tous les plis. Active auto-remplit la base avec roundTotal. */
+  isCapot?: boolean;
 };
 
 export type TeamConfig = {

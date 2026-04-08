@@ -35,6 +35,11 @@ export const lightColors = {
   overlay:             'rgba(0,0,0,0.4)',
   shadow:              '#000000',
 
+  // ── Ombres ───────────────────────────────────────────────
+  shadowCard:          '#000000',   // ombre des cartes (iOS)
+  shadowPrimary:       '#410872',   // ombre des boutons primaires (iOS)
+  borderSubtle:        'rgba(0, 0, 0, 0.05)',  // bordure subtile des cartes
+
   // ── Or / Récompenses ─────────────────────────────────────
   gold:                '#F59E0B',   // étoiles, couronne, badges
   goldSubtle:          '#FEF3C7',   // fond badge 1ère place
@@ -89,6 +94,11 @@ export const darkColors: typeof lightColors = {
   errorSubtle:         '#3B1515',
   overlay:             'rgba(0,0,0,0.7)',
   shadow:              '#000000',
+
+  // ── Ombres ───────────────────────────────────────────────
+  shadowCard:          '#FFFFFF',  // pas d'ombre iOS en dark (contraste par fond)
+  shadowPrimary:       '#090E1A',  // pas d'ombre iOS en dark
+  borderSubtle:        'rgba(255, 255, 255, 0.08)',  // bordure légère sur fond sombre
 
   // ── Or / Récompenses ─────────────────────────────────────
   gold:                '#F59E0B',

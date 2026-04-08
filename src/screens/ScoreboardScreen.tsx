@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import UnoScoreModal from '../components/UnoScoreModal';
+import EditScoreModal from '../components/EditScoreModal';
 import EndGameModal from '../components/EndGameModal';
 import { getGameEngine } from '../core/gameEngine';
 import { RankingItem } from '../core/types';
@@ -18,18 +18,16 @@ import { saveGameToHistory } from '../storage/historyStorage';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 
 const ROUND_COL = 36;
 const PLAYER_COL = 90;
 const HEADER_H = 108;
 const ROW_H = 56;
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.background,
-    },
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     tableCard: {
       overflow: 'hidden',
       backgroundColor: c.card,
@@ -133,16 +131,31 @@ const makeStyles = (c: typeof lightColors) =>
     },
     endSection: {
       paddingVertical: 16,
+      paddingHorizontal: 20,
+      gap: 10,
       alignItems: 'center',
+    },
+    endGameBtn: {
+      width: '100%',
+      paddingVertical: 15,
+      borderRadius: 16,
+      backgroundColor: c.primary,
+      alignItems: 'center',
+      shadowColor: c.shadowPrimary,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 1,
+      shadowRadius: 0,
+      elevation: 10,
+      marginBottom: 24,
+    },
+    endGameBtnText: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: c.white,
     },
     endLink: {
       fontSize: 13,
       color: c.textMuted,
-    },
-    overlay: {
-      flex: 1,
-      backgroundColor: c.overlay,
-      justifyContent: 'flex-end',
     },
     rulesSheet: {
       backgroundColor: c.card,
@@ -198,34 +211,9 @@ const makeStyles = (c: typeof lightColors) =>
       fontSize: 14,
       color: c.textSecondary,
       marginBottom: 28,
-    },
-    exitButtons: {
-      flexDirection: 'row',
-      gap: 12,
-    },
-    exitBtn: {
-      flex: 1,
-      paddingVertical: 14,
-      borderRadius: 14,
-      alignItems: 'center',
-    },
-    exitBtnSecondary: {
-      backgroundColor: c.searchBackground,
-    },
-    exitBtnSecondaryText: {
-      fontSize: 15,
-      fontWeight: '600',
-      color: c.textSecondary,
-    },
-    exitBtnPrimary: {
-      backgroundColor: c.primary,
-    },
-    exitBtnPrimaryText: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: c.white,
-    },
-  });
+    }
+  }),
+});
 
 export default function ScoreboardScreen({ route, navigation }: any) {
   const { colors, language } = useTheme();
@@ -276,12 +264,13 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
+      if (endGameVisible) return;
       e.preventDefault();
       setPendingNavAction(e.data.action);
       setExitModalVisible(true);
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, endGameVisible]);
 
   const addRound = () => setScores(engine.addRound(scores));
 
@@ -301,6 +290,26 @@ export default function ScoreboardScreen({ route, navigation }: any) {
         ranking: result.ranking!,
       });
     }
+  };
+
+  const hasAutoEnd = sessionScoreLimit !== undefined || sessionRoundLimit !== undefined;
+
+  const endGameManually = () => {
+    const currentTotals = engine.getTotals(scores);
+    const finalRanking = players
+      .map((name: string, i: number) => ({ name, score: currentTotals[i] }))
+      .sort((a: { score: number }, b: { score: number }) =>
+        config.lowestScoreWins ? a.score - b.score : b.score - a.score
+      );
+    setRanking(finalRanking);
+    setEndGameVisible(true);
+    saveGameToHistory({
+      id: Date.now().toString(),
+      gameName,
+      date: new Date().toISOString(),
+      players,
+      ranking: finalRanking,
+    });
   };
 
   const totals = engine.getTotals(scores);
@@ -386,7 +395,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           </View>
         </View>
 
-        <Pressable style={styles.addRoundBtn} onPress={addRound}>
+        <Pressable style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
           <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
           <Text style={styles.addRoundText}>{t.addRound}</Text>
         </Pressable>
@@ -394,9 +403,11 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       </ScrollView>
 
       <View style={styles.endSection}>
-        <Pressable onPress={() => navigation.popToTop()}>
-          <Text style={styles.endLink}>{t.finish}</Text>
-        </Pressable>
+        {!hasAutoEnd && (
+          <Pressable style={({ pressed }) => [styles.endGameBtn, pressed && styles.pressed]} onPress={endGameManually}>
+            <Text style={styles.endGameBtnText}>{t.endGameBtn}</Text>
+          </Pressable>
+        )}
       </View>
 
       {/* Modal règles */}
@@ -434,22 +445,22 @@ export default function ScoreboardScreen({ route, navigation }: any) {
             <Text style={styles.exitTitle}>{t.quitGame}</Text>
             <Text style={styles.exitSubtitle}>{t.progressLost}</Text>
 
-            <View style={styles.exitButtons}>
+            <View style={styles.buttons}>
               <Pressable
-                style={[styles.exitBtn, styles.exitBtnSecondary]}
+                style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
                 onPress={() => {
                   setExitModalVisible(false);
                   if (pendingNavAction) navigation.dispatch(pendingNavAction);
                 }}
               >
-                <Text style={styles.exitBtnSecondaryText}>{t.yes}</Text>
+                <Text style={styles.btnSecondaryText}>{t.yes}</Text>
               </Pressable>
 
               <Pressable
-                style={[styles.exitBtn, styles.exitBtnPrimary]}
+                style={({ pressed }) => [styles.btn, styles.btnPrimary, pressed && styles.pressed]}
                 onPress={() => setExitModalVisible(false)}
               >
-                <Text style={styles.exitBtnPrimaryText}>{t.no}</Text>
+                <Text style={styles.btnPrimaryText}>{t.no}</Text>
               </Pressable>
             </View>
 
@@ -458,7 +469,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       </Modal>
 
       {selectedPlayerIndex !== null && selectedRoundIndex !== null && (
-        <UnoScoreModal
+        <EditScoreModal
           visible={modalVisible}
           playerName={players[selectedPlayerIndex]}
           roundNumber={selectedRoundIndex + 1}
