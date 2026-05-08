@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
+import { makeSharedStyles } from '../theme/styles';
 import IconHome from './icons/IconHome';
 import IconHistory from './icons/IconHistory';
 import IconPlayers from './icons/IconPlayers';
@@ -16,8 +17,9 @@ import IconAbout from './icons/IconAbout';
 const version = Constants.expoConfig?.version ?? '1.0.0';
 const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? '1';
 
-const makeStyles = (c: typeof lightColors) =>
-  StyleSheet.create({
+const makeStyles = (c: typeof lightColors) => ({
+  ...makeSharedStyles(c),
+  ...StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: c.card,
@@ -34,14 +36,6 @@ const makeStyles = (c: typeof lightColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 10,
-    },
-    iconBox: {
-      width: 34,
-      height: 34,
-      borderRadius: 9,
-      backgroundColor: c.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     iconLetter: {
       color: c.white,
@@ -88,7 +82,8 @@ const makeStyles = (c: typeof lightColors) =>
       fontSize: 12,
       color: c.textMuted,
     },
-  });
+  }),
+});
 
 export default function CustomDrawer(props: DrawerContentComponentProps) {
   const { colors, language } = useTheme();
@@ -111,7 +106,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.logoRow}>
-          <View style={styles.iconBox}>
+          <View style={styles.iconBoxBrand}>
             <Text style={styles.iconLetter}>S</Text>
           </View>
           <Text style={styles.appName}>Scorio</Text>

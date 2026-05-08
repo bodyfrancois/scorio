@@ -59,7 +59,7 @@ const makeStyles = (c: typeof lightColors) => ({
       color: c.text,
       marginBottom: 6,
     },
-    infoRow: {
+    gameInfoRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
@@ -189,7 +189,7 @@ export default function HomeScreen() {
           <View style={styles.cardContent}>
             <Text style={styles.gameTitle}>{game.name}</Text>
 
-            <View style={styles.infoRow}>
+            <View style={styles.gameInfoRow}>
               <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
               <Text style={styles.infoText}>
                 {game.minPlayers === game.maxPlayers

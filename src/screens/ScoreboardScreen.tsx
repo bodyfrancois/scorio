@@ -188,19 +188,6 @@ const makeStyles = (c: typeof lightColors) => ({
       color: c.textSecondary,
       lineHeight: 20,
     },
-    exitOverlay: {
-      flex: 1,
-      backgroundColor: c.overlay,
-      justifyContent: 'center',
-      paddingHorizontal: 24,
-    },
-    exitCard: {
-      backgroundColor: c.card,
-      borderRadius: 20,
-      paddingHorizontal: 24,
-      paddingTop: 28,
-      paddingBottom: 28,
-    },
     exitTitle: {
       fontSize: 18,
       fontWeight: '700',
@@ -211,7 +198,7 @@ const makeStyles = (c: typeof lightColors) => ({
       fontSize: 14,
       color: c.textSecondary,
       marginBottom: 28,
-    }
+    },
   }),
 });
 
@@ -253,7 +240,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       headerRight: () => (
         <Pressable
           onPress={() => setRulesModalVisible(true)}
-          style={{ width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', marginRight: 16 }}
+          style={({ pressed }) => [styles.hdrBtn, { marginRight: 16 }, pressed && { opacity: 0.72 }]}
           hitSlop={8}
         >
           <Ionicons name="information-circle-outline" size={20} color="#fff" />
@@ -439,8 +426,8 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
       {/* Modal quitter */}
       <Modal visible={exitModalVisible} transparent animationType="fade">
-        <View style={styles.exitOverlay}>
-          <View style={styles.exitCard}>
+        <View style={styles.overlayCenter}>
+          <View style={styles.modalCard}>
 
             <Text style={styles.exitTitle}>{t.quitGame}</Text>
             <Text style={styles.exitSubtitle}>{t.progressLost}</Text>

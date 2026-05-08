@@ -1,5 +1,5 @@
 import React, { useMemo, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, Switch, Pressable, ScrollView } from 'react-native';
+import { View, Text, Switch, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
@@ -9,76 +9,6 @@ import { makeSharedStyles } from '../theme/styles';
 
 const makeStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    scroll: {
-      paddingHorizontal: 20,
-      paddingTop: 28,
-      paddingBottom: 48,
-    },
-    sectionLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: c.textMuted,
-      letterSpacing: 1,
-      marginBottom: 10,
-    },
-    card2: {
-      backgroundColor: c.card,
-      borderRadius: 24,
-      padding: 8,
-      marginBottom: 32,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 3,
-      borderWidth: 2,
-      borderColor: c.borderSubtle,
-    },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-    },
-    rowDivider: {
-      height: 1,
-      backgroundColor: c.border,
-      marginHorizontal: 16,
-    },
-    rowIcon: {
-      width: 34,
-      height: 34,
-      borderRadius: 8,
-      backgroundColor: c.iconBackground,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: 12,
-    },
-    rowLabel: {
-      flex: 1,
-      fontSize: 15,
-      color: c.text,
-    },
-    optionRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-    },
-    optionLabel: {
-      flex: 1,
-      fontSize: 15,
-      color: c.text,
-    },
-    optionLabelActive: {
-      color: c.primary,
-      fontWeight: '600',
-    },
-    checkIcon: {
-      marginLeft: 8,
-    },
-  }),
 });
 
 export default function SettingsScreen() {
@@ -93,41 +23,44 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingTop: 28 }]}
+        showsVerticalScrollIndicator={false}
+      >
 
         {/* ── LANGUE ── */}
         <Text style={styles.sectionLabel}>{t.language}</Text>
-        <View style={styles.card2}>
+        <View style={styles.cardList}>
 
           <Pressable
-            style={({ pressed }) => [styles.optionRow, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
             onPress={() => setLanguage('fr')}
           >
-            <View style={styles.rowIcon}>
+            <View style={styles.listRowIcon}>
               <Text style={{ fontSize: 18 }}>🇫🇷</Text>
             </View>
-            <Text style={[styles.optionLabel, language === 'fr' && styles.optionLabelActive]}>
+            <Text style={[styles.listRowLabel, language === 'fr' && { color: colors.primary, fontWeight: '600' }]}>
               {t.french}
             </Text>
             {language === 'fr' && (
-              <Ionicons name="checkmark" size={18} color={colors.primary} style={styles.checkIcon} />
+              <Ionicons name="checkmark" size={18} color={colors.primary} style={{ marginLeft: 8 }} />
             )}
           </Pressable>
 
-          <View style={styles.rowDivider} />
+          <View style={styles.listRowDivider} />
 
           <Pressable
-            style={({ pressed }) => [styles.optionRow, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
             onPress={() => setLanguage('en')}
           >
-            <View style={styles.rowIcon}>
+            <View style={styles.listRowIcon}>
               <Text style={{ fontSize: 18 }}>🇬🇧</Text>
             </View>
-            <Text style={[styles.optionLabel, language === 'en' && styles.optionLabelActive]}>
+            <Text style={[styles.listRowLabel, language === 'en' && { color: colors.primary, fontWeight: '600' }]}>
               {t.english}
             </Text>
             {language === 'en' && (
-              <Ionicons name="checkmark" size={18} color={colors.primary} style={styles.checkIcon} />
+              <Ionicons name="checkmark" size={18} color={colors.primary} style={{ marginLeft: 8 }} />
             )}
           </Pressable>
 
@@ -135,16 +68,16 @@ export default function SettingsScreen() {
 
         {/* ── APPARENCE ── */}
         <Text style={styles.sectionLabel}>{t.appearance}</Text>
-        <View style={styles.card2}>
-          <View style={styles.row}>
-            <View style={styles.rowIcon}>
+        <View style={styles.cardList}>
+          <View style={styles.listRow}>
+            <View style={styles.listRowIcon}>
               <Ionicons
                 name={isDark ? 'moon' : 'sunny-outline'}
                 size={18}
                 color={colors.textSecondary}
               />
             </View>
-            <Text style={styles.rowLabel}>{t.darkMode}</Text>
+            <Text style={styles.listRowLabel}>{t.darkMode}</Text>
             <Switch
               value={isDark}
               onValueChange={toggleDark}

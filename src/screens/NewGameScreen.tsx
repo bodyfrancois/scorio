@@ -29,12 +29,6 @@ import { makeSharedStyles } from '../theme/styles';
 const makeStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    sectionHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 12,
-    },
     sectionLabelTop: {
       marginTop: 28,
     },
@@ -73,35 +67,10 @@ const makeStyles = (c: typeof lightColors) => ({
       color: c.text,
       padding: 0,
     },
-    addPlayerBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    addPlayerText: {
-      color: c.primary,
-      fontSize: 13,
-      fontWeight: '600',
-    },
     playerList: {
       gap: 8,
     },
-    playerCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: 24,
-      paddingVertical: 12,
-      paddingHorizontal: 14,
-      gap: 12,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 1,
-    },
+    // Variante de cardRow pour les joueurs en mode équipe (fond page, plus compact)
     teamPlayerCard: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -137,6 +106,7 @@ const makeStyles = (c: typeof lightColors) => ({
       color: c.text,
       padding: 0,
     },
+    // Carte paramètre : légèrement plus de padding que cardRow
     paramCard: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -152,14 +122,6 @@ const makeStyles = (c: typeof lightColors) => ({
       shadowOpacity: 0.05,
       shadowRadius: 0,
       elevation: 2,
-    },
-    paramIconBox: {
-      width: 34,
-      height: 34,
-      borderRadius: 8,
-      backgroundColor: c.iconBackground,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     paramLabel: {
       flex: 1,
@@ -504,9 +466,9 @@ export default function NewGameScreen({ route, navigation }: any) {
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionLabel, styles.sectionLabelNoMargin]}>{t.players}</Text>
             {players.length < config.maxPlayers && (
-              <Pressable onPress={addPlayer} style={styles.addPlayerBtn}>
+              <Pressable onPress={addPlayer} style={styles.addBtn}>
                 <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
-                <Text style={styles.addPlayerText}>{t.addPlayer}</Text>
+                <Text style={styles.addBtnText}>{t.addPlayer}</Text>
               </Pressable>
             )}
           </View>
@@ -515,7 +477,11 @@ export default function NewGameScreen({ route, navigation }: any) {
             {players.map((player, index) => (
               <View
                 key={index}
-                style={[styles.playerCard, focusedKey === `p${index}` && styles.playerCardFocused, duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate]}
+                style={[
+                  styles.cardRow,
+                  focusedKey === `p${index}` && styles.playerCardFocused,
+                  duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
+                ]}
               >
                 <View style={[styles.avatar, { backgroundColor: getAvatarColor(index) }]}>
                   <Text style={styles.avatarText}>
@@ -570,9 +536,9 @@ export default function NewGameScreen({ route, navigation }: any) {
                     style={styles.teamNameInput}
                   />
                   {teamMembers.length < (config.teams?.maxPlayersPerTeam ?? 99) && (
-                    <Pressable onPress={() => addTeamPlayer(teamIndex)} style={styles.addPlayerBtn}>
+                    <Pressable onPress={() => addTeamPlayer(teamIndex)} style={styles.addBtn}>
                       <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
-                      <Text style={styles.addPlayerText}>{t.add}</Text>
+                      <Text style={styles.addBtnText}>{t.add}</Text>
                     </Pressable>
                   )}
                 </View>
@@ -583,7 +549,11 @@ export default function NewGameScreen({ route, navigation }: any) {
                     return (
                       <View
                         key={playerIndex}
-                        style={[styles.teamPlayerCard, focusedKey === focusKey && styles.playerCardFocused, duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate]}
+                        style={[
+                          styles.teamPlayerCard,
+                          focusedKey === focusKey && styles.playerCardFocused,
+                          duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
+                        ]}
                       >
                         <TextInput
                           placeholder={t.playerName}
@@ -623,7 +593,7 @@ export default function NewGameScreen({ route, navigation }: any) {
 
           {config.scoreLimit != null && (
             <Pressable style={styles.paramCard} onPress={() => setScoreLimitModalVisible(true)}>
-              <View style={styles.paramIconBox}>
+              <View style={styles.iconBoxSm}>
                 <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
               </View>
               <Text style={styles.paramLabel}>{t.scoreLimit}</Text>
@@ -633,8 +603,11 @@ export default function NewGameScreen({ route, navigation }: any) {
           )}
 
           {config.roundLimit != null && (
-            <Pressable style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]} onPress={() => setRoundLimitModalVisible(true)}>
-              <View style={styles.paramIconBox}>
+            <Pressable
+              style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}
+              onPress={() => setRoundLimitModalVisible(true)}
+            >
+              <View style={styles.iconBoxSm}>
                 <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
               </View>
               <Text style={styles.paramLabel}>{t.roundLimit}</Text>
@@ -645,7 +618,7 @@ export default function NewGameScreen({ route, navigation }: any) {
 
           {!!config.quickActions?.length && (
             <View style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}>
-              <View style={styles.paramIconBox}>
+              <View style={styles.iconBoxSm}>
                 <Ionicons name="flash-outline" size={18} color={colors.textSecondary} />
               </View>
               <Text style={styles.paramLabel}>{t.announcements}</Text>
@@ -662,7 +635,11 @@ export default function NewGameScreen({ route, navigation }: any) {
       )}
 
       <Pressable
-        style={({ pressed }) => [styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout, (!isValidPlayerCount || duplicateNames.size > 0) && styles.startButtonDisabled, pressed && isValidPlayerCount && duplicateNames.size === 0 && styles.pressed]}
+        style={({ pressed }) => [
+          styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout,
+          (!isValidPlayerCount || duplicateNames.size > 0) && styles.startButtonDisabled,
+          pressed && isValidPlayerCount && duplicateNames.size === 0 && styles.pressed,
+        ]}
         onPress={startGame}
         disabled={!isValidPlayerCount || duplicateNames.size > 0}
       >

@@ -37,15 +37,15 @@ function formatDate(iso: string) {
   return `${mois} ${jour} • ${h}:${m}`;
 }
 
-function cléMois(iso: string) {
+function keyMonth(iso: string) {
   const d = new Date(iso);
   return `${MOIS_FR[d.getMonth()].toUpperCase()} ${d.getFullYear()}`;
 }
 
-function groupParMois(items: GameHistoryItem[]) {
+function groupByMonth(items: GameHistoryItem[]) {
   const map: Record<string, GameHistoryItem[]> = {};
   items.forEach((item) => {
-    const key = cléMois(item.date);
+    const key = keyMonth(item.date);
     if (!map[key]) map[key] = [];
     map[key].push(item);
   });
@@ -68,7 +68,6 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
   return (
     <View style={{ width: 160, height: 130, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
 
-      {/* Carte arrière gauche — gris neutre, légèrement inclinée */}
       <View style={[card, {
         backgroundColor: colors.surfaceAlt,
         transform: [{ rotate: '-14deg' }, { translateX: -36 }, { translateY: 10 }],
@@ -77,7 +76,6 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
         <Text style={{ fontSize: 26, color: colors.iconMuted }}>♣</Text>
       </View>
 
-      {/* Carte milieu droite — gris plus clair, légèrement inclinée */}
       <View style={[card, {
         backgroundColor: colors.searchBackground,
         transform: [{ rotate: '10deg' }, { translateX: 34 }, { translateY: 8 }],
@@ -86,21 +84,16 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
         <Text style={{ fontSize: 26, color: colors.border }}>♦</Text>
       </View>
 
-      {/* Carte centrale — blanche avec le pique en primary */}
       <View style={[card, {
         backgroundColor: colors.card,
         zIndex: 3,
         shadowColor: colors.shadowCard, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.12, shadowRadius: 10, elevation: 4,
       }]}>
-        {/* Coin haut-gauche */}
         <Text style={{ position: 'absolute', top: 5, left: 7, fontSize: 11, fontWeight: '700', color: colors.primary }}>A</Text>
-        {/* Symbole central */}
         <Text style={{ fontSize: 30, color: colors.primary }}>♠</Text>
-        {/* Coin bas-droit (retourné) */}
         <Text style={{ position: 'absolute', bottom: 5, right: 7, fontSize: 11, fontWeight: '700', color: colors.primary, transform: [{ rotate: '180deg' }] }}>A</Text>
       </View>
 
-      {/* Petit dot accent primary — étoile */}
       <View style={{ position: 'absolute', top: 4, right: 22, width: 9, height: 9, borderRadius: 5,
         backgroundColor: colors.primary, opacity: 0.7, zIndex: 5 }} />
       <View style={{ position: 'absolute', bottom: 6, left: 20, width: 6, height: 6, borderRadius: 3,
@@ -111,21 +104,17 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
 
 /* ─── Badge classement ────────────────────────────────────── */
 
-function BadgeRang({ rang, isDark, colors }: { rang: number; isDark: boolean; colors: typeof lightColors }) {
-  const idx        = rang - 1;
-  const medalColor = MEDAL_COLORS[idx]   ?? colors.textMuted;
-  const medalBg    = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[idx] ?? colors.surfaceAlt;
-  const badgeStyle = {
-    wrap: {
-      width: 34, height: 34, borderRadius: 10,
-      backgroundColor: medalBg,
-      alignItems: 'center' as const, justifyContent: 'center' as const,
-    },
-    texte: { fontSize: 13, fontWeight: '800' as const, color: medalColor },
-  };
+const MEDAL_COLORS   = ['#F59E0B', '#94A3B8', '#CD7F32'];
+const MEDAL_BG_LIGHT = ['#FEF3C7', '#F1F5F9', '#FDF0E6'];
+const MEDAL_BG_DARK  = ['#3B2A00', '#1E293B', '#2A1500'];
+
+function BadgeRank({ rank, isDark, colors }: { rank: number; isDark: boolean; colors: typeof lightColors }) {
+  const idx       = rank - 1;
+  const color     = MEDAL_COLORS[idx]   ?? colors.textMuted;
+  const bg        = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[idx] ?? colors.surfaceAlt;
   return (
-    <View style={badgeStyle.wrap}>
-      <Text style={badgeStyle.texte}>{rang}</Text>
+    <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 13, fontWeight: '800', color }}>{rank}</Text>
     </View>
   );
 }
@@ -134,63 +123,57 @@ function BadgeRang({ rang, isDark, colors }: { rang: number; isDark: boolean; co
 
 const MAX_VISIBLE = 3;
 
-const MEDAL_COLORS   = ['#F59E0B', '#94A3B8', '#CD7F32'];
-const MEDAL_BG_LIGHT = ['#FEF3C7', '#F1F5F9', '#FDF0E6'];
-const MEDAL_BG_DARK  = ['#3B2A00', '#1E293B', '#2A1500'];
-
-function CartePartie({ item, colors, isDark, t }: { item: GameHistoryItem; colors: typeof lightColors; isDark: boolean; t: ReturnType<typeof useTranslation> }) {
+function GameCard({ item, colors, isDark, t }: { item: GameHistoryItem; colors: typeof lightColors; isDark: boolean; t: ReturnType<typeof useTranslation> }) {
   const config = getGameConfig(item.gameName);
   const [expanded, setExpanded] = useState(false);
   const hasMore = item.ranking.length > MAX_VISIBLE;
   const visible = expanded ? item.ranking : item.ranking.slice(0, MAX_VISIBLE);
 
   const s = useMemo(() => StyleSheet.create({
-    wrap:         { backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 16,
-      shadowColor: colors.shadowCard, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.05,
-      shadowRadius: 0, elevation: 3, borderWidth: 2, borderColor: colors.borderSubtle },
-    entête:       { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
-    logo:         { width: 48, height: 48, borderRadius: 12, borderWidth: 1,borderColor: colors.border,},
+    logo:         { width: 48, height: 48, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
     logoFallback: { width: 48, height: 48, borderRadius: 12, backgroundColor: colors.primarySubtle, alignItems: 'center', justifyContent: 'center' },
-    logoLettre:   { fontSize: 20, fontWeight: '700', color: colors.primary },
-    nomJeu:       { fontSize: 16, fontWeight: '700', color: colors.text },
+    logoLetter:   { fontSize: 20, fontWeight: '700', color: colors.primary },
+    gameName:     { fontSize: 16, fontWeight: '700', color: colors.text },
     date:         { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
-    joueurs:     {},
-    ligneJoueur: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: colors.borderSubtle },
-    nomJoueur:   { flex: 1, fontSize: 14, fontWeight: '500' as const, color: colors.text },
-    score:       { fontSize: 12, color: colors.textMuted },
-    voirPlus:     { marginTop: 10, alignItems: 'center' },
-    voirPlusTxt:  { fontSize: 13, color: colors.primary, fontWeight: '600' },
+    playerRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: colors.borderSubtle },
+    playerName:   { flex: 1, fontSize: 14, fontWeight: '500' as const, color: colors.text },
+    score:        { fontSize: 12, color: colors.textMuted },
+    seeMore:      { marginTop: 10, alignItems: 'center' },
+    seeMoreText:  { fontSize: 13, color: colors.primary, fontWeight: '600' },
   }), [colors]);
 
   return (
-    <View style={s.wrap}>
-      <View style={s.entête}>
+    <View style={[makeSharedStyles(colors).cardSm, { marginBottom: 16 }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         {config?.image ? (
           <Image source={config.image} style={s.logo} />
         ) : (
           <View style={s.logoFallback}>
-            <Text style={s.logoLettre}>{item.gameName[0]}</Text>
+            <Text style={s.logoLetter}>{item.gameName[0]}</Text>
           </View>
         )}
         <View>
-          <Text style={s.nomJeu}>{item.gameName}</Text>
+          <Text style={s.gameName}>{item.gameName}</Text>
           <Text style={s.date}>{formatDate(item.date)}</Text>
         </View>
       </View>
 
-      <View style={s.joueurs}>
-        {visible.map((joueur, i) => (
-          <View key={`${joueur.name}-${i}`} style={s.ligneJoueur}>
-            <BadgeRang rang={i + 1} isDark={isDark} colors={colors} />
-            <Text style={s.nomJoueur}>{joueur.name}</Text>
-            <Text style={s.score}>{joueur.score} pts</Text>
+      <View>
+        {visible.map((player, i) => (
+          <View key={`${player.name}-${i}`} style={s.playerRow}>
+            <BadgeRank rank={i + 1} isDark={isDark} colors={colors} />
+            <Text style={s.playerName}>{player.name}</Text>
+            <Text style={s.score}>{player.score} pts</Text>
           </View>
         ))}
       </View>
 
       {hasMore && (
-        <Pressable style={({ pressed }) => [s.voirPlus, pressed && { opacity: 0.72 }]} onPress={() => setExpanded(!expanded)}>
-          <Text style={s.voirPlusTxt}>
+        <Pressable
+          style={({ pressed }) => [s.seeMore, pressed && { opacity: 0.72 }]}
+          onPress={() => setExpanded(!expanded)}
+        >
+          <Text style={s.seeMoreText}>
             {expanded ? t.seeLess : `${t.seeMore} (${item.ranking.length - MAX_VISIBLE})`}
           </Text>
         </Pressable>
@@ -199,25 +182,16 @@ function CartePartie({ item, colors, isDark, t }: { item: GameHistoryItem; color
   );
 }
 
-/* ─── Styles partagés dropdowns ───────────────────────────── */
+/* ─── Dropdown partagé ────────────────────────────────────── */
 
-function useDropdownStyles(colors: typeof lightColors) {
-  return useMemo(() => StyleSheet.create({
-    input:              { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.inputBackground, borderRadius: 12, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 14, paddingVertical: 12 },
-    inputOuvert:        { borderColor: colors.primary, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
-    placeholder:        { fontSize: 14, color: colors.textMuted, flex: 1 },
-    valeurRow:          { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 },
-    valeurTexte:        { fontSize: 14, color: colors.text, fontWeight: '500', flex: 1 },
-    logoSmall:          { width: 24, height: 24, borderRadius: 6 },
-    liste:              { backgroundColor: colors.card, borderWidth: 1, borderTopWidth: 0, borderColor: colors.primary, borderBottomLeftRadius: 12, borderBottomRightRadius: 12, overflow: 'hidden', maxHeight: 220 },
-    option:             { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.border },
-    optionSurbrillance: { backgroundColor: colors.primarySubtle },
-    optionTexte:        { fontSize: 14, color: colors.text },
-    optionActif:        { color: colors.primary, fontWeight: '600' },
-  }), [colors]);
-}
+type Filtres = {
+  jeu:   string | null;
+  mois:  number | null;
+  annee: number | null;
+};
 
-/* ─── Dropdown jeu ────────────────────────────────────────── */
+const MOIS_LABELS_FR = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MOIS_LABELS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function DropdownJeu({
   valeur,
@@ -230,37 +204,37 @@ function DropdownJeu({
   colors: typeof lightColors;
   labelAllGames: string;
 }) {
-  const [ouvert, setOuvert] = useState(false);
+  const [open, setOpen] = useState(false);
   const nomsJeux = ALL_GAMES.map((g) => g.name);
-  const s = useDropdownStyles(colors);
+  const s = useMemo(() => makeSharedStyles(colors), [colors]);
 
   return (
     <>
       <Pressable
-        style={[s.input, ouvert && s.inputOuvert]}
-        onPress={() => setOuvert((o) => !o)}
+        style={[s.ddInput, open && s.ddInputOpen]}
+        onPress={() => setOpen((o) => !o)}
       >
         {valeur ? (
-          <View style={s.valeurRow}>
+          <View style={s.ddValueRow}>
             {getGameConfig(valeur)?.image && (
-              <Image source={getGameConfig(valeur)!.image} style={s.logoSmall} />
+              <Image source={getGameConfig(valeur)!.image} style={s.ddLogoSmall} />
             )}
-            <Text style={s.valeurTexte}>{valeur}</Text>
+            <Text style={s.ddValueText}>{valeur}</Text>
           </View>
         ) : (
-          <Text style={s.placeholder}>{labelAllGames}</Text>
+          <Text style={s.ddPlaceholder}>{labelAllGames}</Text>
         )}
-        <Ionicons name={ouvert ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
+        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
       </Pressable>
 
-      {ouvert && (
-        <View style={s.liste}>
+      {open && (
+        <View style={s.ddList}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Pressable
-              style={s.option}
-              onPress={() => { onChange(null); setOuvert(false); }}
+              style={s.ddOption}
+              onPress={() => { onChange(null); setOpen(false); }}
             >
-              <Text style={[s.optionTexte, !valeur && s.optionActif]}>{labelAllGames}</Text>
+              <Text style={[s.ddOptionText, !valeur && s.ddOptionTextActive]}>{labelAllGames}</Text>
               {!valeur && <Ionicons name="checkmark" size={16} color={colors.primary} />}
             </Pressable>
             {nomsJeux.map((nom) => {
@@ -269,12 +243,12 @@ function DropdownJeu({
               return (
                 <Pressable
                   key={nom}
-                  style={[s.option, actif && s.optionSurbrillance]}
-                  onPress={() => { onChange(nom); setOuvert(false); }}
+                  style={[s.ddOption, actif && s.ddOptionActive]}
+                  onPress={() => { onChange(nom); setOpen(false); }}
                 >
-                  <View style={s.valeurRow}>
-                    {config?.image && <Image source={config.image} style={s.logoSmall} />}
-                    <Text style={[s.optionTexte, actif && s.optionActif]}>{nom}</Text>
+                  <View style={s.ddValueRow}>
+                    {config?.image && <Image source={config.image} style={s.ddLogoSmall} />}
+                    <Text style={[s.ddOptionText, actif && s.ddOptionTextActive]}>{nom}</Text>
                   </View>
                   {actif && <Ionicons name="checkmark" size={16} color={colors.primary} />}
                 </Pressable>
@@ -286,8 +260,6 @@ function DropdownJeu({
     </>
   );
 }
-
-/* ─── Dropdown générique mois / année ────────────────────── */
 
 function DropdownSelect({
   valeur,
@@ -302,30 +274,30 @@ function DropdownSelect({
   onChange: (v: number | null) => void;
   colors: typeof lightColors;
 }) {
-  const [ouvert, setOuvert] = useState(false);
-  const s = useDropdownStyles(colors);
+  const [open, setOpen] = useState(false);
+  const s = useMemo(() => makeSharedStyles(colors), [colors]);
   const label = options.find((o) => o.value === valeur)?.label ?? null;
 
   return (
     <>
       <Pressable
-        style={[s.input, ouvert && s.inputOuvert]}
-        onPress={() => setOuvert((o) => !o)}
+        style={[s.ddInput, open && s.ddInputOpen]}
+        onPress={() => setOpen((o) => !o)}
       >
-        <Text style={[s.placeholder, label !== null && { color: colors.text, fontWeight: '500' }]}>
+        <Text style={[s.ddPlaceholder, label !== null && { color: colors.text, fontWeight: '500' }]}>
           {label ?? placeholder}
         </Text>
-        <Ionicons name={ouvert ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
+        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
       </Pressable>
 
-      {ouvert && (
-        <View style={s.liste}>
+      {open && (
+        <View style={s.ddList}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Pressable
-              style={s.option}
-              onPress={() => { onChange(null); setOuvert(false); }}
+              style={s.ddOption}
+              onPress={() => { onChange(null); setOpen(false); }}
             >
-              <Text style={[s.optionTexte, valeur === null && s.optionActif]}>{placeholder}</Text>
+              <Text style={[s.ddOptionText, valeur === null && s.ddOptionTextActive]}>{placeholder}</Text>
               {valeur === null && <Ionicons name="checkmark" size={16} color={colors.primary} />}
             </Pressable>
             {options.map((opt) => {
@@ -333,10 +305,10 @@ function DropdownSelect({
               return (
                 <Pressable
                   key={opt.value}
-                  style={[s.option, actif && s.optionSurbrillance]}
-                  onPress={() => { onChange(opt.value); setOuvert(false); }}
+                  style={[s.ddOption, actif && s.ddOptionActive]}
+                  onPress={() => { onChange(opt.value); setOpen(false); }}
                 >
-                  <Text style={[s.optionTexte, actif && s.optionActif]}>{opt.label}</Text>
+                  <Text style={[s.ddOptionText, actif && s.ddOptionTextActive]}>{opt.label}</Text>
                   {actif && <Ionicons name="checkmark" size={16} color={colors.primary} />}
                 </Pressable>
               );
@@ -348,78 +320,57 @@ function DropdownSelect({
   );
 }
 
-/* ─── Filtres ─────────────────────────────────────────────── */
+/* ─── Modale filtres ──────────────────────────────────────── */
 
-type Filtres = {
-  jeu:   string | null;
-  mois:  number | null; // 0-11
-  annee: number | null;
-};
-
-const MOIS_LABELS_FR = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-const MOIS_LABELS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-function ModalFiltres({
+function ModalFilters({
   visible,
   filtres,
   historique,
-  onAppliquer,
-  onFermer,
+  onApply,
+  onClose,
   colors,
   t,
   language,
 }: {
-  visible:     boolean;
-  filtres:     Filtres;
-  historique:  GameHistoryItem[];
-  onAppliquer: (f: Filtres) => void;
-  onFermer:    () => void;
-  colors:      typeof lightColors;
-  t:           ReturnType<typeof useTranslation>;
-  language:    string;
+  visible:    boolean;
+  filtres:    Filtres;
+  historique: GameHistoryItem[];
+  onApply:    (f: Filtres) => void;
+  onClose:    () => void;
+  colors:     typeof lightColors;
+  t:          ReturnType<typeof useTranslation>;
+  language:   string;
 }) {
   const [local, setLocal] = useState<Filtres>(filtres);
   useEffect(() => { setLocal(filtres); }, [filtres, visible]);
 
   const moisLabels = language === 'fr' ? MOIS_LABELS_FR : MOIS_LABELS_EN;
 
-  const anneesDispos = useMemo(() => {
+  const yearsAvailable = useMemo(() => {
     const set = new Set<number>();
     historique.forEach(item => set.add(new Date(item.date).getFullYear()));
     return Array.from(set).sort((a, b) => b - a);
   }, [historique]);
 
-  const moisOptions = moisLabels.map((label, i) => ({ label, value: i }));
-  const anneeOptions = anneesDispos.map((a) => ({ label: String(a), value: a }));
+  const monthOptions = moisLabels.map((label, i) => ({ label, value: i }));
+  const yearOptions  = yearsAvailable.map((a) => ({ label: String(a), value: a }));
 
-  const s = useMemo(() => ({
-    ...makeSharedStyles(colors),
-    ...StyleSheet.create({
-      fond:         { flex: 1, backgroundColor: colors.overlay },
-      feuille:      { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
-      poignée:      { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border, alignSelf: 'center', marginBottom: 16 },
-      titreFeuille: { fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 20 },
-      sectionTitre: { fontSize: 14, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10, marginTop: 16 },
-      dateRow:      { flexDirection: 'row', gap: 12 },
-      dateCol:      { flex: 1 },
-      actions:      { flexDirection: 'row', gap: 12, marginTop: 40 },
-    }),
-  }), [colors]);
+  const s = useMemo(() => makeSharedStyles(colors), [colors]);
 
-  const réinitialiser = () => {
-    const vide: Filtres = { jeu: null, mois: null, annee: null };
-    onAppliquer(vide);
-    onFermer();
+  const reset = () => {
+    const empty: Filtres = { jeu: null, mois: null, annee: null };
+    onApply(empty);
+    onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onFermer}>
-      <Pressable style={s.fond} onPress={onFermer} />
-      <View style={s.feuille}>
-        <View style={s.poignée} />
-        <Text style={s.titreFeuille}>{t.filterGames}</Text>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <Pressable style={s.overlay} onPress={onClose} />
+      <View style={s.sheet}>
+        <View style={s.sheetHandle} />
+        <Text style={s.sheetTitle}>{t.filterGames}</Text>
 
-        <Text style={s.sectionTitre}>{t.game}</Text>
+        <Text style={s.sheetSectionTitle}>{t.game}</Text>
         <DropdownJeu
           valeur={local.jeu}
           onChange={(v) => setLocal((f) => ({ ...f, jeu: v }))}
@@ -427,21 +378,21 @@ function ModalFiltres({
           labelAllGames={t.allGames}
         />
 
-        <Text style={s.sectionTitre}>{t.date}</Text>
-        <View style={s.dateRow}>
-          <View style={s.dateCol}>
+        <Text style={s.sheetSectionTitle}>{t.date}</Text>
+        <View style={s.sheetDateRow}>
+          <View style={s.sheetDateCol}>
             <DropdownSelect
               valeur={local.mois}
-              options={moisOptions}
+              options={monthOptions}
               placeholder={t.month}
               onChange={(v) => setLocal((f) => ({ ...f, mois: v }))}
               colors={colors}
             />
           </View>
-          <View style={s.dateCol}>
+          <View style={s.sheetDateCol}>
             <DropdownSelect
               valeur={local.annee}
-              options={anneeOptions}
+              options={yearOptions}
               placeholder={t.year}
               onChange={(v) => setLocal((f) => ({ ...f, annee: v }))}
               colors={colors}
@@ -449,11 +400,11 @@ function ModalFiltres({
           </View>
         </View>
 
-        <View style={s.actions}>
-          <Pressable style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]} onPress={réinitialiser}>
+        <View style={s.sheetActions}>
+          <Pressable style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]} onPress={reset}>
             <Text style={s.btnSecondaryText}>{t.reset}</Text>
           </Pressable>
-          <Pressable style={({ pressed }) => [s.btn, s.btnPrimary, pressed && s.pressed]} onPress={() => { onAppliquer(local); onFermer(); }}>
+          <Pressable style={({ pressed }) => [s.btn, s.btnPrimary, pressed && s.pressed]} onPress={() => { onApply(local); onClose(); }}>
             <Text style={s.btnPrimaryText}>{t.apply}</Text>
           </Pressable>
         </View>
@@ -464,47 +415,52 @@ function ModalFiltres({
 
 /* ─── Modale confirmation effacement ─────────────────────── */
 
-function ModalConfirmEffacement({
+function ModalConfirmClear({
   visible,
-  onConfirmer,
-  onAnnuler,
+  onConfirm,
+  onCancel,
   colors,
   t,
 }: {
-  visible:    boolean;
-  onConfirmer: () => void;
-  onAnnuler:   () => void;
-  colors:     typeof lightColors;
-  t:          ReturnType<typeof useTranslation>;
+  visible:   boolean;
+  onConfirm: () => void;
+  onCancel:  () => void;
+  colors:    typeof lightColors;
+  t:         ReturnType<typeof useTranslation>;
 }) {
   const s = useMemo(() => ({
     ...makeSharedStyles(colors),
     ...StyleSheet.create({
-      overlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center' as const, paddingHorizontal: 24 },
-      carte:   { backgroundColor: colors.card, borderRadius: 20, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 20 },
-      titre:   { fontSize: 17, fontWeight: '700' as const, color: colors.text, marginBottom: 8 },
-      sous:    { fontSize: 14, color: colors.textSecondary, marginBottom: 24, lineHeight: 20 },
-      btnDanger: { backgroundColor: colors.danger, shadowColor: colors.danger, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 0, elevation: 8 },
+      title: { fontSize: 17, fontWeight: '700' as const, color: colors.text, marginBottom: 8 },
+      body:  { fontSize: 14, color: colors.textSecondary, marginBottom: 24, lineHeight: 20 },
+      btnDangerFull: {
+        backgroundColor: colors.danger,
+        shadowColor: colors.danger,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 0,
+        elevation: 8,
+      },
     }),
   }), [colors]);
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onAnnuler}>
-      <Pressable style={s.overlay} onPress={onAnnuler}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+      <Pressable style={s.overlayCenter} onPress={onCancel}>
         <Pressable onPress={(e) => e.stopPropagation()}>
-          <View style={s.carte}>
-            <Text style={s.titre}>{t.clearHistory}</Text>
-            <Text style={s.sous}>{t.clearHistoryMsg}</Text>
+          <View style={s.modalCard}>
+            <Text style={s.title}>{t.clearHistory}</Text>
+            <Text style={s.body}>{t.clearHistoryMsg}</Text>
             <View style={s.buttons}>
               <Pressable
                 style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]}
-                onPress={onAnnuler}
+                onPress={onCancel}
               >
                 <Text style={s.btnSecondaryText}>{t.cancel}</Text>
               </Pressable>
               <Pressable
-                style={({ pressed }) => [s.btn, s.btnDanger, pressed && s.pressed]}
-                onPress={onConfirmer}
+                style={({ pressed }) => [s.btn, s.btnDangerFull, pressed && s.pressed]}
+                onPress={onConfirm}
               >
                 <Text style={s.btnPrimaryText}>{t.clear}</Text>
               </Pressable>
@@ -522,31 +478,30 @@ export default function HistoryScreen({ navigation }: any) {
   const { colors, isDark, language } = useTheme();
   const t = useTranslation(language);
 
-  const styles = useMemo(() => StyleSheet.create({
-    conteneur:     { flex: 1, backgroundColor: colors.background },
-    liste:         { paddingHorizontal: 16, paddingBottom: 24, paddingTop: 8 },
-    entêteSection: { fontSize: 11, fontWeight: '700', color: colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginTop: 16, marginBottom: 8 },
-    vide:          { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-    videTitre:     { fontSize: 17, fontWeight: '700', color: colors.text },
-    videSous:      { fontSize: 14, color: colors.textMuted, textAlign: 'center', paddingHorizontal: 32 },
-    hdrBtn:        { width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
-    hdrPoint:      { position: 'absolute', top: 5, right: 5, width: 7, height: 7, borderRadius: 4, backgroundColor: '#fff' },
+  const styles = useMemo(() => ({
+    ...makeSharedStyles(colors),
+    ...StyleSheet.create({
+      list:         { paddingHorizontal: 16, paddingBottom: 24, paddingTop: 8 },
+      sectionTitle: { fontSize: 11, fontWeight: '700' as const, color: colors.textMuted, letterSpacing: 1, textTransform: 'uppercase' as const, marginTop: 16, marginBottom: 8 },
+      emptyCenter:  { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
+      emptyBodyTxt: { fontSize: 14, color: colors.textMuted, textAlign: 'center', paddingHorizontal: 32 },
+    }),
   }), [colors]);
 
-  const [historique, setHistorique]        = useState<GameHistoryItem[]>([]);
-  const [filtresOuverts, setFiltresOuverts] = useState(false);
-  const [filtres, setFiltres]              = useState<Filtres>({ jeu: null, mois: null, annee: null });
+  const [history, setHistory]           = useState<GameHistoryItem[]>([]);
+  const [filtersOpen, setFiltersOpen]   = useState(false);
+  const [filters, setFilters]           = useState<Filtres>({ jeu: null, mois: null, annee: null });
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const charger = useCallback(() => { getHistory().then(setHistorique); }, []);
-  useFocusEffect(charger);
+  const load = useCallback(() => { getHistory().then(setHistory); }, []);
+  useFocusEffect(load);
 
-  const aDesFiltres = filtres.jeu !== null || filtres.mois !== null || filtres.annee !== null;
+  const hasFilters = filters.jeu !== null || filters.mois !== null || filters.annee !== null;
 
-  const effacerHistorique = useCallback(async () => {
+  const handleClearHistory = useCallback(async () => {
     await clearHistory();
-    setHistorique([]);
-    setFiltres({ jeu: null, mois: null, annee: null });
+    setHistory([]);
+    setFilters({ jeu: null, mois: null, annee: null });
     setConfirmVisible(false);
   }, []);
 
@@ -555,68 +510,76 @@ export default function HistoryScreen({ navigation }: any) {
       headerTitle: t.history,
       headerRight: () => (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingRight: 16 }}>
-          <Pressable onPress={() => setConfirmVisible(true)} style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]} hitSlop={8}>
+          <Pressable
+            onPress={() => setConfirmVisible(true)}
+            style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
+            hitSlop={8}
+          >
             <Ionicons name="trash-outline" size={20} color="#fff" />
           </Pressable>
-          <Pressable onPress={() => setFiltresOuverts(true)} style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]} hitSlop={8}>
+          <Pressable
+            onPress={() => setFiltersOpen(true)}
+            style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
+            hitSlop={8}
+          >
             <Ionicons name="filter-outline" size={20} color="#fff" />
-            {aDesFiltres && <View style={styles.hdrPoint} />}
+            {hasFilters && <View style={styles.hdrPoint} />}
           </Pressable>
         </View>
       ),
     });
-  }, [navigation, aDesFiltres, filtresOuverts, colors, styles, t]);
+  }, [navigation, hasFilters, filtersOpen, colors, styles, t]);
 
-  const filtré = useMemo(() => {
-    return historique.filter((item) => {
-      if (filtres.jeu && item.gameName !== filtres.jeu) return false;
+  const filtered = useMemo(() => {
+    return history.filter((item) => {
+      if (filters.jeu && item.gameName !== filters.jeu) return false;
       const d = new Date(item.date);
-      if (filtres.mois !== null && d.getMonth() !== filtres.mois) return false;
-      if (filtres.annee !== null && d.getFullYear() !== filtres.annee) return false;
+      if (filters.mois !== null && d.getMonth() !== filters.mois) return false;
+      if (filters.annee !== null && d.getFullYear() !== filters.annee) return false;
       return true;
     });
-  }, [historique, filtres]);
+  }, [history, filters]);
 
-  const sections = useMemo(() => groupParMois(filtré), [filtré]);
+  const sections = useMemo(() => groupByMonth(filtered), [filtered]);
 
   return (
-    <View style={styles.conteneur}>
+    <View style={styles.container}>
       {sections.length === 0 ? (
-        <View style={styles.vide}>
+        <View style={styles.emptyCenter}>
           <IllustrationCartes colors={colors} />
-          <Text style={styles.videTitre}>{t.noGameFound}</Text>
-          <Text style={styles.videSous}>
-            {aDesFiltres ? t.adjustFilters : t.startFirst}
+          <Text style={styles.emptyTitle}>{t.noGameFound}</Text>
+          <Text style={styles.emptyBodyTxt}>
+            {hasFilters ? t.adjustFilters : t.startFirst}
           </Text>
         </View>
       ) : (
         <SectionList
           sections={sections}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.liste}
+          contentContainerStyle={styles.list}
           stickySectionHeadersEnabled={false}
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.entêteSection}>{title}</Text>
+            <Text style={styles.sectionTitle}>{title}</Text>
           )}
-          renderItem={({ item }) => <CartePartie item={item} colors={colors} isDark={isDark} t={t} />}
+          renderItem={({ item }) => <GameCard item={item} colors={colors} isDark={isDark} t={t} />}
         />
       )}
 
-      <ModalFiltres
-        visible={filtresOuverts}
-        filtres={filtres}
-        historique={historique}
-        onAppliquer={setFiltres}
-        onFermer={() => setFiltresOuverts(false)}
+      <ModalFilters
+        visible={filtersOpen}
+        filtres={filters}
+        historique={history}
+        onApply={setFilters}
+        onClose={() => setFiltersOpen(false)}
         colors={colors}
         t={t}
         language={language}
       />
 
-      <ModalConfirmEffacement
+      <ModalConfirmClear
         visible={confirmVisible}
-        onConfirmer={effacerHistorique}
-        onAnnuler={() => setConfirmVisible(false)}
+        onConfirm={clearHistory}
+        onCancel={() => setConfirmVisible(false)}
         colors={colors}
         t={t}
       />

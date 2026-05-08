@@ -33,25 +33,9 @@ const PAD_ROWS = [
 const makeStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    // keypad override : marginBottom différent du partagé
     keypad: {
       gap: 8,
       marginBottom: 20,
-    },
-    // key override : fond card + bordure au lieu de fond background
-    key: {
-      flex: 1,
-      height: 56,
-      backgroundColor: c.card,
-      borderRadius: 16,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderWidth: 2,
-      borderColor: c.borderSubtle,
     },
     title: {
       fontSize: 13,
@@ -166,13 +150,13 @@ export default function ScoreLimitModal({
                   }
                   if (key === '⌫') {
                     return (
-                      <Pressable key={ci} style={({ pressed }) => [styles.key, pressed && styles.keyPressed]} onPress={backspace}>
+                      <Pressable key={ci} style={({ pressed }) => [styles.keyCard, pressed && styles.keyPressed]} onPress={backspace}>
                         <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
                       </Pressable>
                     );
                   }
                   return (
-                    <Pressable key={ci} style={({ pressed: p }) => [styles.key, p && styles.keyPressed]} onPress={() => pressKey(key)}>
+                    <Pressable key={ci} style={({ pressed: p }) => [styles.keyCard, p && styles.keyPressed]} onPress={() => pressKey(key)}>
                       <Text style={styles.keyText}>{key}</Text>
                     </Pressable>
                   );

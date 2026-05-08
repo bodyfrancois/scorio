@@ -27,39 +27,6 @@ import {
 const makeStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    sectionHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 12,
-    },
-    addBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    addBtnText: {
-      color: c.primary,
-      fontSize: 13,
-      fontWeight: '600',
-    },
-    playerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: 24,
-      paddingVertical: 12,
-      paddingHorizontal: 14,
-      gap: 12,
-      marginBottom: 16,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-    },
     avatar: {
       width: 40,
       height: 40,
@@ -90,34 +57,6 @@ const makeStyles = (c: typeof lightColors) => ({
       justifyContent: 'center',
       backgroundColor: c.background,
     },
-    // Empty state
-    emptyWrap: {
-      alignItems: 'center',
-      paddingTop: 48,
-      paddingHorizontal: 32,
-    },
-    emptyIconBox: {
-      width: 80,
-      height: 80,
-      borderRadius: 24,
-      backgroundColor: c.primarySubtle,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 20,
-    },
-    emptyTitle: {
-      fontSize: 17,
-      fontWeight: '700',
-      color: c.text,
-      marginBottom: 8,
-      textAlign: 'center',
-    },
-    emptySubtitle: {
-      fontSize: 14,
-      color: c.textMuted,
-      textAlign: 'center',
-      lineHeight: 20,
-    },
     // Modal
     modalInput: {
       backgroundColor: c.background,
@@ -138,17 +77,6 @@ const makeStyles = (c: typeof lightColors) => ({
       fontWeight: '800',
       color: c.text,
       marginBottom: 20,
-    },
-    dangerBtn: {
-      backgroundColor: c.errorSubtle,
-      borderRadius: 16,
-      paddingVertical: 16,
-      alignItems: 'center',
-    },
-    dangerBtnText: {
-      color: c.danger,
-      fontSize: 16,
-      fontWeight: '700',
     },
     confirmMsg: {
       fontSize: 14,
@@ -259,7 +187,7 @@ export default function PlayersScreen() {
         ) : (
           <>
             {favorites.map((name) => (
-              <View key={name} style={styles.playerRow}>
+              <View key={name} style={styles.cardRow}>
                 <View style={[styles.avatar, { backgroundColor: getAvatarColor(name, colors) }]}>
                   <Text style={styles.avatarText}>
                     {name.trim().slice(0, 2).toUpperCase()}
@@ -286,7 +214,7 @@ export default function PlayersScreen() {
         )}
       </ScrollView>
 
-      {/* Add / Edit modal */}
+      {/* Modal Ajout / Édition */}
       <Modal visible={isAddOrEdit} transparent animationType="slide">
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -333,7 +261,7 @@ export default function PlayersScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Delete confirmation modal */}
+      {/* Modal Suppression */}
       <Modal visible={modal?.type === 'delete'} transparent animationType="slide">
         <View style={styles.overlay}>
           <View style={styles.sheet}>
@@ -343,10 +271,10 @@ export default function PlayersScreen() {
             </Text>
             <View style={styles.buttons}>
               <Pressable
-                style={({ pressed }) => [styles.btn, styles.dangerBtn, pressed && styles.pressed]}
+                style={({ pressed }) => [styles.btn, styles.btnDanger, pressed && styles.pressed]}
                 onPress={handleConfirm}
               >
-                <Text style={styles.dangerBtnText}>{t.deletePlayer}</Text>
+                <Text style={styles.btnDangerText}>{t.deletePlayer}</Text>
               </Pressable>
               <Pressable
                 style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
