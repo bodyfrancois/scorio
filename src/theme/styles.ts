@@ -93,6 +93,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     btnPrimaryBig: {
       paddingHorizontal: 20,
       paddingVertical: 20,
+      shadowOffset: { width: 0, height: 8 },
     },
     btnPrimaryText: {
       fontSize: 16,

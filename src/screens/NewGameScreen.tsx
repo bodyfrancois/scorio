@@ -5,6 +5,7 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
+  Modal,
   Alert,
   LayoutAnimation,
   Platform,
@@ -13,6 +14,9 @@ import {
   Image,
   Switch,
 } from 'react-native';
+import { useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { loadFavorites } from '../storage/favoritePlayers';
 import { TEAM_COLORS } from '../theme/colors';
 import { lightColors } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
@@ -91,11 +95,11 @@ const makeStyles = (c: typeof lightColors) => ({
       paddingHorizontal: 14,
       gap: 12,
       borderWidth: 1,
-      borderColor: 'transparent',
-      shadowColor: c.shadow,
+      borderColor: c.borderSubtle,
+      shadowColor: c.shadowCard,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.05,
-      shadowRadius: 3,
+      shadowRadius: 0,
       elevation: 1,
     },
     teamPlayerCard: {
@@ -111,6 +115,9 @@ const makeStyles = (c: typeof lightColors) => ({
     },
     playerCardFocused: {
       borderColor: c.borderActive,
+    },
+    playerCardDuplicate: {
+      borderColor: c.danger,
     },
     avatar: {
       width: 36,
@@ -138,11 +145,13 @@ const makeStyles = (c: typeof lightColors) => ({
       paddingVertical: 14,
       paddingHorizontal: 16,
       gap: 12,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 1 },
+      borderWidth: 1,
+      borderColor: c.borderSubtle,
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.05,
-      shadowRadius: 3,
-      elevation: 1,
+      shadowRadius: 0,
+      elevation: 2,
     },
     paramIconBox: {
       width: 34,
@@ -196,11 +205,13 @@ const makeStyles = (c: typeof lightColors) => ({
       backgroundColor: c.card,
       borderRadius: 24,
       padding: 16,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 1 },
+      borderWidth: 1,
+      borderColor: c.borderSubtle,
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.05,
-      shadowRadius: 3,
-      elevation: 1,
+      shadowRadius: 0,
+      elevation: 2,
     },
     rulesCardHeader: {
       flexDirection: 'row',
@@ -260,6 +271,43 @@ const makeStyles = (c: typeof lightColors) => ({
       lineHeight: 20,
       color: c.textSecondary,
     },
+    favSheetTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: c.primary,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 4,
+    },
+    favItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      paddingVertical: 13,
+      borderBottomWidth: 1,
+      borderBottomColor: c.borderSubtle,
+    },
+    favItemLast: {
+      borderBottomWidth: 0,
+    },
+    favAvatar: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    favAvatarText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: c.textSecondary,
+    },
+    favName: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: '500',
+      color: c.text,
+    },
   }),
 });
 
@@ -298,6 +346,11 @@ export default function NewGameScreen({ route, navigation }: any) {
 
   const [rulesExpanded, setRulesExpanded] = useState(false);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    loadFavorites().then(setFavorites);
+  }, []));
 
   useEffect(() => {
     if (
@@ -318,6 +371,32 @@ export default function NewGameScreen({ route, navigation }: any) {
     const updated = [...players];
     updated[index] = value;
     setPlayers(updated);
+  };
+
+  const [favSheetVisible, setFavSheetVisible] = useState(false);
+  const [favTargetIndex, setFavTargetIndex] = useState<number | null>(null);
+  const [favTeamTarget, setFavTeamTarget] = useState<{ teamIndex: number; playerIndex: number } | null>(null);
+
+  const openFavSheet = (index: number) => {
+    setFavTeamTarget(null);
+    setFavTargetIndex(index);
+    setFavSheetVisible(true);
+  };
+
+  const openFavSheetTeam = (teamIndex: number, playerIndex: number) => {
+    setFavTargetIndex(null);
+    setFavTeamTarget({ teamIndex, playerIndex });
+    setFavSheetVisible(true);
+  };
+
+  const selectFavorite = (name: string) => {
+    if (favTeamTarget !== null) {
+      updateTeamPlayer(favTeamTarget.teamIndex, favTeamTarget.playerIndex, name);
+      setFavTeamTarget(null);
+    } else if (favTargetIndex !== null) {
+      updatePlayer(favTargetIndex, name);
+    }
+    setFavSheetVisible(false);
   };
 
   const addPlayer = () => {
@@ -357,6 +436,16 @@ export default function NewGameScreen({ route, navigation }: any) {
   };
 
   const validTeams = teamPlayers.map((team) => team.filter((p) => p.trim().length > 0));
+
+  const duplicateNames = useMemo(() => {
+    const allNames = isTeamMode
+      ? teamPlayers.flat().map((p) => p.trim().toLowerCase()).filter(Boolean)
+      : players.map((p) => p.trim().toLowerCase()).filter(Boolean);
+    const seen = new Set<string>();
+    const dupes = new Set<string>();
+    allNames.forEach((n) => { if (seen.has(n)) dupes.add(n); else seen.add(n); });
+    return dupes;
+  }, [isTeamMode, players, teamPlayers]);
 
   const isValidPlayerCount = isTeamMode
     ? validTeams.every(
@@ -426,7 +515,7 @@ export default function NewGameScreen({ route, navigation }: any) {
             {players.map((player, index) => (
               <View
                 key={index}
-                style={[styles.playerCard, focusedKey === `p${index}` && styles.playerCardFocused]}
+                style={[styles.playerCard, focusedKey === `p${index}` && styles.playerCardFocused, duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate]}
               >
                 <View style={[styles.avatar, { backgroundColor: getAvatarColor(index) }]}>
                   <Text style={styles.avatarText}>
@@ -442,8 +531,13 @@ export default function NewGameScreen({ route, navigation }: any) {
                   style={styles.playerInput}
                   placeholderTextColor={colors.textMuted}
                 />
+                {favorites.length > 0 && (
+                  <Pressable onPress={() => openFavSheet(index)} hitSlop={8}>
+                    <Ionicons name="star-outline" size={20} color={colors.primary} />
+                  </Pressable>
+                )}
                 {players.length > 1 && (
-                  <Pressable onPress={() => removePlayer(index)}>
+                  <Pressable onPress={() => removePlayer(index)} hitSlop={8}>
                     <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
                   </Pressable>
                 )}
@@ -489,7 +583,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                     return (
                       <View
                         key={playerIndex}
-                        style={[styles.teamPlayerCard, focusedKey === focusKey && styles.playerCardFocused]}
+                        style={[styles.teamPlayerCard, focusedKey === focusKey && styles.playerCardFocused, duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate]}
                       >
                         <TextInput
                           placeholder={t.playerName}
@@ -500,6 +594,11 @@ export default function NewGameScreen({ route, navigation }: any) {
                           style={styles.playerInput}
                           placeholderTextColor={colors.textMuted}
                         />
+                        {favorites.length > 0 && (
+                          <Pressable onPress={() => openFavSheetTeam(teamIndex, playerIndex)} hitSlop={8}>
+                            <Ionicons name="star-outline" size={20} color={colors.primary} />
+                          </Pressable>
+                        )}
                         {teamMembers.length > (config.teams?.minPlayersPerTeam ?? 1) && (
                           <Pressable onPress={() => removeTeamPlayer(teamIndex, playerIndex)}>
                             <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
@@ -563,9 +662,9 @@ export default function NewGameScreen({ route, navigation }: any) {
       )}
 
       <Pressable
-        style={({ pressed }) => [styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout, !isValidPlayerCount && styles.startButtonDisabled, pressed && isValidPlayerCount && styles.pressed]}
+        style={({ pressed }) => [styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout, (!isValidPlayerCount || duplicateNames.size > 0) && styles.startButtonDisabled, pressed && isValidPlayerCount && duplicateNames.size === 0 && styles.pressed]}
         onPress={startGame}
-        disabled={!isValidPlayerCount}
+        disabled={!isValidPlayerCount || duplicateNames.size > 0}
       >
         <Text style={styles.btnPrimaryTextBig}>
           {t.newGame}
@@ -638,6 +737,31 @@ export default function NewGameScreen({ route, navigation }: any) {
         )}
       </View>
     </ScrollView>
+
+    <Modal visible={favSheetVisible} transparent animationType="slide">
+      <Pressable style={styles.overlay} onPress={() => setFavSheetVisible(false)}>
+        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+          <Text style={styles.favSheetTitle}>{t.fromFavorites}</Text>
+          {favorites.map((name, i) => (
+            <Pressable
+              key={name}
+              style={({ pressed }) => [
+                styles.favItem,
+                i === favorites.length - 1 && styles.favItemLast,
+                pressed && styles.cardPressed,
+              ]}
+              onPress={() => selectFavorite(name)}
+            >
+              <View style={[styles.favAvatar, { backgroundColor: avatarPalette[i % avatarPalette.length] }]}>
+                <Text style={styles.favAvatarText}>{name.slice(0, 2).toUpperCase()}</Text>
+              </View>
+              <Text style={styles.favName}>{name}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+            </Pressable>
+          ))}
+        </Pressable>
+      </Pressable>
+    </Modal>
 
     <ScoreLimitModal
       visible={scoreLimitModalVisible}

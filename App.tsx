@@ -29,6 +29,9 @@ import HomeScreen from './src/screens/HomeScreen';
 import NewGameScreen from './src/screens/NewGameScreen';
 import ScoreboardScreen from './src/screens/ScoreboardScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
+import PlayersScreen from './src/screens/PlayersScreen';
+import StatsScreen from './src/screens/StatsScreen';
+import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import CustomDrawer from './src/components/CustomDrawer';
@@ -114,10 +117,12 @@ function MainDrawer() {
         ),
       })}
     >
-      <Drawer.Screen name="Accueil"    component={HomeScreen} />
-      <Drawer.Screen name="Historique" component={HistoryScreen} />
-      <Drawer.Screen name="Paramètres" component={SettingsScreen} />
-      <Drawer.Screen name="A propos"   component={AboutScreen} />
+      <Drawer.Screen name="Accueil"      component={HomeScreen} />
+      <Drawer.Screen name="Historique"   component={HistoryScreen} />
+      <Drawer.Screen name="Joueurs"      component={PlayersScreen} />
+      <Drawer.Screen name="Statistiques" component={StatsScreen} />
+      <Drawer.Screen name="Paramètres"   component={SettingsScreen} />
+      <Drawer.Screen name="A propos"     component={AboutScreen} />
     </Drawer.Navigator>
   );
 }
@@ -159,6 +164,22 @@ function AppInner() {
             headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Détail joueur */}
+        <Stack.Screen
+          name="PlayerDetail"
+          component={PlayerDetailScreen}
+          options={({ navigation }: any) => ({
+            headerTitle: () => <HeaderLogo />,
+            headerTitleAlign: 'center',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerLeftContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />

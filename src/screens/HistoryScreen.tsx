@@ -111,18 +111,17 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
 
 /* ─── Badge classement ────────────────────────────────────── */
 
-function BadgeRang({ rang, colors }: { rang: number; colors: typeof lightColors }) {
-  const premier = rang === 1;
+function BadgeRang({ rang, isDark, colors }: { rang: number; isDark: boolean; colors: typeof lightColors }) {
+  const idx        = rang - 1;
+  const medalColor = MEDAL_COLORS[idx]   ?? colors.textMuted;
+  const medalBg    = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[idx] ?? colors.surfaceAlt;
   const badgeStyle = {
     wrap: {
-      width: 22, height: 22, borderRadius: 11,
-      backgroundColor: premier ? colors.gold : colors.surfaceAlt,
+      width: 34, height: 34, borderRadius: 10,
+      backgroundColor: medalBg,
       alignItems: 'center' as const, justifyContent: 'center' as const,
     },
-    texte: {
-      fontSize: 11, fontWeight: '600' as const,
-      color: premier ? colors.white : colors.textSecondary,
-    },
+    texte: { fontSize: 13, fontWeight: '800' as const, color: medalColor },
   };
   return (
     <View style={badgeStyle.wrap}>
@@ -135,7 +134,11 @@ function BadgeRang({ rang, colors }: { rang: number; colors: typeof lightColors 
 
 const MAX_VISIBLE = 3;
 
-function CartePartie({ item, colors, t }: { item: GameHistoryItem; colors: typeof lightColors; t: ReturnType<typeof useTranslation> }) {
+const MEDAL_COLORS   = ['#F59E0B', '#94A3B8', '#CD7F32'];
+const MEDAL_BG_LIGHT = ['#FEF3C7', '#F1F5F9', '#FDF0E6'];
+const MEDAL_BG_DARK  = ['#3B2A00', '#1E293B', '#2A1500'];
+
+function CartePartie({ item, colors, isDark, t }: { item: GameHistoryItem; colors: typeof lightColors; isDark: boolean; t: ReturnType<typeof useTranslation> }) {
   const config = getGameConfig(item.gameName);
   const [expanded, setExpanded] = useState(false);
   const hasMore = item.ranking.length > MAX_VISIBLE;
@@ -148,16 +151,13 @@ function CartePartie({ item, colors, t }: { item: GameHistoryItem; colors: typeo
     entête:       { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
     logo:         { width: 48, height: 48, borderRadius: 12, borderWidth: 1,borderColor: colors.border,},
     logoFallback: { width: 48, height: 48, borderRadius: 12, backgroundColor: colors.primarySubtle, alignItems: 'center', justifyContent: 'center' },
-    logoLettre:   { fontSize: 20, fontWeight: '800', color: colors.primary },
+    logoLettre:   { fontSize: 20, fontWeight: '700', color: colors.primary },
     nomJeu:       { fontSize: 16, fontWeight: '700', color: colors.text },
     date:         { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
-    joueurs:      { gap: 8 },
-    ligneJoueur:  { flexDirection: 'row', alignItems: 'center', gap: 10 },
-    nomJoueur:    { flex: 1, fontSize: 14, color: colors.textSecondary },
-    nomGagnant:   { fontWeight: '700', color: colors.text },
-    score:        { fontSize: 14, color: colors.textSecondary },
-    scoreGagnant: { fontWeight: '800', color: colors.text },
-    unité:        { fontSize: 11, fontWeight: '400', color: colors.textMuted },
+    joueurs:     {},
+    ligneJoueur: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: colors.borderSubtle },
+    nomJoueur:   { flex: 1, fontSize: 14, fontWeight: '500' as const, color: colors.text },
+    score:       { fontSize: 12, color: colors.textMuted },
     voirPlus:     { marginTop: 10, alignItems: 'center' },
     voirPlusTxt:  { fontSize: 13, color: colors.primary, fontWeight: '600' },
   }), [colors]);
@@ -181,14 +181,9 @@ function CartePartie({ item, colors, t }: { item: GameHistoryItem; colors: typeo
       <View style={s.joueurs}>
         {visible.map((joueur, i) => (
           <View key={`${joueur.name}-${i}`} style={s.ligneJoueur}>
-            <BadgeRang rang={i + 1} colors={colors} />
-            <Text style={[s.nomJoueur, i === 0 && s.nomGagnant]}>
-              {joueur.name}
-            </Text>
-            <Text style={[s.score, i === 0 && s.scoreGagnant]}>
-              {joueur.score}
-              <Text style={s.unité}> PTS</Text>
-            </Text>
+            <BadgeRang rang={i + 1} isDark={isDark} colors={colors} />
+            <Text style={s.nomJoueur}>{joueur.name}</Text>
+            <Text style={s.score}>{joueur.score} pts</Text>
           </View>
         ))}
       </View>
@@ -524,7 +519,7 @@ function ModalConfirmEffacement({
 /* ─── Écran principal ─────────────────────────────────────── */
 
 export default function HistoryScreen({ navigation }: any) {
-  const { colors, language } = useTheme();
+  const { colors, isDark, language } = useTheme();
   const t = useTranslation(language);
 
   const styles = useMemo(() => StyleSheet.create({
@@ -603,7 +598,7 @@ export default function HistoryScreen({ navigation }: any) {
           renderSectionHeader={({ section: { title } }) => (
             <Text style={styles.entêteSection}>{title}</Text>
           )}
-          renderItem={({ item }) => <CartePartie item={item} colors={colors} t={t} />}
+          renderItem={({ item }) => <CartePartie item={item} colors={colors} isDark={isDark} t={t} />}
         />
       )}
 

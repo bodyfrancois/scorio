@@ -8,6 +8,8 @@ import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
 import IconHome from './icons/IconHome';
 import IconHistory from './icons/IconHistory';
+import IconPlayers from './icons/IconPlayers';
+import IconStats from './icons/IconStats';
 import IconSettings from './icons/IconSettings';
 import IconAbout from './icons/IconAbout';
 
@@ -96,10 +98,12 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
   const currentRoute = props.state.routes[props.state.index].name;
 
   const ITEMS = [
-    { name: 'Accueil',    label: t.home,    Icon: IconHome },
-    { name: 'Historique', label: t.history, Icon: IconHistory },
-    { name: 'Paramètres', label: t.settings, Icon: IconSettings },
-    { name: 'A propos',   label: t.about,   Icon: IconAbout },
+    { name: 'Accueil',       label: t.home,        Icon: IconHome },
+    { name: 'Historique',    label: t.history,     Icon: IconHistory },
+    { name: 'Joueurs',       label: t.playersMenu, Icon: IconPlayers },
+    { name: 'Statistiques',  label: t.statistics,  Icon: IconStats },
+    { name: 'Paramètres',    label: t.settings,    Icon: IconSettings },
+    { name: 'A propos',      label: t.about,       Icon: IconAbout },
   ];
 
   return (

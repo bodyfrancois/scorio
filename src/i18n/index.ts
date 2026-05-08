@@ -5,6 +5,8 @@ const translations = {
     // Navigation
     home: 'Accueil',
     history: 'Historique',
+    playersMenu: 'Mes joueurs favoris',
+    statistics: 'Statistiques',
     settings: 'Paramètres',
     about: 'A propos',
 
@@ -66,7 +68,7 @@ const translations = {
     finalRanking: 'Voici le classement final',
     winner: 'VAINQUEUR',
     replay: 'Rejouer',
-    backHome: 'Retour à l\'accueil',
+    backHome: 'Retour à la page jeu',
 
     // EditScoreModal
     round: 'Manche',
@@ -87,6 +89,38 @@ const translations = {
     french: 'Français',
     english: 'English',
 
+    // PlayersScreen
+    favoritePlayers: 'JOUEURS FAVORIS',
+    noFavorites: 'Aucun joueur favori',
+    noFavoritesHint: 'Ajoutez les joueurs avec qui vous jouez régulièrement pour les retrouver facilement.',
+    addFavorite: 'Ajouter un joueur',
+    editFavorite: 'Modifier le joueur',
+    save: 'Enregistrer',
+    confirmDeletePlayer: 'Supprimer ce joueur des favoris ?',
+    deletePlayer: 'Supprimer',
+    fromFavorites: 'FAVORIS',
+
+    // StatsScreen
+    comingSoon: 'Bientôt disponible',
+    statsHint: 'Retrouvez bientôt vos statistiques de parties : victoires, scores moyens, jeux favoris et bien plus.',
+    statsAllGames: 'Tous',
+    statsTotalGames: 'Parties totales',
+    statsMostPlayed: 'Jeu favori',
+    statsMostActive: 'Meilleur joueur',
+    statsPlayerRanking: 'CLASSEMENT JOUEURS',
+    statsGamesSection: 'PAR JEU',
+    statsVictories: 'Victoires',
+    statsWinRate: 'Taux de victoires',
+    statsAvgScore: 'Moy.',
+    statsBestScore: 'Max',
+    statsStreak: 'Série',
+    statsTopPlayer: 'Top joueur',
+    statsNoHistory: 'Aucune partie jouée',
+    statsNoHistoryHint: 'Jouez votre première partie pour voir vos statistiques ici.',
+    statsParties: 'Parties',
+    statsOther: 'Autre',
+    statsSur: 'sur',
+
     // AboutScreen
     description: 'Scorio est une application de gestion de scores pour vos jeux de société préférés.',
   },
@@ -94,6 +128,8 @@ const translations = {
     // Navigation
     home: 'Home',
     history: 'History',
+    playersMenu: 'Players',
+    statistics: 'Statistics',
     settings: 'Settings',
     about: 'About',
 
@@ -155,7 +191,7 @@ const translations = {
     finalRanking: 'Here is the final ranking',
     winner: 'WINNER',
     replay: 'Play again',
-    backHome: 'Back to home',
+    backHome: 'Back to game page',
 
     // EditScoreModal
     round: 'Round',
@@ -175,6 +211,38 @@ const translations = {
     darkMode: 'Dark mode',
     french: 'Français',
     english: 'English',
+
+    // PlayersScreen
+    favoritePlayers: 'FAVORITE PLAYERS',
+    noFavorites: 'No favorite players',
+    noFavoritesHint: 'Add the players you regularly play with to find them easily.',
+    addFavorite: 'Add a player',
+    editFavorite: 'Edit player',
+    save: 'Save',
+    confirmDeletePlayer: 'Remove this player from favorites?',
+    deletePlayer: 'Remove',
+    fromFavorites: 'FAVORITES',
+
+    // StatsScreen
+    comingSoon: 'Coming soon',
+    statsHint: 'Find your game statistics soon: wins, average scores, favorite games and much more.',
+    statsAllGames: 'All',
+    statsTotalGames: 'Total Games',
+    statsMostPlayed: 'Fav. game',
+    statsMostActive: 'Top player',
+    statsPlayerRanking: 'PLAYER RANKING',
+    statsGamesSection: 'BY GAME',
+    statsVictories: 'Wins',
+    statsWinRate: 'Rate',
+    statsAvgScore: 'Avg.',
+    statsBestScore: 'Best',
+    statsStreak: 'Streak',
+    statsTopPlayer: 'Top player',
+    statsNoHistory: 'No games played',
+    statsNoHistoryHint: 'Play your first game to see your statistics here.',
+    statsParties: 'games',
+    statsOther: 'Other',
+    statsSur: 'out of',
 
     // AboutScreen
     description: 'Scorio is a score tracking app for your favorite board games.',
