@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { getHistory, clearHistory, GameHistoryItem } from '../storage/historyStorage';
-import { makeSharedStyles } from '../theme/styles';
+import { makeSharedStyles, makeHistoryStyles } from '../theme/styles';
 import { getGameConfig, ALL_GAMES } from '../games/registry';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
@@ -129,21 +129,10 @@ function GameCard({ item, colors, isDark, t }: { item: GameHistoryItem; colors: 
   const hasMore = item.ranking.length > MAX_VISIBLE;
   const visible = expanded ? item.ranking : item.ranking.slice(0, MAX_VISIBLE);
 
-  const s = useMemo(() => StyleSheet.create({
-    logo:         { width: 48, height: 48, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
-    logoFallback: { width: 48, height: 48, borderRadius: 12, backgroundColor: colors.primarySubtle, alignItems: 'center', justifyContent: 'center' },
-    logoLetter:   { fontSize: 20, fontWeight: '700', color: colors.primary },
-    gameName:     { fontSize: 16, fontWeight: '700', color: colors.text },
-    date:         { fontSize: 12, color: colors.textSecondary, marginTop: 2 },
-    playerRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: colors.borderSubtle },
-    playerName:   { flex: 1, fontSize: 14, fontWeight: '500' as const, color: colors.text },
-    score:        { fontSize: 12, color: colors.textMuted },
-    seeMore:      { marginTop: 10, alignItems: 'center' },
-    seeMoreText:  { fontSize: 13, color: colors.primary, fontWeight: '600' },
-  }), [colors]);
+  const s = useMemo(() => makeHistoryStyles(colors), [colors]);
 
   return (
-    <View style={[makeSharedStyles(colors).cardSm, { marginBottom: 16 }]}>
+    <View style={[s.card, { marginBottom: 16 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         {config?.image ? (
           <Image source={config.image} style={s.logo} />
@@ -153,8 +142,8 @@ function GameCard({ item, colors, isDark, t }: { item: GameHistoryItem; colors: 
           </View>
         )}
         <View>
-          <Text style={s.gameName}>{item.gameName}</Text>
-          <Text style={s.date}>{formatDate(item.date)}</Text>
+          <Text style={s.itemTitle}>{item.gameName}</Text>
+          <Text style={[s.caption, { marginTop: 2 }]}>{formatDate(item.date)}</Text>
         </View>
       </View>
 
@@ -162,8 +151,8 @@ function GameCard({ item, colors, isDark, t }: { item: GameHistoryItem; colors: 
         {visible.map((player, i) => (
           <View key={`${player.name}-${i}`} style={s.playerRow}>
             <BadgeRank rank={i + 1} isDark={isDark} colors={colors} />
-            <Text style={s.playerName}>{player.name}</Text>
-            <Text style={s.score}>{player.score} pts</Text>
+            <Text style={s.body}>{player.name}</Text>
+            <Text style={[s.itemTitle, { marginLeft: 'auto' }]}>{player.score} pts</Text>
           </View>
         ))}
       </View>
@@ -173,7 +162,7 @@ function GameCard({ item, colors, isDark, t }: { item: GameHistoryItem; colors: 
           style={({ pressed }) => [s.seeMore, pressed && { opacity: 0.72 }]}
           onPress={() => setExpanded(!expanded)}
         >
-          <Text style={s.seeMoreText}>
+          <Text style={s.addBtnText}>
             {expanded ? t.seeLess : `${t.seeMore} (${item.ranking.length - MAX_VISIBLE})`}
           </Text>
         </Pressable>
@@ -368,7 +357,7 @@ function ModalFilters({
       <Pressable style={s.overlay} onPress={onClose} />
       <View style={s.sheet}>
         <View style={s.sheetHandle} />
-        <Text style={s.sheetTitle}>{t.filterGames}</Text>
+        <Text style={[s.subheading, { marginBottom: 20 }]}>{t.filterGames}</Text>
 
         <Text style={s.sheetSectionTitle}>{t.game}</Text>
         <DropdownJeu
@@ -428,29 +417,15 @@ function ModalConfirmClear({
   colors:    typeof lightColors;
   t:         ReturnType<typeof useTranslation>;
 }) {
-  const s = useMemo(() => ({
-    ...makeSharedStyles(colors),
-    ...StyleSheet.create({
-      title: { fontSize: 17, fontWeight: '700' as const, color: colors.text, marginBottom: 8 },
-      body:  { fontSize: 14, color: colors.textSecondary, marginBottom: 24, lineHeight: 20 },
-      btnDangerFull: {
-        backgroundColor: colors.danger,
-        shadowColor: colors.danger,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 0,
-        elevation: 8,
-      },
-    }),
-  }), [colors]);
+  const s = useMemo(() => makeHistoryStyles(colors), [colors]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <Pressable style={s.overlayCenter} onPress={onCancel}>
         <Pressable onPress={(e) => e.stopPropagation()}>
           <View style={s.modalCard}>
-            <Text style={s.title}>{t.clearHistory}</Text>
-            <Text style={s.body}>{t.clearHistoryMsg}</Text>
+            <Text style={[s.subheading, { marginBottom: 8 }]}>{t.clearHistory}</Text>
+            <Text style={[s.caption, { marginBottom: 24, lineHeight: 20 }]}>{t.clearHistoryMsg}</Text>
             <View style={s.buttons}>
               <Pressable
                 style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]}
@@ -478,15 +453,7 @@ export default function HistoryScreen({ navigation }: any) {
   const { colors, isDark, language } = useTheme();
   const t = useTranslation(language);
 
-  const styles = useMemo(() => ({
-    ...makeSharedStyles(colors),
-    ...StyleSheet.create({
-      list:         { paddingHorizontal: 16, paddingBottom: 24, paddingTop: 8 },
-      sectionTitle: { fontSize: 11, fontWeight: '700' as const, color: colors.textMuted, letterSpacing: 1, textTransform: 'uppercase' as const, marginTop: 16, marginBottom: 8 },
-      emptyCenter:  { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-      emptyBodyTxt: { fontSize: 14, color: colors.textMuted, textAlign: 'center', paddingHorizontal: 32 },
-    }),
-  }), [colors]);
+  const styles = useMemo(() => makeHistoryStyles(colors), [colors]);
 
   const [history, setHistory]           = useState<GameHistoryItem[]>([]);
   const [filtersOpen, setFiltersOpen]   = useState(false);
@@ -547,8 +514,8 @@ export default function HistoryScreen({ navigation }: any) {
       {sections.length === 0 ? (
         <View style={styles.emptyCenter}>
           <IllustrationCartes colors={colors} />
-          <Text style={styles.emptyTitle}>{t.noGameFound}</Text>
-          <Text style={styles.emptyBodyTxt}>
+          <Text style={[styles.subheading, { textAlign: 'center' }]}>{t.noGameFound}</Text>
+          <Text style={[styles.muted, { textAlign: 'center', paddingHorizontal: 32 }]}>
             {hasFilters ? t.adjustFilters : t.startFirst}
           </Text>
         </View>
@@ -559,7 +526,7 @@ export default function HistoryScreen({ navigation }: any) {
           contentContainerStyle={styles.list}
           stickySectionHeadersEnabled={false}
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionTitle}>{title}</Text>
+            <Text style={[styles.sectionLabel, { marginTop: 16, marginBottom: 8 }]}>{title}</Text>
           )}
           renderItem={({ item }) => <GameCard item={item} colors={colors} isDark={isDark} t={t} />}
         />

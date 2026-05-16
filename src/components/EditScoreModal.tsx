@@ -4,14 +4,12 @@ import {
   Text,
   Pressable,
   Modal,
-  StyleSheet,
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeEditScoreModalStyles } from '../theme/styles';
 import { QuickAction } from '../core/types';
 
 type Props = {
@@ -33,118 +31,6 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    roundLabel: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: c.primary,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-      marginBottom: 6,
-    },
-    subtitle: {
-      fontSize: 16,
-      color: c.textSecondary,
-      marginBottom: 20,
-    },
-    playerHighlight: {
-      fontWeight: '700',
-      color: c.text,
-    },
-    display: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 8,
-      paddingVertical: 12,
-      backgroundColor: c.background,
-      borderRadius: 16,
-    },
-    displayError: {
-      backgroundColor: c.errorSubtle,
-    },
-    displayValue: {
-      fontSize: 40,
-      fontWeight: '800',
-      color: c.text,
-      letterSpacing: -1,
-    },
-    displayPlaceholder: {
-      color: c.textMuted,
-    },
-    displayBreakdown: {
-      fontSize: 12,
-      color: c.textMuted,
-      marginTop: 2,
-    },
-    remainingRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-      justifyContent: 'center',
-      marginBottom: 12,
-    },
-    remainingRowError: {},
-    remainingText: {
-      fontSize: 12,
-      color: c.textMuted,
-    },
-    remainingTextError: {
-      color: c.danger,
-      fontWeight: '600',
-    },
-    quickActionsSection: {
-      marginBottom: 16,
-    },
-    quickActionsLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: c.textMuted,
-      letterSpacing: 1,
-      marginBottom: 8,
-    },
-    quickActionsRow: {
-      gap: 8,
-      flexDirection: 'row',
-    },
-    chip: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 20,
-      backgroundColor: c.background,
-      borderWidth: 1,
-      borderColor: c.border,
-    },
-    keypad: {
-      gap: 8,
-      marginBottom: 20,
-    },
-    chipActive: {
-      backgroundColor: c.primarySubtle,
-      borderColor: c.primary,
-    },
-    chipLabel: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: c.textSecondary,
-    },
-    chipLabelActive: {
-      color: c.primary,
-    },
-    chipValue: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: c.textMuted,
-    },
-    chipValueActive: {
-      color: c.primary,
-    },
-  }),
-});
 
 export default function EditScoreModal({
   visible,
@@ -159,7 +45,7 @@ export default function EditScoreModal({
 }: Props) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeEditScoreModalStyles(colors), [colors]);
 
   const [input, setInput] = useState('');
   const [activeActions, setActiveActions] = useState<Set<number>>(new Set());
@@ -239,8 +125,8 @@ export default function EditScoreModal({
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          <Text style={styles.roundLabel}>{t.round} {roundNumber}</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.labelPrimary, { marginBottom: 6 }]}>{t.round} {roundNumber}</Text>
+          <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>
             {t.enterScore}{' '}
             <Text style={styles.playerHighlight}>{playerName}</Text>
           </Text>
@@ -250,7 +136,7 @@ export default function EditScoreModal({
               {hasValue ? total : '0'}
             </Text>
             {actionsTotal > 0 && input.length > 0 && (
-              <Text style={styles.displayBreakdown}>
+              <Text style={[styles.muted, { marginTop: 2 }]}>
                 {keypadValue} + {actionsTotal}
               </Text>
             )}
@@ -263,7 +149,7 @@ export default function EditScoreModal({
                 size={13}
                 color={isOver ? colors.danger : colors.textMuted}
               />
-              <Text style={[styles.remainingText, isOver && styles.remainingTextError]}>
+              <Text style={[styles.muted, isOver && styles.remainingTextError]}>
                 {isOver
                   ? `Dépassement de ${keypadValue - remaining} pts (max ${remaining})`
                   : isLastPlayer
@@ -273,7 +159,7 @@ export default function EditScoreModal({
             </View>
           )}
 
-          <View style={styles.keypad}>
+          <View style={styles.keypadModal}>
             {PAD_ROWS.map((row, ri) => (
               <View key={ri} style={styles.keyRow}>
                 {row.map((key, ci) => {

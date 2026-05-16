@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeCustomDrawerStyles } from '../theme/styles';
 import IconHome from './icons/IconHome';
 import IconHistory from './icons/IconHistory';
 import IconPlayers from './icons/IconPlayers';
@@ -17,78 +16,10 @@ import IconAbout from './icons/IconAbout';
 const version = Constants.expoConfig?.version ?? '1.0.0';
 const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? '1';
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.card,
-      paddingTop: 56,
-      paddingHorizontal: 16,
-    },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 16,
-    },
-    logoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 10,
-    },
-    iconLetter: {
-      color: c.white,
-      fontWeight: '800',
-      fontSize: 18,
-    },
-    appName: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: c.text,
-    },
-    divider: {
-      height: 1,
-      backgroundColor: c.border,
-      marginBottom: 12,
-    },
-    menu: {
-      gap: 4,
-    },
-    item: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-      paddingVertical: 13,
-      paddingHorizontal: 12,
-      borderRadius: 12,
-    },
-    itemActive: {
-      backgroundColor: c.primarySubtle,
-    },
-    label: {
-      fontSize: 15,
-      fontWeight: '500',
-      color: c.text,
-    },
-    labelActive: {
-      color: c.primary,
-      fontWeight: '600',
-    },
-    version: {
-      position: 'absolute',
-      bottom: 36,
-      alignSelf: 'center',
-      fontSize: 12,
-      color: c.textMuted,
-    },
-  }),
-});
-
 export default function CustomDrawer(props: DrawerContentComponentProps) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeCustomDrawerStyles(colors), [colors]);
 
   const currentRoute = props.state.routes[props.state.index].name;
 
@@ -102,21 +33,21 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={styles.drawerContainer}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={styles.drawerHeader}>
         <View style={styles.logoRow}>
           <View style={styles.iconBoxBrand}>
             <Text style={styles.iconLetter}>S</Text>
           </View>
-          <Text style={styles.appName}>Scorio</Text>
+          <Text style={styles.subheading}>Scorio</Text>
         </View>
         <Pressable onPress={() => props.navigation.closeDrawer()} hitSlop={10}>
           <Ionicons name="close" size={22} color={colors.textSecondary} />
         </Pressable>
       </View>
 
-      <View style={styles.divider} />
+      <View style={styles.drawerDivider} />
 
       {/* Menu items */}
       <View style={styles.menu}>
@@ -129,7 +60,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
               onPress={() => props.navigation.navigate(name)}
             >
               <Icon size={22} color={active ? colors.primary : colors.text} />
-              <Text style={[styles.label, active && styles.labelActive]}>
+              <Text style={[styles.bodyMedium, active && styles.labelActive]}>
                 {label}
               </Text>
             </Pressable>
@@ -138,7 +69,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
       </View>
 
       {/* Footer */}
-      <Text style={styles.version}>
+      <Text style={[styles.muted, { position: 'absolute', bottom: 36, alignSelf: 'center' }]}>
         Version {version} (Build {buildNumber})
       </Text>
     </View>

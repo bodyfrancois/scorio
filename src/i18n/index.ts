@@ -109,7 +109,7 @@ const translations = {
     statsMostActive: 'Meilleur joueur',
     statsPlayerRanking: 'CLASSEMENT JOUEURS',
     statsGamesSection: 'PAR JEU',
-    statsVictories: 'Victoires',
+    statsVictories: 'Vic.',
     statsWinRate: 'Taux de victoires',
     statsAvgScore: 'Moy.',
     statsBestScore: 'Max',

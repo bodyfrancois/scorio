@@ -8,7 +8,6 @@ import React, {
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Pressable,
   Image,
@@ -20,7 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeStatsStyles, makeSharedStyles } from '../theme/styles';
 import { getHistory, GameHistoryItem } from '../storage/historyStorage';
 import { getGameConfig } from '../games/registry';
 import {
@@ -41,7 +40,8 @@ const MEDAL_COLORS   = ['#F59E0B', '#94A3B8', '#CD7F32'];
 const MEDAL_BG_LIGHT = ['#FEF3C7', '#F1F5F9', '#FDF0E6'];
 const MEDAL_BG_DARK  = ['#3B2A00', '#1E293B', '#2A1500'];
 
-const DONUT_PALETTE = ['#4d2983', '#7C48CA', '#C05177', '#b791df', '#d2c0ef'];
+
+const DONUT_PALETTE = ['#4d2983', '#0a9396', '#94d2bd', '#ee9b00', '#bb3e03'];
 const DONUT_OTHER_COLOR = '#d8d8d8';
 const MAX_DONUT_SLICES  = 5;
 
@@ -108,124 +108,6 @@ function roundedDonutPath(
 
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
-
-const makeStyles = (c: typeof lightColors, _isDark: boolean) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-
-    // Donut
-    donutWrap: {
-      marginBottom: 24,
-    },
-
-    // Player cards (classement)
-    playerCard: {
-      marginBottom: 10,
-      overflow: 'hidden',
-      borderColor: c.borderSubtle,
-      borderBottomWidth: 1,
-    },
-    playerCardMain: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingBottom: 24,
-      gap: 10,
-    },
-    rankBadge: {
-      width: 34, height: 34, borderRadius: 10,
-      alignItems: 'center', justifyContent: 'center',
-    },
-    rankText: { fontSize: 13, fontWeight: '800' },
-    playerNameBlock: { flex: 1 },
-    playerName: { fontSize: 15, fontWeight: '700', color: c.text },
-    playerStats: { fontSize: 12, color: c.textMuted, marginTop: 2 },
-    streakBadge: {
-      flexDirection: 'row', alignItems: 'center', gap: 3,
-      paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
-      backgroundColor: c.goldSubtle,
-    },
-    streakText: { fontSize: 12, fontWeight: '700', color: c.goldText },
-
-    // Game cards (par jeu)
-    gameCard: {
-      backgroundColor: c.card,
-      borderRadius: 20,
-      marginBottom: 12,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-    },
-    gameCardHeader: {
-      flexDirection: 'row', alignItems: 'center',
-      gap: 14, padding: 14, paddingBottom: 12,
-    },
-    gameImage: {
-      width: 52, height: 52, borderRadius: 12,
-      borderWidth: 1, borderColor: c.border,
-    },
-    gameImagePlaceholder: {
-      width: 52, height: 52, borderRadius: 12,
-      backgroundColor: c.primarySubtle,
-      alignItems: 'center', justifyContent: 'center',
-    },
-    gameHeaderInfo: { flex: 1 },
-    gameName: {
-      fontSize: 15, fontWeight: '700', color: c.text, marginBottom: 4,
-    },
-    gameCountBadge: {
-      alignSelf: 'flex-start',
-      paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10,
-      backgroundColor: c.primarySubtle,
-    },
-    gameCountText: { fontSize: 12, fontWeight: '700', color: c.primary },
-    gameDivider: { height: 1, backgroundColor: c.borderSubtle, marginHorizontal: 14 },
-    gameHighlights: {
-      flexDirection: 'row', padding: 14, paddingTop: 12, gap: 8,
-    },
-    highlightCard: {
-      flex: 1, backgroundColor: c.background,
-      borderRadius: 14, padding: 10, alignItems: 'center',
-    },
-    highlightIcon: {
-      width: 28, height: 28, borderRadius: 8,
-      alignItems: 'center', justifyContent: 'center', marginBottom: 6,
-    },
-    highlightLabel: {
-      fontSize: 10, fontWeight: '700', color: c.textMuted,
-      textTransform: 'uppercase', letterSpacing: 0.5,
-      marginBottom: 4, textAlign: 'center',
-    },
-    highlightValue: {
-      fontSize: 14, fontWeight: '800', color: c.text, textAlign: 'center',
-    },
-    highlightSub: {
-      fontSize: 11, color: c.textMuted, marginTop: 2, textAlign: 'center',
-    },
-    gameRankingSection: {
-      paddingHorizontal: 14, paddingBottom: 14,
-    },
-    gameRankingLabel: {
-      fontSize: 11, fontWeight: '700', color: c.textMuted,
-      textTransform: 'uppercase', letterSpacing: 1,
-      marginBottom: 8, marginTop: 12,
-    },
-    gameRankRow: {
-      flexDirection: 'row', alignItems: 'center',
-      paddingVertical: 8,
-      borderTopWidth: 1, borderTopColor: c.borderSubtle,
-      gap: 10,
-    },
-    gameRankNum: { fontSize: 13, fontWeight: '700', color: c.textMuted, width: 18, textAlign: 'center' },
-    gameRankName: { flex: 1, fontSize: 14, fontWeight: '500', color: c.text },
-    gameRankStats: { fontSize: 12, color: c.textMuted },
-    gameRankBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
-    gameRankBadgeText: { fontSize: 11, fontWeight: '700' },
-  }),
-});
 
 // ─── Dropdown (styles partagés) ───────────────────────────────────────────────
 
@@ -399,7 +281,7 @@ function ModalFiltres({
       <Pressable style={s.overlay} onPress={onClose} />
       <View style={s.sheet}>
         <View style={s.sheetHandle} />
-        <Text style={s.sheetTitle}>{t.filterGames}</Text>
+        <Text style={[s.subheading, { marginBottom: 20 }]}>{t.filterGames}</Text>
 
         {gameNames.length > 1 && (
           <>
@@ -541,7 +423,7 @@ function PlayerCard({
   player, rank, styles, colors, isDark, t, onPress,
 }: {
   player: PlayerStats; rank: number;
-  styles: ReturnType<typeof makeStyles>;
+  styles: ReturnType<typeof makeStatsStyles>;
   colors: typeof lightColors; isDark: boolean; t: any;
   onPress: () => void;
 }) {
@@ -553,13 +435,13 @@ function PlayerCard({
       style={({ pressed }) => [styles.playerCard, pressed && { opacity: 0.72 }]}
       onPress={onPress}
     >
-      <View style={styles.playerCardMain}>
+      <View style={[styles.cardRow]}>
         <View style={[styles.rankBadge, { backgroundColor: medalBg }]}>
           <Text style={[styles.rankText, { color: medalColor }]}>{rank + 1}</Text>
         </View>
         <View style={styles.playerNameBlock}>
-          <Text style={styles.playerName}>{player.name}</Text>
-          <Text style={styles.playerStats}>
+          <Text style={styles.itemTitle}>{player.name}</Text>
+          <Text style={[styles.muted, { marginTop: 2 }]}>
             {player.wins} {t.statsVictories} / {player.games} {t.statsParties}
           </Text>
         </View>
@@ -575,7 +457,7 @@ function GameCard({
   game, styles, colors, isDark, t,
 }: {
   game: GameStats;
-  styles: ReturnType<typeof makeStyles>;
+  styles: ReturnType<typeof makeStatsStyles>;
   colors: typeof lightColors; isDark: boolean; t: any;
 }) {
   const image = (() => { try { return getGameConfig(game.name)?.image ?? null; } catch { return null; } })();
@@ -591,7 +473,7 @@ function GameCard({
           </View>
         )}
         <View style={styles.gameHeaderInfo}>
-          <Text style={styles.gameName}>{game.name}</Text>
+          <Text style={[styles.itemTitle, { marginBottom: 4 }]}>{game.name}</Text>
           <View style={styles.gameCountBadge}>
             <Text style={styles.gameCountText}>{game.count} {t.statsParties}</Text>
           </View>
@@ -607,7 +489,7 @@ function GameCard({
           </View>
           <Text style={styles.highlightLabel}>{t.statsTopPlayer}</Text>
           <Text style={styles.highlightValue} numberOfLines={1}>{game.bestPlayer}</Text>
-          <Text style={styles.highlightSub}>{game.bestPlayerWins} {t.statsVictories}</Text>
+          <Text style={[styles.micro, { marginTop: 2, textAlign: 'center' }]}>{game.bestPlayerWins} {t.statsVictories}</Text>
         </View>
 
         {game.bestScoreEntry && (
@@ -617,7 +499,7 @@ function GameCard({
             </View>
             <Text style={styles.highlightLabel}>{t.statsBestScore}</Text>
             <Text style={styles.highlightValue}>{game.bestScoreEntry.score} pts</Text>
-            <Text style={styles.highlightSub} numberOfLines={1}>{game.bestScoreEntry.player}</Text>
+            <Text style={[styles.micro, { marginTop: 2, textAlign: 'center' }]} numberOfLines={1}>{game.bestScoreEntry.player}</Text>
           </View>
         )}
       </View>
@@ -625,7 +507,7 @@ function GameCard({
       <View style={styles.gameDivider} />
 
       <View style={styles.gameRankingSection}>
-        <Text style={styles.gameRankingLabel}>{t.statsPlayerRanking}</Text>
+        <Text style={[styles.sectionLabel, { marginBottom: 8, marginTop: 12 }]}>{t.statsPlayerRanking}</Text>
         {game.playerRanking.map((p, i) => {
           const medalColor = MEDAL_COLORS[i] ?? colors.textMuted;
           const medalBg    = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[i] ?? colors.background;
@@ -633,7 +515,7 @@ function GameCard({
             <View key={p.name} style={styles.gameRankRow}>
               <Text style={[styles.gameRankNum, i < 3 && { color: medalColor }]}>{i + 1}</Text>
               <Text style={styles.gameRankName} numberOfLines={1}>{p.name}</Text>
-              <Text style={styles.gameRankStats}>ø {p.avgScore} pts</Text>
+              <Text style={styles.muted}>ø {p.avgScore} pts</Text>
               {p.wins > 0 && (
                 <View style={[styles.gameRankBadge, { backgroundColor: medalBg }]}>
                   <Text style={[styles.gameRankBadgeText, { color: medalColor }]}>{p.wins}V</Text>
@@ -652,7 +534,7 @@ function GameCard({
 export default function StatsScreen({ navigation }: any) {
   const { colors, isDark, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors, isDark), [colors, isDark]);
+  const styles = useMemo(() => makeStatsStyles(colors), [colors]);
 
   const [history, setHistory]           = useState<GameHistoryItem[]>([]);
   const [filtres, setFiltres]           = useState<DateFilter>({ mois: null, annee: null });
@@ -705,16 +587,16 @@ export default function StatsScreen({ navigation }: any) {
       >
         {!stats ? (
           <View style={styles.emptyWrap}>
-            <View style={styles.emptyIconBox}>
+            <View style={styles.iconBoxLg}>
               <Ionicons name="bar-chart" size={36} color={colors.primary} />
             </View>
-            <Text style={styles.emptyTitle}>{t.statsNoHistory}</Text>
-            <Text style={styles.emptySubtitle}>{t.statsNoHistoryHint}</Text>
+            <Text style={[styles.subheading, { marginBottom: 8, textAlign: 'center' }]}>{t.statsNoHistory}</Text>
+            <Text style={[styles.muted, { textAlign: 'center', lineHeight: 20 }]}>{t.statsNoHistoryHint}</Text>
           </View>
         ) : (
           <>
             {/* Carte KPI */}
-            <View style={[styles.cardMd, { marginBottom: 32 }]}>
+            <View style={[styles.card, { marginBottom: 32 }]}>
 
               {/* Donut */}
               {!filterGame && stats.donutData.length > 0 && (
@@ -727,16 +609,16 @@ export default function StatsScreen({ navigation }: any) {
                 <View style={styles.iconBoxPrimary}>
                   <Ionicons name="game-controller" size={16} color={colors.primary} />
                 </View>
-                <Text style={styles.infoLabel}>{t.statsTotalGames}</Text>
-                <Text style={styles.infoValue}>{stats.totalGames}</Text>
+                <Text style={[styles.body, { flex: 1 }]}>{t.statsTotalGames}</Text>
+                <Text style={styles.itemTitle}>{stats.totalGames}</Text>
               </View>
               <View style={styles.infoRowDivider} />
               <View style={styles.infoRow}>
                 <View style={styles.iconBoxPrimary}>
                   <Ionicons name="trophy" size={16} color={colors.primary} />
                 </View>
-                <Text style={styles.infoLabel}>{t.statsMostActive}</Text>
-                <Text style={styles.infoValue} numberOfLines={1}>{stats.players[0]?.name ?? '—'}</Text>
+                <Text style={[styles.body, { flex: 1 }]}>{t.statsMostActive}</Text>
+                <Text style={styles.itemTitle} numberOfLines={1}>{stats.players[0]?.name ?? '—'}</Text>
               </View>
               {!filterGame && (
                 <>
@@ -745,8 +627,8 @@ export default function StatsScreen({ navigation }: any) {
                     <View style={styles.iconBoxPrimary}>
                       <Ionicons name="star" size={16} color={colors.primary} />
                     </View>
-                    <Text style={styles.infoLabel}>{t.statsMostPlayed}</Text>
-                    <Text style={styles.infoValue} numberOfLines={1}>{stats.mostPlayedGame ?? '—'}</Text>
+                    <Text style={[styles.body, { flex: 1 }]}>{t.statsMostPlayed}</Text>
+                    <Text style={styles.itemTitle} numberOfLines={1}>{stats.mostPlayedGame ?? '—'}</Text>
                   </View>
                 </>
               )}
@@ -756,7 +638,7 @@ export default function StatsScreen({ navigation }: any) {
             {stats.players.length > 0 && (
               <>
                 <Text style={styles.sectionLabel}>{t.statsPlayerRanking}</Text>
-                <View style={[styles.cardMd, { marginBottom: 32 }]}>
+                <View style={[styles.card, { marginBottom: 32 }]}>
                   {stats.players.map((player, i) => (
                     <PlayerCard
                       key={player.name}

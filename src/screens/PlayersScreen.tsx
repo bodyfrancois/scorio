@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 're
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   ScrollView,
   TextInput,
@@ -16,76 +15,13 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makePlayersStyles } from '../theme/styles';
 import {
   loadFavorites,
   addFavorite,
   removeFavorite,
   updateFavorite,
 } from '../storage/favoritePlayers';
-
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    avatarText: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: c.textSecondary,
-    },
-    playerName: {
-      flex: 1,
-      fontSize: 15,
-      fontWeight: '500',
-      color: c.text,
-    },
-    rowActions: {
-      flexDirection: 'row',
-      gap: 4,
-    },
-    iconBtn: {
-      width: 36,
-      height: 36,
-      borderRadius: 12,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: c.background,
-    },
-    // Modal
-    modalInput: {
-      backgroundColor: c.background,
-      borderRadius: 16,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      color: c.text,
-      marginBottom: 16,
-      borderWidth: 1,
-      borderColor: c.border,
-    },
-    modalInputFocused: {
-      borderColor: c.primary,
-    },
-    modalTitle: {
-      fontSize: 18,
-      fontWeight: '800',
-      color: c.text,
-      marginBottom: 20,
-    },
-    confirmMsg: {
-      fontSize: 14,
-      color: c.textSecondary,
-      marginBottom: 20,
-      lineHeight: 20,
-    },
-  }),
-});
 
 function getAvatarColor(name: string, colors: typeof lightColors) {
   const palette = [
@@ -106,7 +42,7 @@ type ModalState =
 export default function PlayersScreen() {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makePlayersStyles(colors), [colors]);
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -178,22 +114,22 @@ export default function PlayersScreen() {
 
         {favorites.length === 0 ? (
           <View style={styles.emptyWrap}>
-            <View style={styles.emptyIconBox}>
+            <View style={styles.iconBoxLg}>
               <Ionicons name="people-outline" size={36} color={colors.primary} />
             </View>
-            <Text style={styles.emptyTitle}>{t.noFavorites}</Text>
-            <Text style={styles.emptySubtitle}>{t.noFavoritesHint}</Text>
+            <Text style={[styles.subheading, { marginBottom: 8, textAlign: 'center' }]}>{t.noFavorites}</Text>
+            <Text style={[styles.muted, { textAlign: 'center', lineHeight: 20 }]}>{t.noFavoritesHint}</Text>
           </View>
         ) : (
           <>
             {favorites.map((name) => (
-              <View key={name} style={styles.cardRow}>
+              <View key={name} style={[styles.card, styles.cardRow]}>
                 <View style={[styles.avatar, { backgroundColor: getAvatarColor(name, colors) }]}>
                   <Text style={styles.avatarText}>
                     {name.trim().slice(0, 2).toUpperCase()}
                   </Text>
                 </View>
-                <Text style={styles.playerName}>{name}</Text>
+                <Text style={[styles.bodyMedium, { flex: 1 }]}>{name}</Text>
                 <View style={styles.rowActions}>
                   <Pressable
                     style={({ pressed }) => [styles.iconBtn, pressed && styles.pressed]}
@@ -222,7 +158,7 @@ export default function PlayersScreen() {
         >
           <View style={styles.overlay}>
             <View style={styles.sheet}>
-              <Text style={styles.modalTitle}>
+              <Text style={[styles.subheading, { marginBottom: 20 }]}>
                 {modal?.type === 'add' ? t.addFavorite : t.editFavorite}
               </Text>
               <TextInput
@@ -265,8 +201,8 @@ export default function PlayersScreen() {
       <Modal visible={modal?.type === 'delete'} transparent animationType="slide">
         <View style={styles.overlay}>
           <View style={styles.sheet}>
-            <Text style={styles.modalTitle}>{t.confirmDeletePlayer}</Text>
-            <Text style={styles.confirmMsg}>
+            <Text style={[styles.subheading, { marginBottom: 20 }]}>{t.confirmDeletePlayer}</Text>
+            <Text style={[styles.caption, { marginBottom: 20, lineHeight: 20 }]}>
               {modal?.type === 'delete' ? `"${modal.name}"` : ''}
             </Text>
             <View style={styles.buttons}>

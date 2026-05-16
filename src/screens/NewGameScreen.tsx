@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   Pressable,
-  StyleSheet,
   Modal,
   Alert,
   LayoutAnimation,
@@ -18,265 +17,18 @@ import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { loadFavorites } from '../storage/favoritePlayers';
 import { TEAM_COLORS } from '../theme/colors';
-import { lightColors } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { getGameEngine } from '../core/gameEngine';
 import ScoreLimitModal from '../components/ScoreLimitModal';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { makeSharedStyles } from '../theme/styles';
+import { makeNewGameStyles } from '../theme/styles';
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    sectionLabelTop: {
-      marginTop: 28,
-    },
-    sectionLabelNoMargin: {
-      marginBottom: 0,
-    },
-    teamSection: {
-      marginTop: 16,
-      backgroundColor: c.card,
-      borderRadius: 16,
-      borderTopWidth: 3,
-      paddingHorizontal: 14,
-      paddingTop: 14,
-      paddingBottom: 14,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 4,
-      elevation: 2,
-      gap: 12,
-    },
-    teamHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    teamColorDot: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-    },
-    teamNameInput: {
-      flex: 1,
-      fontSize: 14,
-      fontWeight: '700',
-      color: c.text,
-      padding: 0,
-    },
-    playerList: {
-      gap: 8,
-    },
-    // Variante de cardRow pour les joueurs en mode équipe (fond page, plus compact)
-    teamPlayerCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.background,
-      borderRadius: 14,
-      paddingVertical: 10,
-      paddingHorizontal: 12,
-      gap: 12,
-      borderWidth: 1,
-      borderColor: 'transparent',
-    },
-    playerCardFocused: {
-      borderColor: c.borderActive,
-    },
-    playerCardDuplicate: {
-      borderColor: c.danger,
-    },
-    avatar: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    avatarText: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: c.textSecondary,
-    },
-    playerInput: {
-      flex: 1,
-      fontSize: 15,
-      color: c.text,
-      padding: 0,
-    },
-    // Carte paramètre : légèrement plus de padding que cardRow
-    paramCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: 24,
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-      gap: 12,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-    },
-    paramLabel: {
-      flex: 1,
-      fontSize: 15,
-      color: c.text,
-    },
-    paramValue: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: c.text,
-    },
-    stepper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    stepBtn: {
-      width: 28,
-      height: 28,
-      borderRadius: 8,
-      backgroundColor: c.searchBackground,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    stepValue: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: c.text,
-      minWidth: 44,
-      textAlign: 'center',
-    },
-    startButtonLayout: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop: 28,
-      gap: 6,
-    },
-    startButtonDisabled: {
-      opacity: 0.4,
-    },
-    rulesCard: {
-      backgroundColor: c.card,
-      borderRadius: 24,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-    },
-    rulesCardHeader: {
-      flexDirection: 'row',
-      gap: 14,
-      marginBottom: 12,
-    },
-    rulesImage: {
-      width: 72,
-      height: 72,
-      borderRadius: 12,
-    },
-    rulesCardMeta: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    rulesGameName: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.text,
-      marginBottom: 6,
-    },
-    rulesInfoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    rulesInfoText: {
-      fontSize: 12,
-      color: c.textMuted,
-    },
-    rulesBullet: {
-      fontSize: 14,
-      color: c.iconMuted,
-    },
-    rulesDescription: {
-      fontSize: 14,
-      color: c.textSecondary,
-      lineHeight: 18,
-    },
-    expandButton: {
-      marginTop: 12,
-      paddingTop: 12,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: c.border,
-    },
-    expandText: {
-      color: c.primary,
-      fontWeight: '600',
-      fontSize: 14,
-    },
-    rulesDetailed: {
-      marginTop: 10,
-      fontSize: 14,
-      lineHeight: 20,
-      color: c.textSecondary,
-    },
-    favSheetTitle: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: c.primary,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-      marginBottom: 4,
-    },
-    favItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      paddingVertical: 13,
-      borderBottomWidth: 1,
-      borderBottomColor: c.borderSubtle,
-    },
-    favItemLast: {
-      borderBottomWidth: 0,
-    },
-    favAvatar: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    favAvatarText: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: c.textSecondary,
-    },
-    favName: {
-      flex: 1,
-      fontSize: 16,
-      fontWeight: '500',
-      color: c.text,
-    },
-  }),
-});
 
 export default function NewGameScreen({ route, navigation }: any) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeNewGameStyles(colors), [colors]);
 
   const { gameName } = route.params ?? { gameName: 'Jeu' };
   const { config } = getGameEngine(gameName);
@@ -473,12 +225,12 @@ export default function NewGameScreen({ route, navigation }: any) {
             )}
           </View>
 
-          <View style={styles.playerList}>
+          <View>
             {players.map((player, index) => (
               <View
                 key={index}
                 style={[
-                  styles.cardRow,
+                  [styles.card, styles.cardRow],
                   focusedKey === `p${index}` && styles.playerCardFocused,
                   duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
                 ]}
@@ -592,36 +344,36 @@ export default function NewGameScreen({ route, navigation }: any) {
           </Text>
 
           {config.scoreLimit != null && (
-            <Pressable style={styles.paramCard} onPress={() => setScoreLimitModalVisible(true)}>
+            <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
               </View>
-              <Text style={styles.paramLabel}>{t.scoreLimit}</Text>
-              <Text style={styles.paramValue}>{sessionScoreLimit} pts</Text>
+              <Text style={[styles.body, { flex: 1 }]}>{t.scoreLimit}</Text>
+              <Text style={styles.itemTitle}>{sessionScoreLimit} pts</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
             </Pressable>
           )}
 
           {config.roundLimit != null && (
             <Pressable
-              style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}
+              style={[[styles.card, styles.cardRow], config.scoreLimit != null && { marginTop: 8 }]}
               onPress={() => setRoundLimitModalVisible(true)}
             >
               <View style={styles.iconBoxSm}>
                 <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
               </View>
-              <Text style={styles.paramLabel}>{t.roundLimit}</Text>
-              <Text style={styles.paramValue}>{sessionRoundLimit}</Text>
+              <Text style={[styles.body, { flex: 1 }]}>{t.roundLimit}</Text>
+              <Text style={styles.itemTitle}>{sessionRoundLimit}</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
             </Pressable>
           )}
 
           {!!config.quickActions?.length && (
-            <View style={[styles.paramCard, config.scoreLimit != null && { marginTop: 8 }]}>
+            <View style={[[styles.card, styles.cardRow], config.scoreLimit != null && { marginTop: 8 }]}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="flash-outline" size={18} color={colors.textSecondary} />
               </View>
-              <Text style={styles.paramLabel}>{t.announcements}</Text>
+              <Text style={[styles.body, { flex: 1 }]}>{t.announcements}</Text>
               <Switch
                 value={quickActionsEnabled}
                 onValueChange={setQuickActionsEnabled}
@@ -643,7 +395,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         onPress={startGame}
         disabled={!isValidPlayerCount || duplicateNames.size > 0}
       >
-        <Text style={styles.btnPrimaryTextBig}>
+        <Text style={styles.btnPrimaryText}>
           {t.newGame}
         </Text>
       </Pressable>
@@ -652,33 +404,33 @@ export default function NewGameScreen({ route, navigation }: any) {
         {t.gameRules}
       </Text>
 
-      <View style={styles.rulesCard}>
+      <View style={styles.card}>
 
         <View style={styles.rulesCardHeader}>
           {config.image && (
             <Image source={config.image} style={styles.rulesImage} resizeMode="cover" />
           )}
           <View style={styles.rulesCardMeta}>
-            <Text style={styles.rulesGameName}>{config.name}</Text>
+            <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{config.name}</Text>
             <View style={styles.rulesInfoRow}>
               <Ionicons name="people-outline" size={13} color={colors.textMuted} />
-              <Text style={styles.rulesInfoText}>
+              <Text style={styles.muted}>
                 {config.minPlayers === config.maxPlayers
                   ? config.minPlayers
                   : `${config.minPlayers}-${config.maxPlayers}`}
               </Text>
               {config.estimatedDuration && (
                 <>
-                  <Text style={styles.rulesBullet}>·</Text>
+                  <Text style={styles.muted}>·</Text>
                   <Ionicons name="time-outline" size={13} color={colors.textMuted} />
-                  <Text style={styles.rulesInfoText}>{config.estimatedDuration} min</Text>
+                  <Text style={styles.muted}>{config.estimatedDuration} min</Text>
                 </>
               )}
               {config.age && (
                 <>
-                  <Text style={styles.rulesBullet}>·</Text>
+                  <Text style={styles.muted}>·</Text>
                   <Ionicons name="person-outline" size={13} color={colors.textMuted} />
-                  <Text style={styles.rulesInfoText}>{config.age}</Text>
+                  <Text style={styles.muted}>{config.age}</Text>
                 </>
               )}
             </View>
@@ -686,7 +438,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         </View>
 
         {config.description && (
-          <Text style={styles.rulesDescription}>{config.description}</Text>
+          <Text style={[styles.caption, { lineHeight: 18 }]}>{config.description}</Text>
         )}
 
         {config.detailedRules && (
@@ -698,7 +450,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                 setRulesExpanded(!rulesExpanded);
               }}
             >
-              <Text style={styles.expandText}>
+              <Text style={styles.addBtnText}>
                 {rulesExpanded ? t.hideRules : t.showRules}
               </Text>
               <Ionicons
@@ -708,7 +460,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               />
             </Pressable>
             {rulesExpanded && (
-              <Text style={styles.rulesDetailed}>{config.detailedRules}</Text>
+              <Text style={[styles.caption, { marginTop: 10, lineHeight: 20 }]}>{config.detailedRules}</Text>
             )}
           </>
         )}
@@ -718,7 +470,7 @@ export default function NewGameScreen({ route, navigation }: any) {
     <Modal visible={favSheetVisible} transparent animationType="slide">
       <Pressable style={styles.overlay} onPress={() => setFavSheetVisible(false)}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <Text style={styles.favSheetTitle}>{t.fromFavorites}</Text>
+          <Text style={[styles.labelPrimary, { marginBottom: 4 }]}>{t.fromFavorites}</Text>
           {favorites.map((name, i) => (
             <Pressable
               key={name}
@@ -730,9 +482,9 @@ export default function NewGameScreen({ route, navigation }: any) {
               onPress={() => selectFavorite(name)}
             >
               <View style={[styles.favAvatar, { backgroundColor: avatarPalette[i % avatarPalette.length] }]}>
-                <Text style={styles.favAvatarText}>{name.slice(0, 2).toUpperCase()}</Text>
+                <Text style={styles.avatarText}>{name.slice(0, 2).toUpperCase()}</Text>
               </View>
-              <Text style={styles.favName}>{name}</Text>
+              <Text style={[styles.bodyMedium, { flex: 1 }]}>{name}</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
             </Pressable>
           ))}

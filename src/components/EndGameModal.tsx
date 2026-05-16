@@ -4,15 +4,13 @@ import {
   Text,
   Modal,
   Pressable,
-  StyleSheet,
   ScrollView,
   Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeEndGameModalStyles } from '../theme/styles';
 import IconStar from './icons/IconStar';
 import IconCrown from './icons/IconCrown';
 import IconReload from './icons/IconReload';
@@ -157,162 +155,6 @@ function Confetti({ visible }: { visible: boolean }) {
 
 const SCROLL_THRESHOLD = 6;
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    overlay: {
-      flex: 1,
-      backgroundColor: c.overlay,
-      justifyContent: 'center',
-      paddingHorizontal: 20,
-    },
-    card: {
-      backgroundColor: c.card,
-      borderRadius: 24,
-      paddingHorizontal: 20,
-      paddingTop: 28,
-      paddingBottom: 24,
-    },
-    titleRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      marginBottom: 6,
-    },
-    title: {
-      fontSize: 22,
-      fontWeight: '800',
-      color: c.text,
-      letterSpacing: -0.5,
-    },
-    subtitle: {
-      fontSize: 14,
-      color: c.textMuted,
-      textAlign: 'center',
-      marginBottom: 20,
-    },
-    rankingList: {
-      gap: 8,
-      marginBottom: 24,
-    },
-    rankingScroll: {
-      maxHeight: 320,
-      marginBottom: 24,
-    },
-    rankingScrollContent: {
-      gap: 8,
-    },
-    winnerCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderRadius: 12,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      gap: 14,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 25 },
-      shadowOpacity: 0.25,
-      shadowRadius: 50,
-      elevation: 12,
-    },
-    winnerIconBox: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: c.gold,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    winnerInfo: {
-      flex: 1,
-    },
-    winnerName: {
-      fontSize: 17,
-      fontWeight: '800',
-      color: c.textOnLight,
-    },
-    winnerLabel: {
-      fontSize: 11,
-      fontWeight: '700',
-      color: c.textOnLight,
-      letterSpacing: 0.8,
-      marginTop: 2,
-    },
-    winnerScoreBox: {
-      alignItems: 'flex-end',
-    },
-    winnerScore: {
-      fontSize: 26,
-      fontWeight: '800',
-      color: c.textOnLight,
-      lineHeight: 28,
-    },
-    winnerUnit: {
-      fontSize: 10,
-      fontWeight: '600',
-      color: c.textOnLight,
-      letterSpacing: 0.5,
-    },
-    rankRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.background,
-      borderRadius: 14,
-      paddingHorizontal: 14,
-      paddingVertical: 12,
-      gap: 12,
-    },
-    badge: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      backgroundColor: c.searchBackground,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    badgeText: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: c.textSecondary,
-    },
-    playerName: {
-      flex: 1,
-      fontSize: 15,
-      fontWeight: '400',
-      color: c.text,
-    },
-    scoreInfo: {
-      alignItems: 'flex-end',
-    },
-    score: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: c.text,
-    },
-    scoreUnit: {
-      fontSize: 10,
-      fontWeight: '400',
-      color: c.textMuted,
-      letterSpacing: 0.5,
-    },
-    replayBtnLayout: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      marginBottom: 16,
-    },
-    homeBtnLayout: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      paddingVertical: 16,
-      borderRadius: 16,
-    },
-  }),
-});
 
 export default function EndGameModal({
   visible,
@@ -322,7 +164,7 @@ export default function EndGameModal({
 }: Props) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeEndGameModalStyles(colors), [colors]);
   const needsScroll = ranking.length > SCROLL_THRESHOLD;
 
   const renderRanking = () =>
@@ -338,15 +180,15 @@ export default function EndGameModal({
             style={styles.winnerCard}
           >
             <View style={styles.winnerIconBox}>
-              <IconCrown size={22} color={colors.white} />
+              <IconCrown size={24} color={colors.white} />
             </View>
             <View style={styles.winnerInfo}>
-              <Text style={styles.winnerName}>{player.name}</Text>
               <Text style={styles.winnerLabel}>{t.winner}</Text>
+              <Text style={styles.winnerName}>{player.name}</Text>
             </View>
             <View style={styles.winnerScoreBox}>
               <Text style={styles.winnerScore}>{player.score}</Text>
-              <Text style={styles.winnerUnit}>PTS</Text>
+              <Text style={styles.winnerUnit}>pts</Text>
             </View>
           </LinearGradient>
         );
@@ -356,10 +198,9 @@ export default function EndGameModal({
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{index + 1}</Text>
           </View>
-          <Text style={styles.playerName}>{player.name}</Text>
-          <View style={styles.scoreInfo}>
-            <Text style={styles.score}>{player.score}</Text>
-            <Text style={styles.scoreUnit}>PTS</Text>
+          <Text style={[styles.body, { flex: 1 }]}>{player.name}</Text>
+          <View>
+            <Text style={styles.itemTitle}>{player.score} pts</Text>
           </View>
         </View>
       );
@@ -368,20 +209,20 @@ export default function EndGameModal({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <View style={styles.card}>
+        <View style={styles.modalCardEnd}>
 
           {/* Confetti centré sur le titre */}
           <View style={{ alignItems: 'center', marginBottom: 6 }}>
             <View style={{ position: 'relative' }}>
               <Confetti visible={visible} />
-              <View style={styles.titleRow}>
+              <View style={styles.endTitleRow}>
                 <IconStar size={22} color={colors.gold} />
-                <Text style={styles.title}>{t.gameOver}</Text>
+                <Text style={[styles.heading, { letterSpacing: -1 }]}>{t.gameOver}</Text>
                 <IconStar size={22} color={colors.gold} />
               </View>
             </View>
           </View>
-          <Text style={styles.subtitle}>{t.finalRanking}</Text>
+          <Text style={[styles.muted, { textAlign: 'center', marginBottom: 20 }]}>{t.finalRanking}</Text>
 
           {/* Classement */}
           {needsScroll ? (

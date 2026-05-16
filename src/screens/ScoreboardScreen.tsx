@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Pressable,
-  StyleSheet,
   Modal,
   useWindowDimensions,
 } from 'react-native';
@@ -17,195 +16,17 @@ import { RankingItem } from '../core/types';
 import { saveGameToHistory } from '../storage/historyStorage';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeScoreboardStyles } from '../theme/styles';
 
 const ROUND_COL = 36;
 const PLAYER_COL = 90;
 const HEADER_H = 108;
 const ROW_H = 56;
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    tableCard: {
-      overflow: 'hidden',
-      backgroundColor: c.card,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
-      shadowRadius: 8,
-      elevation: 3,
-    },
-    leftCol: {
-      zIndex: 2,
-      backgroundColor: c.card,
-      shadowColor: c.shadow,
-      shadowOffset: { width: 4, height: 0 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
-      elevation: 4,
-    },
-    cornerCell: {
-      width: ROUND_COL,
-      height: HEADER_H,
-      backgroundColor: c.card,
-    },
-    roundCell: {
-      width: ROUND_COL,
-      height: ROW_H,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderTopWidth: 1,
-      borderTopColor: c.border,
-    },
-    roundNum: {
-      fontSize: 14,
-      fontWeight: '400',
-      color: c.textMuted,
-    },
-    playerHeaderCol: {
-      width: PLAYER_COL,
-      height: HEADER_H,
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4,
-      paddingVertical: 14,
-      borderLeftWidth: 1,
-      borderLeftColor: c.card,
-      backgroundColor: c.card,
-    },
-    avatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 22,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    avatarText: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: c.textSecondary,
-    },
-    playerName: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: c.textSecondary,
-      maxWidth: PLAYER_COL - 8,
-      textAlign: 'center',
-    },
-    totalScore: {
-      fontSize: 18,
-      fontWeight: '800',
-      letterSpacing: -0.5,
-    },
-    scoreCell: {
-      width: PLAYER_COL,
-      height: ROW_H,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderTopWidth: 1,
-      borderTopColor: c.border,
-      borderLeftWidth: 1,
-      borderLeftColor: c.border,
-    },
-    scoreValue: {
-      fontSize: 15,
-      color: c.text,
-    },
-    scoreEmpty: {
-      color: c.textMuted,
-    },
-    addRoundBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 6,
-      marginTop: 28,
-      paddingVertical: 8,
-    },
-    addRoundText: {
-      color: c.primary,
-      fontSize: 15,
-      fontWeight: '600',
-    },
-    endSection: {
-      paddingVertical: 16,
-      paddingHorizontal: 20,
-      gap: 10,
-      alignItems: 'center',
-    },
-    endGameBtn: {
-      width: '100%',
-      paddingVertical: 15,
-      borderRadius: 16,
-      backgroundColor: c.primary,
-      alignItems: 'center',
-      shadowColor: c.shadowPrimary,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 1,
-      shadowRadius: 0,
-      elevation: 10,
-      marginBottom: 24,
-    },
-    endGameBtnText: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.white,
-    },
-    endLink: {
-      fontSize: 13,
-      color: c.textMuted,
-    },
-    rulesSheet: {
-      backgroundColor: c.card,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      paddingBottom: 40,
-      maxHeight: '70%',
-    },
-    rulesSheetHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-    },
-    rulesSheetTitle: {
-      fontSize: 17,
-      fontWeight: '700',
-      color: c.text,
-    },
-    rulesDescription: {
-      fontSize: 14,
-      color: c.textSecondary,
-      lineHeight: 20,
-      marginBottom: 12,
-    },
-    rulesDetailed: {
-      fontSize: 13,
-      color: c.textSecondary,
-      lineHeight: 20,
-    },
-    exitTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: c.text,
-      marginBottom: 8,
-    },
-    exitSubtitle: {
-      fontSize: 14,
-      color: c.textSecondary,
-      marginBottom: 28,
-    },
-  }),
-});
-
 export default function ScoreboardScreen({ route, navigation }: any) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeScoreboardStyles(colors, ROUND_COL, PLAYER_COL, HEADER_H, ROW_H), [colors]);
 
   const { players, gameName, teamColors, sessionScoreLimit, sessionRoundLimit, sessionQuickActions } = route.params;
   const engine = getGameEngine(gameName);
@@ -233,7 +54,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     colors.avatarCiel, colors.avatarBleu, colors.avatarViole, colors.avatarFuchsia,
   ];
   const getAvatarColor = (i: number) => teamColors?.[i] ?? avatarPalette[i % avatarPalette.length];
-  const getAvatarTextColor = (i: number) => teamColors?.[i] ? colors.white : colors.textSecondary;
+  const getAvatarTextColor = (i: number) => teamColors?.[i] ? colors.white : colors.white;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -332,7 +153,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
               <View style={styles.cornerCell} />
               {Array.from({ length: numberOfRounds }, (_, i) => (
                 <View key={i} style={styles.roundCell}>
-                  <Text style={styles.roundNum}>{i + 1}</Text>
+                  <Text style={styles.muted}>{i + 1}</Text>
                 </View>
               ))}
             </View>
@@ -368,7 +189,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
                           setModalVisible(true);
                         }}
                       >
-                        <Text style={[styles.scoreValue, scores[playerIndex][roundIndex] === null && styles.scoreEmpty]}>
+                        <Text style={[styles.body, scores[playerIndex][roundIndex] === null && styles.scoreEmpty]}>
                           {scores[playerIndex][roundIndex] ?? '–'}
                         </Text>
                       </Pressable>
@@ -384,7 +205,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
         <Pressable style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
           <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
-          <Text style={styles.addRoundText}>{t.addRound}</Text>
+          <Text style={styles.addBtnText}>{t.addRound}</Text>
         </Pressable>
 
       </ScrollView>
@@ -392,7 +213,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       <View style={styles.endSection}>
         {!hasAutoEnd && (
           <Pressable style={({ pressed }) => [styles.endGameBtn, pressed && styles.pressed]} onPress={endGameManually}>
-            <Text style={styles.endGameBtnText}>{t.endGameBtn}</Text>
+            <Text style={styles.btnPrimaryText}>{t.endGameBtn}</Text>
           </Pressable>
         )}
       </View>
@@ -403,7 +224,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           <View style={styles.rulesSheet}>
 
             <View style={styles.rulesSheetHeader}>
-              <Text style={styles.rulesSheetTitle}>
+              <Text style={styles.subheading}>
                 {t.rules} {config.name ? `– ${config.name}` : ''}
               </Text>
               <Pressable onPress={() => setRulesModalVisible(false)}>
@@ -413,10 +234,10 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {config.description && (
-                <Text style={styles.rulesDescription}>{config.description}</Text>
+                <Text style={[styles.caption, { lineHeight: 20, marginBottom: 12 }]}>{config.description}</Text>
               )}
               {config.detailedRules && (
-                <Text style={styles.rulesDetailed}>{config.detailedRules}</Text>
+                <Text style={[styles.caption, { lineHeight: 20 }]}>{config.detailedRules}</Text>
               )}
             </ScrollView>
 
@@ -429,8 +250,8 @@ export default function ScoreboardScreen({ route, navigation }: any) {
         <View style={styles.overlayCenter}>
           <View style={styles.modalCard}>
 
-            <Text style={styles.exitTitle}>{t.quitGame}</Text>
-            <Text style={styles.exitSubtitle}>{t.progressLost}</Text>
+            <Text style={[styles.subheading, { marginBottom: 8 }]}>{t.quitGame}</Text>
+            <Text style={[styles.caption, { marginBottom: 28 }]}>{t.progressLost}</Text>
 
             <View style={styles.buttons}>
               <Pressable

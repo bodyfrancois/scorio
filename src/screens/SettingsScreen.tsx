@@ -30,16 +30,16 @@ export default function SettingsScreen() {
 
         {/* ── LANGUE ── */}
         <Text style={styles.sectionLabel}>{t.language}</Text>
-        <View style={styles.cardList}>
+        <View style={styles.card}>
 
           <Pressable
             style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
             onPress={() => setLanguage('fr')}
           >
-            <View style={styles.listRowIcon}>
+            <View style={[styles.iconBoxSm, { marginRight: 12 }]}>
               <Text style={{ fontSize: 18 }}>🇫🇷</Text>
             </View>
-            <Text style={[styles.listRowLabel, language === 'fr' && { color: colors.primary, fontWeight: '600' }]}>
+            <Text style={[styles.body, language === 'fr' && { color: colors.primary, fontWeight: '600' }]}>
               {t.french}
             </Text>
             {language === 'fr' && (
@@ -53,10 +53,10 @@ export default function SettingsScreen() {
             style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
             onPress={() => setLanguage('en')}
           >
-            <View style={styles.listRowIcon}>
+            <View style={[styles.iconBoxSm, { marginRight: 12 }]}>
               <Text style={{ fontSize: 18 }}>🇬🇧</Text>
             </View>
-            <Text style={[styles.listRowLabel, language === 'en' && { color: colors.primary, fontWeight: '600' }]}>
+            <Text style={[styles.body, language === 'en' && { color: colors.primary, fontWeight: '600' }]}>
               {t.english}
             </Text>
             {language === 'en' && (
@@ -68,16 +68,16 @@ export default function SettingsScreen() {
 
         {/* ── APPARENCE ── */}
         <Text style={styles.sectionLabel}>{t.appearance}</Text>
-        <View style={styles.cardList}>
+        <View style={styles.card}>
           <View style={styles.listRow}>
-            <View style={styles.listRowIcon}>
+            <View style={[styles.iconBoxSm, { marginRight: 12 }]}>
               <Ionicons
                 name={isDark ? 'moon' : 'sunny-outline'}
                 size={18}
                 color={colors.textSecondary}
               />
             </View>
-            <Text style={styles.listRowLabel}>{t.darkMode}</Text>
+            <Text style={[styles.body, { flex: 1 }]}>{t.darkMode}</Text>
             <Switch
               value={isDark}
               onValueChange={toggleDark}

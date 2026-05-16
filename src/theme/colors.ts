@@ -5,6 +5,10 @@ export const lightColors = {
   primarySubtle:       '#F2EDFA',
   winnerGradientStart: '#AD7BF8',   // dégradé carte vainqueur (début)
 
+  secondary:           '#F59E0B',
+  secondaryText:      '#712a00',
+  secondarySubtle:     '#fff0c4',
+
   // ── Fonds ────────────────────────────────────────────────
   background:          '#F6F6F8',
   card:                '#FFFFFF',
@@ -38,6 +42,7 @@ export const lightColors = {
   // ── Ombres ───────────────────────────────────────────────
   shadowCard:          '#000000',   // ombre des cartes (iOS)
   shadowPrimary:       '#410872',   // ombre des boutons primaires (iOS)
+  shadowSecondary:     '#712a00',
   borderSubtle:        'rgba(0, 0, 0, 0.05)',  // bordure subtile des cartes
 
   // ── Or / Récompenses ─────────────────────────────────────
@@ -46,14 +51,14 @@ export const lightColors = {
   goldText:            '#D97706',   // texte badge 1ère place
 
   // ── Avatars (pastels) ────────────────────────────────────
-  avatarRose:          '#ffeded',
-  avatarPeche:         '#fff1db',
-  avatarJaune:         '#FEF3C7',
-  avatarVert:          '#D1FAE5',
-  avatarCiel:          '#d5f6fd',
-  avatarBleu:          '#dde1fe',
-  avatarViole:         '#F2EDFA',
-  avatarFuchsia:       '#ffd9f3',
+  avatarRose:          '#005f73',
+  avatarPeche:         '#0a9396',
+  avatarJaune:         '#94d2bd',
+  avatarVert:          '#e9d8a6',
+  avatarCiel:          '#ee9b00',
+  avatarBleu:          '#ca6702',
+  avatarViole:         '#bb3e03',
+  avatarFuchsia:       '#ae2012',
 };
 
 export const colors = lightColors;
@@ -64,6 +69,10 @@ export const darkColors: typeof lightColors = {
   primaryLight:        '#4A2E8A',
   primarySubtle:       '#2D1F4A',
   winnerGradientStart: '#B88AF8',
+
+  secondary:           '#f6c020',
+  secondaryText:      '#4D3800',
+  secondarySubtle:     '#2D2000',
 
   // ── Fonds ────────────────────────────────────────────────
   background:          '#0F172A',
@@ -97,7 +106,8 @@ export const darkColors: typeof lightColors = {
 
   // ── Ombres ───────────────────────────────────────────────
   shadowCard:          '#FFFFFF',  // pas d'ombre iOS en dark (contraste par fond)
-  shadowPrimary:       '#090E1A',  // pas d'ombre iOS en dark
+  shadowPrimary:       '#090E1A',  // pas d'ombre iOS en dark  
+  shadowSecondary:     '#77611d',
   borderSubtle:        'rgba(255, 255, 255, 0.08)',  // bordure légère sur fond sombre
 
   // ── Or / Récompenses ─────────────────────────────────────

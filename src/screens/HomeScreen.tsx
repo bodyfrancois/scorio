@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   ScrollView,
   TextInput,
@@ -15,117 +14,14 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { getAvailableGames } from '../core/gameEngine';
 import { RootStackParamList } from '../types/navigations';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeHomeStyles } from '../theme/styles';
 import { IllustrationCartes } from './HistoryScreen';
-
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    searchWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.searchBackground,
-      borderRadius: 16,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      gap: 8,
-      marginBottom: 28,
-      height: 50,
-    },
-    searchInput: {
-      flex: 1,
-      fontSize: 15,
-      color: c.text,
-      padding: 0,
-    },
-    cardPressed: {
-      opacity: 0.85,
-    },
-    gameImage: {
-      width: 72,
-      height: 72,
-      borderRadius: 12,
-      marginRight: 14,
-      borderWidth: 1,
-      borderColor: c.border,
-    },
-    cardContent: {
-      flex: 1,
-    },
-    gameTitle: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: c.text,
-      marginBottom: 6,
-    },
-    gameInfoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    infoText: {
-      fontSize: 13,
-      color: c.textSecondary,
-    },
-    bullet: {
-      fontSize: 13,
-      color: c.iconMuted,
-    },
-    noResult: {
-      textAlign: 'center',
-      marginTop: 32,
-      color: c.textMuted,
-      fontSize: 14,
-    },
-    footer: {
-      marginTop: 40,
-      alignItems: 'center',
-      gap: 8,
-    },
-    footerLogo: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      marginBottom: 4,
-    },
-    footerLogoIcon: {
-      width: 26,
-      height: 26,
-      borderRadius: 6,
-      backgroundColor: c.primaryLight,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    footerLogoLetter: {
-      color: c.card,
-      fontWeight: '800',
-      fontSize: 14,
-    },
-    footerLogoText: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: c.textMuted,
-    },
-    footerTagline: {
-      fontSize: 12,
-      color: c.textMuted,
-      textAlign: 'center',
-      lineHeight: 18,
-    },
-    footerLink: {
-      fontSize: 12,
-      color: c.textMuted,
-      textDecorationLine: 'underline',
-    },
-  }),
-});
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeHomeStyles(colors), [colors]);
 
   const games = getAvailableGames();
   const [searchQuery, setSearchQuery] = useState('');
@@ -165,7 +61,7 @@ export default function HomeScreen() {
       {filteredGames.length === 0 && (
         <View style={{ alignItems: 'center', marginTop: 32 }}>
           <IllustrationCartes colors={colors} />
-          <Text style={styles.noResult}>{t.noResult}</Text>
+          <Text style={styles.muted}>{t.noResult}</Text>
         </View>
       )}
 
@@ -173,7 +69,7 @@ export default function HomeScreen() {
         <Pressable
           key={game.name}
           style={({ pressed }) => [
-            styles.card,
+            [styles.card, styles.cardRow],
             pressed && styles.cardPressed,
           ]}
           onPress={() => handleStartGame(game.name)}
@@ -187,11 +83,11 @@ export default function HomeScreen() {
           )}
 
           <View style={styles.cardContent}>
-            <Text style={styles.gameTitle}>{game.name}</Text>
+            <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{game.name}</Text>
 
             <View style={styles.gameInfoRow}>
               <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
-              <Text style={styles.infoText}>
+              <Text style={styles.caption}>
                 {game.minPlayers === game.maxPlayers
                   ? game.minPlayers
                   : `${game.minPlayers}-${game.maxPlayers}`}
@@ -199,9 +95,9 @@ export default function HomeScreen() {
 
               {game.estimatedDuration && (
                 <>
-                  <Text style={styles.bullet}>·</Text>
+                  <Text style={styles.muted}>·</Text>
                   <Ionicons name="time-outline" size={13} color={colors.textSecondary} />
-                  <Text style={styles.infoText}>
+                  <Text style={styles.caption}>
                     {game.estimatedDuration} min
                   </Text>
                 </>

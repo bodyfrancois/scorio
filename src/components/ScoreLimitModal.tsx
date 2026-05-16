@@ -4,13 +4,11 @@ import {
   Text,
   Pressable,
   Modal,
-  StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeSharedStyles } from '../theme/styles';
+import { makeScoreLimitModalStyles } from '../theme/styles';
 
 type Props = {
   visible: boolean;
@@ -30,53 +28,6 @@ const PAD_ROWS = [
   ['⌫', '0', null],
 ];
 
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-  ...StyleSheet.create({
-    keypad: {
-      gap: 8,
-      marginBottom: 20,
-    },
-    title: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: c.primary,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-      marginBottom: 6,
-    },
-    subtitle: {
-      fontSize: 15,
-      color: c.textSecondary,
-      marginBottom: 20,
-    },
-    display: {
-      flexDirection: 'row',
-      alignItems: 'baseline',
-      justifyContent: 'center',
-      gap: 6,
-      marginBottom: 16,
-      paddingVertical: 12,
-      backgroundColor: c.background,
-      borderRadius: 24,
-    },
-    displayValue: {
-      fontSize: 40,
-      fontWeight: '800',
-      color: c.text,
-      letterSpacing: -1,
-    },
-    displayPlaceholder: {
-      color: c.textMuted,
-    },
-    displayUnit: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: c.textMuted,
-      paddingBottom: 4,
-    },
-  }),
-});
 
 export default function ScoreLimitModal({
   visible,
@@ -90,7 +41,7 @@ export default function ScoreLimitModal({
 }: Props) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeScoreLimitModalStyles(colors), [colors]);
 
   const title = titleProp ?? t.scoreLimitTitle;
   const subtitle = subtitleProp ?? t.scoreLimitSubtitle;
@@ -131,8 +82,8 @@ export default function ScoreLimitModal({
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          <Text style={[styles.labelPrimary, { marginBottom: 6 }]}>{title}</Text>
+          <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>{subtitle}</Text>
 
           <View style={styles.display}>
             <Text style={[styles.displayValue, !input && styles.displayPlaceholder]}>
@@ -141,7 +92,7 @@ export default function ScoreLimitModal({
             <Text style={styles.displayUnit}>{unit}</Text>
           </View>
 
-          <View style={styles.keypad}>
+          <View style={styles.keypadModal}>
             {PAD_ROWS.map((row, ri) => (
               <View key={ri} style={styles.keyRow}>
                 {row.map((key, ci) => {
