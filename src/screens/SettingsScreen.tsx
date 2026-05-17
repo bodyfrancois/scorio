@@ -1,20 +1,16 @@
 import React, { useMemo, useLayoutEffect } from 'react';
-import { View, Text, Switch, Pressable, ScrollView } from 'react-native';
+import { View, Text, Switch, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
 import { makeSharedStyles } from '../theme/styles';
-
-const makeStyles = (c: typeof lightColors) => ({
-  ...makeSharedStyles(c),
-});
+import SelectableRow from '../components/SelectableRow';
 
 export default function SettingsScreen() {
   const { colors, isDark, toggleDark, language, setLanguage } = useTheme();
   const t = useTranslation(language);
-  const styles = useMemo(() => makeStyles(colors), [colors]);
+  const styles = useMemo(() => makeSharedStyles(colors), [colors]);
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -31,39 +27,19 @@ export default function SettingsScreen() {
         {/* ── LANGUE ── */}
         <Text style={styles.sectionLabel}>{t.language}</Text>
         <View style={styles.card}>
-
-          <Pressable
-            style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
+          <SelectableRow
+            icon={<Text style={{ fontSize: 18 }}>🇫🇷</Text>}
+            label={t.french}
+            selected={language === 'fr'}
             onPress={() => setLanguage('fr')}
-          >
-            <View style={[styles.iconBoxSm, { marginRight: 12 }]}>
-              <Text style={{ fontSize: 18 }}>🇫🇷</Text>
-            </View>
-            <Text style={[styles.body, language === 'fr' && { color: colors.primary, fontWeight: '600' }]}>
-              {t.french}
-            </Text>
-            {language === 'fr' && (
-              <Ionicons name="checkmark" size={18} color={colors.primary} style={{ marginLeft: 8 }} />
-            )}
-          </Pressable>
-
+          />
           <View style={styles.listRowDivider} />
-
-          <Pressable
-            style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
+          <SelectableRow
+            icon={<Text style={{ fontSize: 18 }}>🇬🇧</Text>}
+            label={t.english}
+            selected={language === 'en'}
             onPress={() => setLanguage('en')}
-          >
-            <View style={[styles.iconBoxSm, { marginRight: 12 }]}>
-              <Text style={{ fontSize: 18 }}>🇬🇧</Text>
-            </View>
-            <Text style={[styles.body, language === 'en' && { color: colors.primary, fontWeight: '600' }]}>
-              {t.english}
-            </Text>
-            {language === 'en' && (
-              <Ionicons name="checkmark" size={18} color={colors.primary} style={{ marginLeft: 8 }} />
-            )}
-          </Pressable>
-
+          />
         </View>
 
         {/* ── APPARENCE ── */}

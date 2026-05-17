@@ -20,6 +20,7 @@ Speedbac est un jeu d'ambiance drôle mais pas vulgaire qui stimule la répartie
 
 Parfait entre potes & adultes !
 
+---
 
 2. Comment on joue ?
 
@@ -29,7 +30,10 @@ Soyez rapides car 3 réponses sont acceptées par tour, pas plus !
 
 Mais attention : si la majorité refuse votre réponse, vous reprenez votre lettre et en piochez une autre en pénalité. Le premier qui pose toutes ses lettres gagne !
 
+---
+
 3. Points forts :
+
  - Des règles qui s'expliquent en 1 minute,
  - Des parties ultra rapides et nerveuses,
  - 224 thèmes loufoques, des réponses incongrues... des débats hilarants !

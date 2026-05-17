@@ -3,43 +3,31 @@ import React, {
   useMemo,
   useCallback,
   useLayoutEffect,
-  useEffect,
 } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
-  Image,
-  Modal,
 } from 'react-native';
 import Svg, { Path, Text as SvgText } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
-import { makeStatsStyles, makeSharedStyles } from '../theme/styles';
+import { makeStatsStyles } from '../theme/styles';
 import { getHistory, GameHistoryItem } from '../storage/historyStorage';
-import { getGameConfig } from '../games/registry';
 import {
   computeStats,
-  PlayerStats,
-  GameStats,
   DonutSlice,
   DateFilter,
 } from '../utils/statsEngine';
-
+import PlayerCard from '../components/PlayerCard';
+import EmptyState from '../components/EmptyState';
+import FilterModal, { FilterState } from '../components/FilterModal';
+import InfoRow from '../components/InfoRow';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
-
-const MOIS_LABELS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-const MOIS_LABELS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-const MEDAL_COLORS   = ['#F59E0B', '#94A3B8', '#CD7F32'];
-const MEDAL_BG_LIGHT = ['#FEF3C7', '#F1F5F9', '#FDF0E6'];
-const MEDAL_BG_DARK  = ['#3B2A00', '#1E293B', '#2A1500'];
-
 
 const DONUT_PALETTE = ['#4d2983', '#0a9396', '#94d2bd', '#ee9b00', '#bb3e03'];
 const DONUT_OTHER_COLOR = '#d8d8d8';
@@ -106,237 +94,6 @@ function roundedDonutPath(
   ].join(' ');
 }
 
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-// ─── Dropdown (styles partagés) ───────────────────────────────────────────────
-
-function useDropdownStyles(c: typeof lightColors) {
-  return useMemo(() => makeSharedStyles(c), [c]);
-}
-
-// ─── Dropdown dates ───────────────────────────────────────────────────────────
-
-function Dropdown({
-  valeur,
-  options,
-  placeholder,
-  onChange,
-  colors,
-}: {
-  valeur: number | null;
-  options: { label: string; value: number }[];
-  placeholder: string;
-  onChange: (v: number | null) => void;
-  colors: typeof lightColors;
-}) {
-  const [open, setOpen] = useState(false);
-  const s = useDropdownStyles(colors);
-  const label = options.find((o) => o.value === valeur)?.label ?? null;
-
-  return (
-    <>
-      <Pressable
-        style={[s.ddInput, open && s.ddInputOpen]}
-        onPress={() => setOpen((o) => !o)}
-      >
-        <Text style={[s.ddPlaceholder, label !== null && { color: colors.text, fontWeight: '500' }]}>
-          {label ?? placeholder}
-        </Text>
-        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
-      </Pressable>
-      {open && (
-        <View style={s.ddList}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Pressable style={s.ddOption} onPress={() => { onChange(null); setOpen(false); }}>
-              <Text style={[s.ddOptionText, valeur === null && s.ddOptionTextActive]}>{placeholder}</Text>
-              {valeur === null && <Ionicons name="checkmark" size={16} color={colors.primary} />}
-            </Pressable>
-            {options.map((opt) => {
-              const actif = valeur === opt.value;
-              return (
-                <Pressable
-                  key={opt.value}
-                  style={[s.ddOption, actif && s.ddOptionActive]}
-                  onPress={() => { onChange(opt.value); setOpen(false); }}
-                >
-                  <Text style={[s.ddOptionText, actif && s.ddOptionTextActive]}>{opt.label}</Text>
-                  {actif && <Ionicons name="checkmark" size={16} color={colors.primary} />}
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      )}
-    </>
-  );
-}
-
-// ─── Dropdown jeu ─────────────────────────────────────────────────────────────
-
-function DropdownJeu({
-  valeur,
-  options,
-  placeholder,
-  onChange,
-  colors,
-}: {
-  valeur: string | undefined;
-  options: string[];
-  placeholder: string;
-  onChange: (v: string | undefined) => void;
-  colors: typeof lightColors;
-}) {
-  const [open, setOpen] = useState(false);
-  const s = useDropdownStyles(colors);
-
-  return (
-    <>
-      <Pressable
-        style={[s.ddInput, open && s.ddInputOpen]}
-        onPress={() => setOpen((o) => !o)}
-      >
-        {valeur !== undefined ? (
-          <View style={s.ddValueRow}>
-            {getGameConfig(valeur)?.image && (
-              <Image source={getGameConfig(valeur)!.image} style={s.ddLogoSmall} />
-            )}
-            <Text style={s.ddValueText}>{valeur}</Text>
-          </View>
-        ) : (
-          <Text style={s.ddPlaceholder}>{placeholder}</Text>
-        )}
-        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
-      </Pressable>
-      {open && (
-        <View style={s.ddList}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Pressable style={s.ddOption} onPress={() => { onChange(undefined); setOpen(false); }}>
-              <Text style={[s.ddOptionText, valeur === undefined && s.ddOptionTextActive]}>{placeholder}</Text>
-              {valeur === undefined && <Ionicons name="checkmark" size={16} color={colors.primary} />}
-            </Pressable>
-            {options.map((opt) => {
-              const config = getGameConfig(opt);
-              const actif  = valeur === opt;
-              return (
-                <Pressable
-                  key={opt}
-                  style={[s.ddOption, actif && s.ddOptionActive]}
-                  onPress={() => { onChange(opt); setOpen(false); }}
-                >
-                  <View style={s.ddValueRow}>
-                    {config?.image && <Image source={config.image} style={s.ddLogoSmall} />}
-                    <Text style={[s.ddOptionText, actif && s.ddOptionTextActive]}>{opt}</Text>
-                  </View>
-                  {actif && <Ionicons name="checkmark" size={16} color={colors.primary} />}
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      )}
-    </>
-  );
-}
-
-// ─── Modal filtre ─────────────────────────────────────────────────────────────
-
-function ModalFiltres({
-  visible,
-  filtres,
-  filterGame,
-  gameNames,
-  availableYears,
-  onApply,
-  onClose,
-  colors,
-  t,
-  language,
-}: {
-  visible: boolean;
-  filtres: DateFilter;
-  filterGame: string | undefined;
-  gameNames: string[];
-  availableYears: number[];
-  onApply: (date: DateFilter, game: string | undefined) => void;
-  onClose: () => void;
-  colors: typeof lightColors;
-  t: any;
-  language: string;
-}) {
-  const [local, setLocal] = useState<DateFilter>(filtres);
-  const [localGame, setLocalGame] = useState<string | undefined>(filterGame);
-  useEffect(() => {
-    if (visible) { setLocal(filtres); setLocalGame(filterGame); }
-  }, [visible, filtres, filterGame]);
-
-  const moisLabels = language === 'fr' ? MOIS_LABELS_FR : MOIS_LABELS_EN;
-  const moisOptions = moisLabels.map((l, i) => ({ label: l, value: i }));
-  const anneeOptions = availableYears.map((y) => ({ label: String(y), value: y }));
-
-  const s = useMemo(() => makeSharedStyles(colors), [colors]);
-
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={s.overlay} onPress={onClose} />
-      <View style={s.sheet}>
-        <View style={s.sheetHandle} />
-        <Text style={[s.subheading, { marginBottom: 20 }]}>{t.filterGames}</Text>
-
-        {gameNames.length > 1 && (
-          <>
-            <Text style={s.sheetSectionTitle}>{t.game}</Text>
-            <DropdownJeu
-              valeur={localGame}
-              options={gameNames}
-              placeholder={t.allGames}
-              onChange={setLocalGame}
-              colors={colors}
-            />
-          </>
-        )}
-
-        <Text style={s.sheetSectionTitle}>{t.date}</Text>
-        <View style={s.sheetDateRow}>
-          <View style={s.sheetDateCol}>
-            <Dropdown
-              valeur={local.mois}
-              options={moisOptions}
-              placeholder={t.month}
-              onChange={(v) => setLocal((f) => ({ ...f, mois: v }))}
-              colors={colors}
-            />
-          </View>
-          <View style={s.sheetDateCol}>
-            <Dropdown
-              valeur={local.annee}
-              options={anneeOptions}
-              placeholder={t.year}
-              onChange={(v) => setLocal((f) => ({ ...f, annee: v }))}
-              colors={colors}
-            />
-          </View>
-        </View>
-
-        <View style={s.sheetActions}>
-          <Pressable
-            style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]}
-            onPress={() => { onApply({ mois: null, annee: null }, undefined); onClose(); }}
-          >
-            <Text style={s.btnSecondaryText}>{t.reset}</Text>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [s.btn, s.btnPrimary, pressed && s.pressed]}
-            onPress={() => { onApply(local, localGame); onClose(); }}
-          >
-            <Text style={s.btnPrimaryText}>{t.apply}</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
 // ─── Donut chart ──────────────────────────────────────────────────────────────
 
 function DonutChart({
@@ -395,7 +152,7 @@ function DonutChart({
         <SvgText x={cx} y={cy + 2} textAnchor="middle" fontSize={40} fontWeight="bold" fill={textColor}>
           {total}
         </SvgText>
-        <SvgText x={cx} y={cy + 20} textAnchor="middle" fontSize={13} fontWeight="600" fill={mutedColor}>
+        <SvgText x={cx} y={cy + 24} textAnchor="middle" fontSize={16} fontWeight="400" fill={textColor}>
           {t.statsParties}
         </SvgText>
       </Svg>
@@ -404,126 +161,14 @@ function DonutChart({
         {segments.map((seg) => (
           <View key={seg.gameName} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: seg.color }} />
-            <Text style={{ fontSize: 13, fontWeight: '500', color: textColor }}>
-              {seg.gameName}
+            <Text style={{ fontSize: 13, fontWeight: '700', color: textColor }}>
+              {seg.gameName} : {seg.count}
             </Text>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: mutedColor }}>
-              {seg.count} ({seg.percentage}%)
+            <Text style={{ fontSize: 13, fontWeight: '400', color: textColor }}>
+              ({seg.percentage}%)
             </Text>
           </View>
         ))}
-      </View>
-    </View>
-  );
-}
-
-// ─── Carte joueur ─────────────────────────────────────────────────────────────
-
-function PlayerCard({
-  player, rank, styles, colors, isDark, t, onPress,
-}: {
-  player: PlayerStats; rank: number;
-  styles: ReturnType<typeof makeStatsStyles>;
-  colors: typeof lightColors; isDark: boolean; t: any;
-  onPress: () => void;
-}) {
-  const medalColor = MEDAL_COLORS[rank] ?? colors.textMuted;
-  const medalBg    = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[rank] ?? colors.background;
-
-  return (
-    <Pressable
-      style={({ pressed }) => [styles.playerCard, pressed && { opacity: 0.72 }]}
-      onPress={onPress}
-    >
-      <View style={[styles.cardRow]}>
-        <View style={[styles.rankBadge, { backgroundColor: medalBg }]}>
-          <Text style={[styles.rankText, { color: medalColor }]}>{rank + 1}</Text>
-        </View>
-        <View style={styles.playerNameBlock}>
-          <Text style={styles.itemTitle}>{player.name}</Text>
-          <Text style={[styles.muted, { marginTop: 2 }]}>
-            {player.wins} {t.statsVictories} / {player.games} {t.statsParties}
-          </Text>
-        </View>
-        <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
-      </View>
-    </Pressable>
-  );
-}
-
-// ─── Carte jeu ────────────────────────────────────────────────────────────────
-
-function GameCard({
-  game, styles, colors, isDark, t,
-}: {
-  game: GameStats;
-  styles: ReturnType<typeof makeStatsStyles>;
-  colors: typeof lightColors; isDark: boolean; t: any;
-}) {
-  const image = (() => { try { return getGameConfig(game.name)?.image ?? null; } catch { return null; } })();
-
-  return (
-    <View style={styles.gameCard}>
-      <View style={styles.gameCardHeader}>
-        {image ? (
-          <Image source={image} style={styles.gameImage} resizeMode="cover" />
-        ) : (
-          <View style={styles.gameImagePlaceholder}>
-            <Ionicons name="game-controller" size={22} color={colors.primary} />
-          </View>
-        )}
-        <View style={styles.gameHeaderInfo}>
-          <Text style={[styles.itemTitle, { marginBottom: 4 }]}>{game.name}</Text>
-          <View style={styles.gameCountBadge}>
-            <Text style={styles.gameCountText}>{game.count} {t.statsParties}</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.gameDivider} />
-
-      <View style={styles.gameHighlights}>
-        <View style={styles.highlightCard}>
-          <View style={[styles.highlightIcon, { backgroundColor: colors.goldSubtle }]}>
-            <Ionicons name="trophy" size={14} color={colors.goldText} />
-          </View>
-          <Text style={styles.highlightLabel}>{t.statsTopPlayer}</Text>
-          <Text style={styles.highlightValue} numberOfLines={1}>{game.bestPlayer}</Text>
-          <Text style={[styles.micro, { marginTop: 2, textAlign: 'center' }]}>{game.bestPlayerWins} {t.statsVictories}</Text>
-        </View>
-
-        {game.bestScoreEntry && (
-          <View style={styles.highlightCard}>
-            <View style={[styles.highlightIcon, { backgroundColor: colors.primarySubtle }]}>
-              <Ionicons name="star" size={14} color={colors.primary} />
-            </View>
-            <Text style={styles.highlightLabel}>{t.statsBestScore}</Text>
-            <Text style={styles.highlightValue}>{game.bestScoreEntry.score} pts</Text>
-            <Text style={[styles.micro, { marginTop: 2, textAlign: 'center' }]} numberOfLines={1}>{game.bestScoreEntry.player}</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.gameDivider} />
-
-      <View style={styles.gameRankingSection}>
-        <Text style={[styles.sectionLabel, { marginBottom: 8, marginTop: 12 }]}>{t.statsPlayerRanking}</Text>
-        {game.playerRanking.map((p, i) => {
-          const medalColor = MEDAL_COLORS[i] ?? colors.textMuted;
-          const medalBg    = (isDark ? MEDAL_BG_DARK : MEDAL_BG_LIGHT)[i] ?? colors.background;
-          return (
-            <View key={p.name} style={styles.gameRankRow}>
-              <Text style={[styles.gameRankNum, i < 3 && { color: medalColor }]}>{i + 1}</Text>
-              <Text style={styles.gameRankName} numberOfLines={1}>{p.name}</Text>
-              <Text style={styles.muted}>ø {p.avgScore} pts</Text>
-              {p.wins > 0 && (
-                <View style={[styles.gameRankBadge, { backgroundColor: medalBg }]}>
-                  <Text style={[styles.gameRankBadgeText, { color: medalColor }]}>{p.wins}V</Text>
-                </View>
-              )}
-            </View>
-          );
-        })}
       </View>
     </View>
   );
@@ -537,15 +182,14 @@ export default function StatsScreen({ navigation }: any) {
   const styles = useMemo(() => makeStatsStyles(colors), [colors]);
 
   const [history, setHistory]           = useState<GameHistoryItem[]>([]);
-  const [filtres, setFiltres]           = useState<DateFilter>({ mois: null, annee: null });
-  const [filterGame, setFilterGame]     = useState<string | undefined>(undefined);
+  const [filter, setFilter]             = useState<FilterState>({ game: null, month: null, year: null });
   const [filterVisible, setFilterVisible] = useState(false);
 
   useFocusEffect(useCallback(() => {
     getHistory().then(setHistory);
   }, []));
 
-  const isFiltered = filtres.mois !== null || filtres.annee !== null || filterGame !== undefined;
+  const isFiltered = filter.game !== null || filter.month !== null || filter.year !== null;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -573,9 +217,10 @@ export default function StatsScreen({ navigation }: any) {
     [history]
   );
 
+  const dateFilter: DateFilter = { mois: filter.month, annee: filter.year };
   const stats = useMemo(
-    () => computeStats(history, filterGame, filtres),
-    [history, filterGame, filtres]
+    () => computeStats(history, filter.game ?? undefined, dateFilter),
+    [history, filter]
   );
 
   return (
@@ -586,52 +231,52 @@ export default function StatsScreen({ navigation }: any) {
         showsVerticalScrollIndicator={false}
       >
         {!stats ? (
-          <View style={styles.emptyWrap}>
-            <View style={styles.iconBoxLg}>
-              <Ionicons name="bar-chart" size={36} color={colors.primary} />
-            </View>
-            <Text style={[styles.subheading, { marginBottom: 8, textAlign: 'center' }]}>{t.statsNoHistory}</Text>
-            <Text style={[styles.muted, { textAlign: 'center', lineHeight: 20 }]}>{t.statsNoHistoryHint}</Text>
-          </View>
+          <EmptyState
+            iconName="bar-chart"
+            heading={t.statsNoHistory}
+            description={t.statsNoHistoryHint}
+          />
         ) : (
           <>
             {/* Carte KPI */}
             <View style={[styles.card, { marginBottom: 32 }]}>
 
               {/* Donut */}
-              {!filterGame && stats.donutData.length > 0 && (
+              {!filter.game && stats.donutData.length > 0 && (
                 <View style={styles.donutWrap}>
                   <DonutChart data={stats.donutData} total={stats.totalGames} isDark={isDark} t={t} />
                 </View>
               )}
 
-              <View style={styles.infoRow}>
-                <View style={styles.iconBoxPrimary}>
-                  <Ionicons name="game-controller" size={16} color={colors.primary} />
-                </View>
-                <Text style={[styles.body, { flex: 1 }]}>{t.statsTotalGames}</Text>
-                <Text style={styles.itemTitle}>{stats.totalGames}</Text>
-              </View>
-              <View style={styles.infoRowDivider} />
-              <View style={styles.infoRow}>
-                <View style={styles.iconBoxPrimary}>
-                  <Ionicons name="trophy" size={16} color={colors.primary} />
-                </View>
-                <Text style={[styles.body, { flex: 1 }]}>{t.statsMostActive}</Text>
-                <Text style={styles.itemTitle} numberOfLines={1}>{stats.players[0]?.name ?? '—'}</Text>
-              </View>
-              {!filterGame && (
-                <>
-                  <View style={styles.infoRowDivider} />
-                  <View style={styles.infoRow}>
-                    <View style={styles.iconBoxPrimary}>
-                      <Ionicons name="star" size={16} color={colors.primary} />
-                    </View>
-                    <Text style={[styles.body, { flex: 1 }]}>{t.statsMostPlayed}</Text>
-                    <Text style={styles.itemTitle} numberOfLines={1}>{stats.mostPlayedGame ?? '—'}</Text>
+              {/* KPI côte à côte : total parties + meilleur joueur */}
+              <View style={styles.kpiRow}>
+                <View style={styles.kpiBlock}>
+                  <View style={[styles.iconBoxPrimary, { backgroundColor: colors.primarySubtle }]}>
+                    <Ionicons name="game-controller" size={16} color={colors.primary} />
                   </View>
-                </>
-              )}
+                  <Text style={styles.kpiValue}>{stats.totalGames}</Text>
+                  <Text style={styles.body}>{t.statsTotalGames}</Text>
+                </View>
+                <View style={styles.kpiBlock}>
+                  <View style={[styles.iconBoxPrimary, { backgroundColor: colors.primarySubtle }]}>
+                    <Ionicons name="trophy" size={16} color={colors.primary} />
+                  </View>
+                  <Text style={styles.kpiValue} numberOfLines={1} adjustsFontSizeToFit>
+                    {stats.players[0]?.name ?? '—'}
+                  </Text>
+                  <Text style={styles.body}>{t.statsMostActive}</Text>
+                </View>
+              </View>
+              {/*!filter.game && (
+                <InfoRow
+                  iconName="star"
+                  iconBg={colors.primarySubtle}
+                  iconColor={colors.primary}
+                  label={t.statsMostPlayed}
+                  value={stats.mostPlayedGame ?? '—'}
+                  showDivider
+                />
+              )*/}
             </View>
 
             {/* Classement joueurs */}
@@ -642,12 +287,9 @@ export default function StatsScreen({ navigation }: any) {
                   {stats.players.map((player, i) => (
                     <PlayerCard
                       key={player.name}
+                      variant="stats"
                       player={player}
                       rank={i}
-                      styles={styles}
-                      colors={colors}
-                      isDark={isDark}
-                      t={t}
                       onPress={() => navigation.navigate('PlayerDetail', { player })}
                     />
                   ))}
@@ -658,17 +300,13 @@ export default function StatsScreen({ navigation }: any) {
         )}
       </ScrollView>
 
-      <ModalFiltres
+      <FilterModal
         visible={filterVisible}
-        filtres={filtres}
-        filterGame={filterGame}
-        gameNames={gameNames}
+        value={filter}
+        gameOptions={gameNames.length > 1 ? gameNames : []}
         availableYears={availableYears}
-        onApply={(date, game) => { setFiltres(date); setFilterGame(game); }}
+        onApply={setFilter}
         onClose={() => setFilterVisible(false)}
-        colors={colors}
-        t={t}
-        language={language}
       />
     </>
   );

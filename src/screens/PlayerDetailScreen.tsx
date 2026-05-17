@@ -6,6 +6,7 @@ import { useTranslation } from '../i18n';
 import { makePlayerDetailStyles } from '../theme/styles';
 import { getGameConfig } from '../games/registry';
 import { PlayerStats } from '../utils/statsEngine';
+import InfoRow from '../components/InfoRow';
 
 export default function PlayerDetailScreen({ route }: any) {
   const { player } = route.params as { player: PlayerStats };
@@ -13,30 +14,30 @@ export default function PlayerDetailScreen({ route }: any) {
   const t = useTranslation(language);
   const styles = useMemo(() => makePlayerDetailStyles(colors), [colors]);
 
-  const statRows: { icon: string; iconBg: string; iconColor: string; label: string; value: string }[] = [
+  const statRows: { iconName: string; iconBg: string; iconColor: string; label: string; value: string }[] = [
     {
-      icon: 'game-controller',
+      iconName: 'game-controller',
       iconBg: colors.primarySubtle,
       iconColor: colors.primary,
       label: t.statsTotalGames,
-      value: `${player.games} ${t.statsParties}`,
+      value: `${player.games}`,
     },
     {
-      icon: 'trophy',
-      iconBg: colors.goldSubtle,
-      iconColor: colors.goldText,
+      iconName: 'trophy',
+      iconBg: colors.primarySubtle,
+      iconColor: colors.primary,
       label: t.statsVictories,
       value: String(player.wins),
     },
     {
-      icon: 'stats-chart',
+      iconName: 'stats-chart',
       iconBg: colors.primarySubtle,
       iconColor: colors.primary,
       label: t.statsWinRate,
       value: `${player.winRate}%`,
     },
     ...(player.streak > 1 ? [{
-      icon: 'flame',
+      iconName: 'flame',
       iconBg: colors.goldSubtle,
       iconColor: colors.goldText,
       label: t.statsStreak,
@@ -52,23 +53,20 @@ export default function PlayerDetailScreen({ route }: any) {
     >
       <Text style={styles.pageTitle}>{player.name}</Text>
 
-      {/* Liste de stats */}
-      <View style={[styles.card, { marginBottom: 24 }]}>
+      <View style={[styles.card, { marginBottom: 40 }]}>
         {statRows.map((row, i) => (
-          <View key={i}>
-            {i > 0 && <View style={styles.infoRowDivider} />}
-            <View style={styles.infoRow}>
-              <View style={[styles.iconBoxPrimary, { backgroundColor: row.iconBg }]}>
-                <Ionicons name={row.icon as any} size={16} color={row.iconColor} />
-              </View>
-              <Text style={[styles.body, { flex: 1 }]}>{row.label}</Text>
-              <Text style={styles.itemTitle}>{row.value}</Text>
-            </View>
-          </View>
+          <InfoRow
+            key={i}
+            iconName={row.iconName}
+            iconBg={row.iconBg}
+            iconColor={row.iconColor}
+            label={row.label}
+            value={row.value}
+            showDivider={i > 0}
+          />
         ))}
       </View>
 
-      {/* Détail par jeu */}
       {player.gameBreakdown.length > 0 && (
         <>
           <Text style={styles.sectionLabel}>{t.statsGamesSection}</Text>
@@ -85,8 +83,8 @@ export default function PlayerDetailScreen({ route }: any) {
                     </View>
                   )}
                   <Text style={styles.gameName} numberOfLines={1}>{g.gameName}</Text>
-                  <Text style={styles.body}>
-                    {g.wins} {t.statsVictories} / {g.games} {t.statsParties}
+                  <Text style={styles.itemTitle}>
+                    {g.wins} {t.statsVictories2} / {g.games} {t.statsParties2}
                   </Text>
                 </View>
               );

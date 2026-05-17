@@ -9,33 +9,25 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import IconPen from '../components/icons/IconPen';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
-import { lightColors } from '../theme/colors';
 import { makePlayersStyles } from '../theme/styles';
 import {
   loadFavorites,
   addFavorite,
   removeFavorite,
   updateFavorite,
+  FavoritePlayer,
 } from '../storage/favoritePlayers';
-
-function getAvatarColor(name: string, colors: typeof lightColors) {
-  const palette = [
-    colors.avatarViole, colors.avatarRose, colors.avatarPeche, colors.avatarJaune,
-    colors.avatarVert, colors.avatarCiel, colors.avatarBleu, colors.avatarFuchsia,
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash += name.charCodeAt(i);
-  return palette[hash % palette.length];
-}
+import PlayerCard from '../components/PlayerCard';
+import EmptyState from '../components/EmptyState';
+import AvatarColorPicker from '../components/AvatarColorPicker';
+import { getAvatarColorByKey, getDefaultColorKeyByIndex } from '../utils/avatarColors';
 
 type ModalState =
   | { type: 'add' }
-  | { type: 'edit'; name: string }
+  | { type: 'edit'; name: string; colorKey: string }
   | { type: 'delete'; name: string }
   | null;
 
@@ -49,9 +41,10 @@ export default function PlayersScreen() {
     navigation.setOptions({ headerTitle: t.playersMenu });
   }, [navigation, t.playersMenu]);
 
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoritePlayer[]>([]);
   const [modal, setModal] = useState<ModalState>(null);
   const [inputValue, setInputValue] = useState('');
+  const [selectedColorKey, setSelectedColorKey] = useState<string>('avatarColor0');
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
@@ -61,13 +54,15 @@ export default function PlayersScreen() {
 
   const openAdd = () => {
     setInputValue('');
+    setSelectedColorKey(getDefaultColorKeyByIndex(favorites.length));
     setModal({ type: 'add' });
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  const openEdit = (name: string) => {
-    setInputValue(name);
-    setModal({ type: 'edit', name });
+  const openEdit = (player: FavoritePlayer) => {
+    setInputValue(player.name);
+    setSelectedColorKey(player.colorKey);
+    setModal({ type: 'edit', name: player.name, colorKey: player.colorKey });
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
@@ -80,10 +75,10 @@ export default function PlayersScreen() {
   const handleConfirm = async () => {
     if (!modal) return;
     if (modal.type === 'add') {
-      const updated = await addFavorite(inputValue);
+      const updated = await addFavorite(inputValue, selectedColorKey);
       setFavorites(updated);
     } else if (modal.type === 'edit') {
-      const updated = await updateFavorite(modal.name, inputValue);
+      const updated = await updateFavorite(modal.name, inputValue, selectedColorKey);
       setFavorites(updated);
     } else if (modal.type === 'delete') {
       const updated = await removeFavorite(modal.name);
@@ -95,7 +90,7 @@ export default function PlayersScreen() {
   const isAddOrEdit = modal?.type === 'add' || modal?.type === 'edit';
   const canConfirm = isAddOrEdit
     ? inputValue.trim().length > 0 &&
-      !(modal?.type === 'add' && favorites.includes(inputValue.trim()))
+      !(modal?.type === 'add' && favorites.some((p) => p.name === inputValue.trim()))
     : true;
 
   return (
@@ -107,47 +102,28 @@ export default function PlayersScreen() {
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>{t.favoritePlayers}</Text>
           <Pressable onPress={openAdd} style={styles.addBtn}>
-            <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
             <Text style={styles.addBtnText}>{t.addFavorite}</Text>
           </Pressable>
         </View>
 
         {favorites.length === 0 ? (
-          <View style={styles.emptyWrap}>
-            <View style={styles.iconBoxLg}>
-              <Ionicons name="people-outline" size={36} color={colors.primary} />
-            </View>
-            <Text style={[styles.subheading, { marginBottom: 8, textAlign: 'center' }]}>{t.noFavorites}</Text>
-            <Text style={[styles.muted, { textAlign: 'center', lineHeight: 20 }]}>{t.noFavoritesHint}</Text>
-          </View>
+          <EmptyState
+            iconName="people-outline"
+            heading={t.noFavorites}
+            description={t.noFavoritesHint}
+          />
         ) : (
-          <>
-            {favorites.map((name) => (
-              <View key={name} style={[styles.card, styles.cardRow]}>
-                <View style={[styles.avatar, { backgroundColor: getAvatarColor(name, colors) }]}>
-                  <Text style={styles.avatarText}>
-                    {name.trim().slice(0, 2).toUpperCase()}
-                  </Text>
-                </View>
-                <Text style={[styles.bodyMedium, { flex: 1 }]}>{name}</Text>
-                <View style={styles.rowActions}>
-                  <Pressable
-                    style={({ pressed }) => [styles.iconBtn, pressed && styles.pressed]}
-                    onPress={() => openEdit(name)}
-                  >
-                    <IconPen size={18} color={colors.textSecondary} />
-                  </Pressable>
-                  <Pressable
-                    style={({ pressed }) => [styles.iconBtn, pressed && styles.pressed]}
-                    onPress={() => openDelete(name)}
-                  >
-                    <Ionicons name="trash-outline" size={18} color={colors.danger} />
-                  </Pressable>
-                </View>
-              </View>
-            ))}
-          </>
-        )}
+          favorites.map((player) => (
+            <PlayerCard
+              key={player.name}
+              variant="manage"
+              name={player.name}
+              avatarColor={getAvatarColorByKey(player.colorKey, colors)}
+              onEdit={() => openEdit(player)}
+              onDelete={() => openDelete(player.name)}
+            />
+          ))
+        )}sdsd
       </ScrollView>
 
       {/* Modal Ajout / Édition */}
@@ -172,6 +148,10 @@ export default function PlayersScreen() {
                 onBlur={() => setInputFocused(false)}
                 returnKeyType="done"
                 onSubmitEditing={canConfirm ? handleConfirm : undefined}
+              />
+              <AvatarColorPicker
+                selectedKey={selectedColorKey}
+                onSelect={setSelectedColorKey}
               />
               <View style={styles.buttons}>
                 <Pressable

@@ -1,4 +1,5 @@
 import { GameEngine } from './types';
+import { freeLibreEngine } from '../games/freelibre/logic';
 import { unoEngine } from '../games/uno/logic';
 import { beloteEngine } from '../games/belote/logic';
 import { scrabbleEngine } from '../games/scrabble/logic';
@@ -11,6 +12,7 @@ import { ligrettoEngine } from '../games/ligretto/logic';
 import { sixquiprendeEngine } from '../games/6quiprend/logic';
 
 const engines: Record<string, GameEngine> = {
+  'MODE LIBRE': freeLibreEngine,
   'UNO': unoEngine,
   'BELOTE': beloteEngine,
   'SKYJO': skyjoEngine,

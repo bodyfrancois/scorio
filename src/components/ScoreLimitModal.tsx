@@ -5,10 +5,10 @@ import {
   Pressable,
   Modal,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeScoreLimitModalStyles } from '../theme/styles';
+import NumericKeypad from './NumericKeypad';
 
 type Props = {
   visible: boolean;
@@ -20,13 +20,6 @@ type Props = {
   unit?: string;
   minValue?: number;
 };
-
-const PAD_ROWS = [
-  ['1', '2', '3'],
-  ['4', '5', '6'],
-  ['7', '8', '9'],
-  ['⌫', '0', null],
-];
 
 
 export default function ScoreLimitModal({
@@ -92,29 +85,7 @@ export default function ScoreLimitModal({
             <Text style={styles.displayUnit}>{unit}</Text>
           </View>
 
-          <View style={styles.keypadModal}>
-            {PAD_ROWS.map((row, ri) => (
-              <View key={ri} style={styles.keyRow}>
-                {row.map((key, ci) => {
-                  if (key === null) {
-                    return <View key={ci} style={styles.keyEmpty} />;
-                  }
-                  if (key === '⌫') {
-                    return (
-                      <Pressable key={ci} style={({ pressed }) => [styles.keyCard, pressed && styles.keyPressed]} onPress={backspace}>
-                        <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
-                      </Pressable>
-                    );
-                  }
-                  return (
-                    <Pressable key={ci} style={({ pressed: p }) => [styles.keyCard, p && styles.keyPressed]} onPress={() => pressKey(key)}>
-                      <Text style={styles.keyText}>{key}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))}
-          </View>
+          <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
 
           <View style={styles.buttons}>
             <Pressable

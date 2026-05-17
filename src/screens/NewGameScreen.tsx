@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { loadFavorites } from '../storage/favoritePlayers';
+import { loadFavorites, FavoritePlayer } from '../storage/favoritePlayers';
 import { TEAM_COLORS } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { getGameEngine } from '../core/gameEngine';
@@ -23,6 +23,8 @@ import ScoreLimitModal from '../components/ScoreLimitModal';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeNewGameStyles } from '../theme/styles';
+import PlayerAvatar from '../components/PlayerAvatar';
+import { getAvatarColorByIndex, getAvatarColorByKey } from '../utils/avatarColors';
 
 
 export default function NewGameScreen({ route, navigation }: any) {
@@ -36,6 +38,7 @@ export default function NewGameScreen({ route, navigation }: any) {
   const isTeamMode = !!config.teams;
 
   const [players, setPlayers] = useState<string[]>(['']);
+  const [playerColorKeys, setPlayerColorKeys] = useState<(string | null)[]>([null]);
 
   const [teamPlayers, setTeamPlayers] = useState<string[][]>(() => {
     if (!config.teams) return [];
@@ -52,15 +55,19 @@ export default function NewGameScreen({ route, navigation }: any) {
     (_, i) => TEAM_COLORS[i % TEAM_COLORS.length]
   );
 
+  const [sessionGameName, setSessionGameName] = useState('');
   const [sessionScoreLimit, setSessionScoreLimit] = useState<number>(config.scoreLimit ?? 500);
   const [sessionRoundLimit, setSessionRoundLimit] = useState<number>(config.roundLimit ?? 10);
+  const [sessionLowestScoreWins, setSessionLowestScoreWins] = useState<boolean>(config.lowestScoreWins);
+  const [sessionTimeLimit, setSessionTimeLimit] = useState<number | null>(null);
   const [quickActionsEnabled, setQuickActionsEnabled] = useState<boolean>(!!config.quickActions?.length);
   const [scoreLimitModalVisible, setScoreLimitModalVisible] = useState(false);
   const [roundLimitModalVisible, setRoundLimitModalVisible] = useState(false);
+  const [timeLimitModalVisible, setTimeLimitModalVisible] = useState(false);
 
   const [rulesExpanded, setRulesExpanded] = useState(false);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoritePlayer[]>([]);
 
   useFocusEffect(useCallback(() => {
     loadFavorites().then(setFavorites);
@@ -75,11 +82,10 @@ export default function NewGameScreen({ route, navigation }: any) {
     }
   }, []);
 
-  const avatarPalette = [
-    colors.avatarViole, colors.avatarRose, colors.avatarPeche, colors.avatarJaune,
-    colors.avatarVert, colors.avatarCiel, colors.avatarBleu, colors.avatarFuchsia,
-  ];
-  const getAvatarColor = (index: number) => avatarPalette[index % avatarPalette.length];
+  const getAvatarColor = (index: number) => {
+    const key = playerColorKeys[index];
+    return key ? getAvatarColorByKey(key, colors) : getAvatarColorByIndex(index, colors);
+  };
 
   const updatePlayer = (index: number, value: string) => {
     const updated = [...players];
@@ -103,22 +109,31 @@ export default function NewGameScreen({ route, navigation }: any) {
     setFavSheetVisible(true);
   };
 
-  const selectFavorite = (name: string) => {
+  const selectFavorite = (fav: FavoritePlayer) => {
     if (favTeamTarget !== null) {
-      updateTeamPlayer(favTeamTarget.teamIndex, favTeamTarget.playerIndex, name);
+      updateTeamPlayer(favTeamTarget.teamIndex, favTeamTarget.playerIndex, fav.name);
       setFavTeamTarget(null);
     } else if (favTargetIndex !== null) {
-      updatePlayer(favTargetIndex, name);
+      updatePlayer(favTargetIndex, fav.name);
+      setPlayerColorKeys((prev) => {
+        const next = [...prev];
+        next[favTargetIndex] = fav.colorKey;
+        return next;
+      });
     }
     setFavSheetVisible(false);
   };
 
   const addPlayer = () => {
-    if (players.length < config.maxPlayers) setPlayers([...players, '']);
+    if (players.length < config.maxPlayers) {
+      setPlayers([...players, '']);
+      setPlayerColorKeys([...playerColorKeys, null]);
+    }
   };
 
   const removePlayer = (index: number) => {
     setPlayers(players.filter((_, i) => i !== index));
+    setPlayerColorKeys(playerColorKeys.filter((_, i) => i !== index));
   };
 
   const validPlayers = players.filter((p) => p.trim().length > 0);
@@ -181,10 +196,14 @@ export default function NewGameScreen({ route, navigation }: any) {
     }
 
     const sessionQuickActions = quickActionsEnabled ? config.quickActions : undefined;
+    const displayName = config.cardSubtitle
+      ? (sessionGameName.trim() || t.freeGameDefaultName)
+      : undefined;
 
     if (isTeamMode) {
       navigation.navigate('Scoreboard', {
         gameName,
+        displayName,
         players: validTeams.map((_, i) => teamNames[i]?.trim() || `Équipe ${i + 1}`),
         teams: validTeams,
         teamColors,
@@ -193,17 +212,28 @@ export default function NewGameScreen({ route, navigation }: any) {
         sessionQuickActions,
       });
     } else {
+      const validIndices = players.reduce<number[]>((acc, p, i) => {
+        if (p.trim().length > 0) acc.push(i);
+        return acc;
+      }, []);
+      const validPlayerColors = validIndices.map((i) => {
+        const key = playerColorKeys[i];
+        return key ? getAvatarColorByKey(key, colors) : getAvatarColorByIndex(i, colors);
+      });
       navigation.navigate('Scoreboard', {
         gameName,
+        displayName,
         players: validPlayers,
+        playerColors: validPlayerColors,
         sessionScoreLimit: config.scoreLimit != null ? sessionScoreLimit : undefined,
         sessionRoundLimit: config.roundLimit != null ? sessionRoundLimit : undefined,
+        sessionLowestScoreWins: config.lowestScoreWinsToggle ? sessionLowestScoreWins : undefined,
         sessionQuickActions,
       });
     }
   };
 
-  const hasSettings = config.scoreLimit != null || config.roundLimit != null || !!config.quickActions?.length;
+  const hasSettings = config.scoreLimit != null || config.roundLimit != null || !!config.quickActions?.length || !!config.lowestScoreWinsToggle || !!config.timeLimitToggle || !!config.cardSubtitle;
 
   return (
     <>
@@ -235,11 +265,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                   duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
                 ]}
               >
-                <View style={[styles.avatar, { backgroundColor: getAvatarColor(index) }]}>
-                  <Text style={styles.avatarText}>
-                    {player.trim() ? player.trim().slice(0, 2).toUpperCase() : '—'}
-                  </Text>
-                </View>
+                <PlayerAvatar name={player.trim() || '—'} color={getAvatarColor(index)} />
                 <TextInput
                   placeholder={t.playerName}
                   value={player}
@@ -343,6 +369,21 @@ export default function NewGameScreen({ route, navigation }: any) {
             {t.gameSettings}
           </Text>
 
+          {!!config.cardSubtitle && (
+            <View style={[styles.card, styles.cardRow]}>
+              <View style={styles.iconBoxSm}>
+                <Ionicons name="create-outline" size={18} color={colors.textSecondary} />
+              </View>
+              <TextInput
+                style={styles.playerInput}
+                placeholder={t.freeGameDefaultName}
+                placeholderTextColor={colors.textMuted}
+                value={sessionGameName}
+                onChangeText={setSessionGameName}
+              />
+            </View>
+          )}
+
           {config.scoreLimit != null && (
             <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
@@ -381,6 +422,46 @@ export default function NewGameScreen({ route, navigation }: any) {
                 thumbColor={quickActionsEnabled ? colors.primary : colors.textMuted}
                 ios_backgroundColor={colors.searchBackground}
               />
+            </View>
+          )}
+
+          {config.timeLimitToggle && (
+            <Pressable style={[styles.card, styles.cardRow, { marginTop: 8 }]} onPress={() => setTimeLimitModalVisible(true)}>
+              <View style={styles.iconBoxSm}>
+                <Ionicons name="timer-outline" size={18} color={colors.textSecondary} />
+              </View>
+              <Text style={[styles.body, { flex: 1 }]}>{t.timeLimit}</Text>
+              <Text style={styles.itemTitle}>
+                {sessionTimeLimit != null ? `${sessionTimeLimit} min` : t.noLimit}
+              </Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+            </Pressable>
+          )}
+
+          {config.lowestScoreWinsToggle && (
+            <View style={[styles.card]}>
+              <View style={[styles.cardRow, { marginBottom: 12 }]}>
+                <View style={styles.iconBoxSm}>
+                  <Ionicons name="podium-outline" size={18} color={colors.textSecondary} />
+                </View>
+                <Text style={styles.body}>{t.winnerMode}</Text>
+              </View>
+              <View style={styles.radioRow}>
+                <Pressable
+                  style={[styles.radioOption, !sessionLowestScoreWins && styles.radioOptionSelected]}
+                  onPress={() => setSessionLowestScoreWins(false)}
+                >
+                  <View style={[styles.radioCircle, !sessionLowestScoreWins && styles.radioCircleSelected]} />
+                  <Text style={[styles.caption, !sessionLowestScoreWins && { color: colors.primary }]}>{t.highestWins}</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.radioOption, sessionLowestScoreWins && styles.radioOptionSelected]}
+                  onPress={() => setSessionLowestScoreWins(true)}
+                >
+                  <View style={[styles.radioCircle, sessionLowestScoreWins && styles.radioCircleSelected]} />
+                  <Text style={[styles.caption, sessionLowestScoreWins && { color: colors.primary }]}>{t.lowestWins}</Text>
+                </Pressable>
+              </View>
             </View>
           )}
         </>
@@ -471,20 +552,18 @@ export default function NewGameScreen({ route, navigation }: any) {
       <Pressable style={styles.overlay} onPress={() => setFavSheetVisible(false)}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <Text style={[styles.labelPrimary, { marginBottom: 4 }]}>{t.fromFavorites}</Text>
-          {favorites.map((name, i) => (
+          {favorites.map((fav, i) => (
             <Pressable
-              key={name}
+              key={fav.name}
               style={({ pressed }) => [
                 styles.favItem,
                 i === favorites.length - 1 && styles.favItemLast,
                 pressed && styles.cardPressed,
               ]}
-              onPress={() => selectFavorite(name)}
+              onPress={() => selectFavorite(fav)}
             >
-              <View style={[styles.favAvatar, { backgroundColor: avatarPalette[i % avatarPalette.length] }]}>
-                <Text style={styles.avatarText}>{name.slice(0, 2).toUpperCase()}</Text>
-              </View>
-              <Text style={[styles.bodyMedium, { flex: 1 }]}>{name}</Text>
+              <PlayerAvatar name={fav.name} color={getAvatarColorByKey(fav.colorKey, colors)} />
+              <Text style={[styles.bodyMedium, { flex: 1 }]}>{fav.name}</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
             </Pressable>
           ))}
@@ -507,6 +586,17 @@ export default function NewGameScreen({ route, navigation }: any) {
       title={t.roundLimitTitle}
       subtitle={t.roundLimitSubtitle}
       unit=""
+      minValue={1}
+    />
+
+    <ScoreLimitModal
+      visible={timeLimitModalVisible}
+      currentValue={sessionTimeLimit ?? 30}
+      onClose={() => setTimeLimitModalVisible(false)}
+      onValidate={(value) => setSessionTimeLimit(value)}
+      title={t.timeLimitTitle}
+      subtitle={t.timeLimitSubtitle}
+      unit="min"
       minValue={1}
     />
   </>

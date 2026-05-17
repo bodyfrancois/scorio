@@ -1,3 +1,4 @@
+import { freeLibreConfig } from './freelibre/config';
 import { unoConfig } from './uno/config';
 import { beloteConfig } from './belote/config';
 import { flip7Config } from './flip7/config';
@@ -11,6 +12,7 @@ import { sixquiprendConfig } from './6quiprend/config';
 import { GameConfig } from '../core/types';
 
 export const ALL_GAMES: GameConfig[] = [
+  freeLibreConfig,
   unoConfig,
   beloteConfig,
   flip7Config,

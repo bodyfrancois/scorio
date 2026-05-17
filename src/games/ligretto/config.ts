@@ -18,12 +18,20 @@ Après avoir reçu un jeu de 40 cartes de même motif, chaque joueur constitue s
 
 Le joueur garde dans sa main les cartes qui lui restent. 
 
+---
+
+2. Manches et tours
+
 Le jeu commence lorsqu’un joueur prononce « LIGRETTO » : il faut alors poser au plus vite un 1 si on en possède un. 
 Cette carte peut être dans le Ligretto, dans la série ou même dans la main. 
 Il faut alors tirer rapidement 3 cartes qui sont dans sa main, à l’envers, les empiler jusqu’à trouver le chiffre. 
 
-Pendant ce temps les autres joueurs jouent de la même façon, les cartes montent et l’on peut alors mettre d’autres chiffres, et cela jusqu’à 10. La partie se termine quand un joueur a fini son paquet de Ligretto il dit alors : « LIGRETTO STOP ». 
+Pendant ce temps les autres joueurs jouent de la même façon, les cartes montent et l’on peut alors mettre d’autres chiffres, et cela jusqu’à 10. 
 
-Il faut ensuite compter les points.
+---
+
+3. Phase de Fin
+
+La partie se termine quand un joueur a fini son paquet de Ligretto il dit alors : « LIGRETTO STOP ». Il faut ensuite compter les points.
 `,
 };

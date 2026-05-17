@@ -5,9 +5,9 @@ export const lightColors = {
   primarySubtle:       '#F2EDFA',
   winnerGradientStart: '#AD7BF8',   // dégradé carte vainqueur (début)
 
-  secondary:           '#F59E0B',
-  secondaryText:      '#712a00',
-  secondarySubtle:     '#fff0c4',
+  secondary:           '#0a9396',
+  secondaryText:       '#FFFFFF',
+  secondarySubtle:     '#005152',
 
   // ── Fonds ────────────────────────────────────────────────
   background:          '#F6F6F8',
@@ -51,14 +51,16 @@ export const lightColors = {
   goldText:            '#D97706',   // texte badge 1ère place
 
   // ── Avatars (pastels) ────────────────────────────────────
-  avatarRose:          '#005f73',
-  avatarPeche:         '#0a9396',
-  avatarJaune:         '#94d2bd',
-  avatarVert:          '#e9d8a6',
-  avatarCiel:          '#ee9b00',
-  avatarBleu:          '#ca6702',
-  avatarViole:         '#bb3e03',
-  avatarFuchsia:       '#ae2012',
+  avatarColor0:        '#01353f',
+  avatarColor1:        '#005f73',
+  avatarColor2:        '#0a9396',
+  avatarColor3:        '#94d2bd',
+  avatarColor4:        '#e9d8a6',
+  avatarColor5:        '#ee9b00',
+  avatarColor6:        '#ca6702',
+  avatarColor7:        '#bb3e03',
+  avatarColor8:        '#ae2012',
+  avatarColor9:        '#781108',
 };
 
 export const colors = lightColors;
@@ -71,7 +73,7 @@ export const darkColors: typeof lightColors = {
   winnerGradientStart: '#B88AF8',
 
   secondary:           '#f6c020',
-  secondaryText:      '#4D3800',
+  secondaryText:       '#4D3800',
   secondarySubtle:     '#2D2000',
 
   // ── Fonds ────────────────────────────────────────────────
@@ -115,15 +117,17 @@ export const darkColors: typeof lightColors = {
   goldSubtle:          '#3B2A00',
   goldText:            '#F59E0B',
 
-  // ── Avatars (pastels sombres) ─────────────────────────────
-  avatarRose:          '#3D2020',
-  avatarPeche:         '#3D2D1A',
-  avatarJaune:         '#3D3310',
-  avatarVert:          '#1A3D2A',
-  avatarCiel:          '#1A3340',
-  avatarBleu:          '#1E2550',
-  avatarViole:         '#2A1F3D',
-  avatarFuchsia:       '#3D1F35',
+  // ── Avatars (dark mode) ───────────────────────────────────
+  avatarColor0:        '#0a8fa6',
+  avatarColor1:        '#0097ae',
+  avatarColor2:        '#0ab4b8',
+  avatarColor3:        '#3a9080',
+  avatarColor4:        '#8a7a2a',
+  avatarColor5:        '#d08a00',
+  avatarColor6:        '#b55b02',
+  avatarColor7:        '#cc4508',
+  avatarColor8:        '#c02818',
+  avatarColor9:        '#9a1a13',
 };
 
 // ── Couleurs d'équipe ────────────────────────────────────

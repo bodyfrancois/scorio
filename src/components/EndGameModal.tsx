@@ -15,6 +15,7 @@ import IconStar from './icons/IconStar';
 import IconCrown from './icons/IconCrown';
 import IconReload from './icons/IconReload';
 import IconHomeFill from './icons/IconHomeFill';
+import MedalBadge from './MedalBadge';
 
 type RankingItem = {
   name: string;
@@ -195,13 +196,9 @@ export default function EndGameModal({
       }
       return (
         <View key={`${player.name}-${index}`} style={styles.rankRow}>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{index + 1}</Text>
-          </View>
+          <MedalBadge rank={index + 1} />
           <Text style={[styles.body, { flex: 1 }]}>{player.name}</Text>
-          <View>
-            <Text style={styles.itemTitle}>{player.score} pts</Text>
-          </View>
+          <Text style={styles.itemTitle}>{player.score} pts</Text>
         </View>
       );
     });

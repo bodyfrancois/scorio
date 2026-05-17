@@ -25,6 +25,7 @@ export interface GameConfig {
   estimatedDuration?: number;
   age?: string;
   category?: string;
+  cardSubtitle?: string;
   description?: string;
   detailedRules?: string;
   scoreLimit?: number;
@@ -32,6 +33,8 @@ export interface GameConfig {
   roundTotal?: number;
   image?: any; // require('...') local asset
   lowestScoreWins: boolean;
+  lowestScoreWinsToggle?: boolean;
+  timeLimitToggle?: boolean;
   quickActionsName?: string;
   quickActions?: QuickAction[];
   teams?: TeamConfig;
@@ -57,7 +60,8 @@ export interface GameEngine {
     scores: PlayerScoreMatrix,
     players: string[],
     scoreLimit?: number,
-    roundLimit?: number
+    roundLimit?: number,
+    lowestScoreWins?: boolean,
   ): {
     hasEnded: boolean;
     ranking?: RankingItem[];

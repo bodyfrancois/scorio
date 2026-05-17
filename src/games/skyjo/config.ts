@@ -13,19 +13,28 @@ export const skyjoConfig: GameConfig = {
   image: require('./asset/logo.png'), // ✅ image locale au module
   detailedRules: `
 1. Objectif du jeu
+
 Le but du jeu est simple : marquer le moins de points possible. Chaque joueur reçoit 12 cartes, et l’objectif est de former des séries de cartes de même valeur tout en éliminant les cartes indésirables. Le joueur avec le moins de points à la fin de la partie remporte la victoire.
+
+---
 
 2. Phase de Début – La Chasse aux Cartes
 
 Lors de la phase de début, les joueurs tentent de collecter des cartes à faible valeur pour minimiser leur score. Il s’agit d’une phase cruciale où chaque carte compte.
 
+---
+
 3. Phase Intermédiaire – Échange et Stratégie
 
 Pendant la phase intermédiaire, les joueurs ont la possibilité d’échanger des cartes avec celles au centre de la table. C’est là que la stratégie entre en jeu, car il faut décider quand échanger et quelles cartes garder.
 
+---
+
 4. Phase de Fin – La Révélation
 
 À la fin du jeu, chaque joueur retourne ses cartes restantes. Les cartes non groupées comptent négativement, tandis que les séries de cartes de même valeur sont avantageuses. Le joueur avec le score le plus bas remporte la partie.
+
+---
 
 5. Règles Spécifiques
 

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { lightColors } from './colors';
+import { colors, lightColors } from './colors';
 import {
   fontSize as FS,
   fontWeight as FW,
@@ -66,11 +66,6 @@ export const makeSharedStyles = (c: typeof lightColors) =>
 
     /** Carte liste (flex row) : 24px coins, 2px bordure subtile, ombre légère */
     card: {
-      /*flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: c.card,
-      borderRadius: R['2xl'],
-      padding: S.card,*/
       backgroundColor: c.card,
       borderRadius: R.lg,
       padding: S.base,
@@ -139,6 +134,16 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       elevation: 2,
       borderWidth: 1,
       borderColor: c.borderSubtle,
+    },
+
+    cardAbout:{
+      marginBottom: S.base,
+      backgroundColor: c.secondary,
+      shadowColor: c.secondarySubtle,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.8,
+      shadowRadius: 0,
+      elevation: 2,
     },
 
     // ─── Modales & Sheets ─────────────────────────────────────────────────
@@ -230,7 +235,8 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       elevation: 10,
       borderRadius: R.lg,
       paddingHorizontal: S.base,
-      paddingVertical: S.base,
+      paddingVertical: S.base,  
+      alignItems: 'center',
     },
     btnPrimaryBig: {
       paddingHorizontal: S.lg,
@@ -241,6 +247,23 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       fontSize: FS.base,
       fontWeight: FW.bold,
       color: c.white,
+    },
+    btnPrimaryAbout: {
+      backgroundColor: c.secondary,
+      shadowColor: c.secondaryText,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 1,
+      shadowRadius: 0,
+      elevation: 10,
+      borderRadius: R.lg,
+      paddingHorizontal: S.base,
+      paddingVertical: S.base,  
+      alignItems: 'center',
+    },
+    btnPrimaryTextAbout: {
+      fontSize: FS.base,
+      fontWeight: FW.bold,
+      color: c.secondaryText,
     },
     btnPrimaryTextSmall: {
       fontSize: FS.sm,
@@ -663,16 +686,12 @@ export const makeSharedStyles = (c: typeof lightColors) =>
 export const makeAboutStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: c.background,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      paddingHorizontal: S['3xl'],
+    secondaryText:{
+      color: c.secondaryText,
     },
     iconBox: {
-      width: 72,
-      height: 72,
+      width: 64,
+      height: 64,
       borderRadius: R.xl,
       backgroundColor: c.primary,
       alignItems: 'center' as const,
@@ -685,16 +704,84 @@ export const makeAboutStyles = (c: typeof lightColors) => ({
       fontSize: 38,
     },
     appName: {
-      fontSize: 28,
-      fontWeight: FW.extrabold,
+      color: c.text,
+      marginBottom: S.base,
+      fontSize: FS.lg,
+      fontWeight: FW.bold,
+    },
+    feedbackPicker: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
+      backgroundColor: c.background,
+      borderRadius: R.md,
+      paddingVertical: S.md,
+      paddingHorizontal: S.md,
+      borderWidth: 1,
+      borderColor: c.borderSubtle,
+    },
+    feedbackPickerError: {
+      borderColor: c.danger,
+    },
+    feedbackPickerText: {
+      fontSize: FS.base,
+      color: c.text,
+      flex: 1,
+    },
+    feedbackPickerPlaceholder: {
+      fontSize: FS.base,
+      color: c.textMuted,
+      flex: 1,
+    },
+    feedbackTextArea: {
+      backgroundColor: c.background,
+      borderRadius: R.md,
+      padding: S.md,
+      fontSize: FS.base,
+      color: c.text,
+      borderWidth: 1,
+      borderColor: c.borderSubtle,
+      minHeight: 110,
+      textAlignVertical: 'top' as const,
+    },
+    feedbackTextAreaError: {
+      borderColor: c.danger,
+    },
+    feedbackErrorText: {
+      fontSize: FS.xs,
+      color: c.danger,
+      marginTop: -S.sm,
+    },
+    feedbackStatusBox: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: S.sm,
+      padding: S.md,
+      borderRadius: R.md,
+    },
+    feedbackStatusText: {
+      fontSize: FS.sm,
+      flex: 1,
+      lineHeight: 18,
+    },
+    dropdownOption: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: c.borderSubtle,
+    },
+    dropdownOptionLast: {
+      borderBottomWidth: 0,
+    },
+    dropdownOptionText: {
+      fontSize: FS.base,
       color: c.text,
     },
-    divider: {
-      width: 40,
-      height: 2,
-      backgroundColor: c.border,
-      borderRadius: 2,
-      marginVertical: S.xl,
+    dropdownOptionTextSelected: {
+      color: c.primary,
+      fontWeight: FW.bold,
     },
   }),
 });
@@ -737,6 +824,27 @@ export const makeHomeStyles = (c: typeof lightColors) => ({
       alignItems: 'center' as const,
       gap: S.xs,
     },
+    // ── Mode Libre ───────────────────────────────────────────
+    freeGameCard: {
+      backgroundColor: c.primarySubtle,
+      shadowColor: c.primaryLight,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.5,
+      shadowRadius: 0,
+      elevation: 2,
+      borderWidth: 1,
+      borderColor: c.primaryLight,
+    },
+    /*freeGameIconBox: {
+      width: 72,
+      height: 72,
+      borderRadius: R.md,
+      backgroundColor: c.primarySubtle,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      borderWidth: 1,
+      borderColor: c.primaryLight,
+    },*/
   }),
 });
 
@@ -849,8 +957,9 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
-      marginTop: S['2xl'],
       gap: 6,
+      marginTop: S['xl'],
+      marginBottom: S['xl'],
     },
     startButtonDisabled: {
       opacity: 0.4,
@@ -883,6 +992,38 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
       alignItems: 'center' as const,
       borderTopWidth: 1,
       borderTopColor: c.border,
+    },
+    radioRow: {
+      flexDirection: 'row' as const,
+      gap: S.sm,
+    },
+    radioOption: {
+      flex: 1,
+      alignItems: 'center' as const,
+      gap: S.sm,
+      paddingVertical: S.md,
+      paddingHorizontal: S.md,
+      borderRadius: R.md,
+      borderWidth: 0.5,
+      borderColor: c.borderSubtle,
+      backgroundColor: c.background,
+    },
+    radioOptionSelected: {
+      borderWidth: 0.5,
+      borderColor: c.primary,
+      backgroundColor: c.primarySubtle,
+    },
+    radioCircle: {
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      borderWidth: 1,
+      borderColor: c.textMuted,
+    },
+    radioCircleSelected: {
+      borderColor: c.primary,
+      borderWidth: 6,
+      backgroundColor: c.white,
     },
     favItem: {
       flexDirection: 'row' as const,
@@ -978,7 +1119,6 @@ export const makeScoreboardStyles = (c: typeof lightColors, ROUND_COL: number, P
     playerName: {
       flexDirection: 'row' as const,
       fontSize: FS.sm,
-      fontWeight: FW.bold,
       color: c.textSecondary,
       maxWidth: PLAYER_COL - 8,
       textAlign: 'center' as const,
@@ -1051,6 +1191,33 @@ export const makeStatsStyles = (c: typeof lightColors) => ({
   ...StyleSheet.create({
     donutWrap: {
       marginBottom: S.xl,
+    },
+    kpiRow: {
+      flexDirection: 'row' as const,
+      gap: S.md,
+    },
+    kpiBlock: {
+      flex: 1,
+      backgroundColor: c.white,
+      borderRadius: R.md,
+      borderWidth: 1,
+      borderColor: c.border,
+      paddingVertical: S.base,
+      alignItems: 'center' as const,
+      gap: S.sm,
+    },
+    kpiValue: {
+      fontSize: FS.lg,
+      fontWeight: FW.extrabold,
+      color: c.text,
+    },
+    kpiLabel: {
+      fontSize: FS.xs,
+      fontWeight: FW.bold,
+      color: c.textMuted,
+      textTransform: 'uppercase' as const,
+      letterSpacing: LS.label,
+      textAlign: 'center' as const,
     },
     playerCard: {
       marginBottom: 10,

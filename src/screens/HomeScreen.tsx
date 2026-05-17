@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Image,
+  Linking,
 } from 'react-native';
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -59,7 +60,7 @@ export default function HomeScreen() {
 
       {/* Liste des jeux — état vide */}
       {filteredGames.length === 0 && (
-        <View style={{ alignItems: 'center', marginTop: 32 }}>
+        <View style={{ alignItems: 'center', marginTop: 32, marginBottom: 32 }}>
           <IllustrationCartes colors={colors} />
           <Text style={styles.muted}>{t.noResult}</Text>
         </View>
@@ -69,40 +70,51 @@ export default function HomeScreen() {
         <Pressable
           key={game.name}
           style={({ pressed }) => [
-            [styles.card, styles.cardRow],
+            styles.card, styles.cardRow,
+            game.cardSubtitle && styles.freeGameCard,
             pressed && styles.cardPressed,
           ]}
           onPress={() => handleStartGame(game.name)}
         >
-          {game.image && (
+          {game.cardSubtitle ? (
+            <View /*style={styles.freeGameIconBox}*/>
+              {/* <Ionicons name="options-outline" size={30} color={colors.primary} /> */}
+            </View>
+          ) : game.image ? (
             <Image
               source={game.image}
               style={styles.gameImage}
               resizeMode="cover"
             />
-          )}
+          ) : null}
 
           <View style={styles.cardContent}>
             <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{game.name}</Text>
 
-            <View style={styles.gameInfoRow}>
-              <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
-              <Text style={styles.caption}>
-                {game.minPlayers === game.maxPlayers
-                  ? game.minPlayers
-                  : `${game.minPlayers}-${game.maxPlayers}`}
-              </Text>
+            {game.cardSubtitle ? (
+              <Text style={styles.caption} numberOfLines={1}>{game.cardSubtitle}</Text>
+            ) : (
+              <View style={styles.gameInfoRow}>
+                <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
+                <Text style={styles.caption}>
+                  {game.minPlayers === game.maxPlayers
+                    ? game.minPlayers
+                    : game.maxPlayers >= 20
+                    ? `${game.minPlayers}+`
+                    : `${game.minPlayers}-${game.maxPlayers}`}
+                </Text>
 
-              {game.estimatedDuration && (
-                <>
-                  <Text style={styles.muted}>·</Text>
-                  <Ionicons name="time-outline" size={13} color={colors.textSecondary} />
-                  <Text style={styles.caption}>
-                    {game.estimatedDuration} min
-                  </Text>
-                </>
-              )}
-            </View>
+                {game.estimatedDuration && (
+                  <>
+                    <Text style={styles.muted}>·</Text>
+                    <Ionicons name="time-outline" size={13} color={colors.textSecondary} />
+                    <Text style={styles.caption}>
+                      {game.estimatedDuration} min
+                    </Text>
+                  </>
+                )}
+              </View>
+            )}
           </View>
 
           <View style={[styles.btnPrimary]}>
@@ -110,6 +122,21 @@ export default function HomeScreen() {
           </View>
         </Pressable>
       ))}
+
+      
+
+      {/* Donate */}
+      <View style={[styles.card, styles.cardAbout, { marginTop: 24, alignItems: 'center' }]}>
+          <Ionicons name="heart" size={48} color={colors.white} style={{ marginBottom: 10 }} />
+          <Text style={[styles.itemTitle, { color: colors.white, marginBottom: 20 }]}>{t.aboutDonate}</Text>
+          <Text style={[styles.body, { color: colors.white, textAlign: 'center', lineHeight: 20, marginBottom: 20 }]}>{t.aboutDonateHint}</Text>
+          <Pressable
+          style={({ pressed }) => [styles.btnPrimary, { alignSelf: 'stretch' }, pressed && styles.pressed]}
+          onPress={() => Linking.openURL('https://ko-fi.com/misterbuddy')}
+        >
+          <Text style={styles.btnPrimaryText}>{t.aboutDonateCTA}</Text>
+        </Pressable>
+      </View>
 
       {/* Footer */}
       <View style={styles.footer}>
@@ -122,7 +149,7 @@ export default function HomeScreen() {
 
         <Text style={styles.footerTagline}>{t.freeApp}</Text>
 
-        <Pressable>
+        <Pressable onPress={() => (navigation as any).navigate('A propos', { scrollToFeedback: true })}>
           <Text style={styles.footerLink}>{t.supportMe}</Text>
         </Pressable>
       </View>

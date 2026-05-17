@@ -17,6 +17,8 @@ import { saveGameToHistory } from '../storage/historyStorage';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeScoreboardStyles } from '../theme/styles';
+import PlayerAvatar from '../components/PlayerAvatar';
+import { getAvatarColorByIndex } from '../utils/avatarColors';
 
 const ROUND_COL = 36;
 const PLAYER_COL = 90;
@@ -28,9 +30,11 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const t = useTranslation(language);
   const styles = useMemo(() => makeScoreboardStyles(colors, ROUND_COL, PLAYER_COL, HEADER_H, ROW_H), [colors]);
 
-  const { players, gameName, teamColors, sessionScoreLimit, sessionRoundLimit, sessionQuickActions } = route.params;
+  const { players, gameName, displayName, teamColors, playerColors, teams, sessionScoreLimit, sessionRoundLimit, sessionLowestScoreWins, sessionQuickActions } = route.params;
+  const effectiveGameName: string = displayName ?? gameName;
   const engine = getGameEngine(gameName);
   const { config } = engine;
+  const effectiveLowestScoreWins: boolean = sessionLowestScoreWins ?? config.lowestScoreWins;
 
   const { width: screenWidth } = useWindowDimensions();
   const playerColWidth = players.length <= 3
@@ -49,15 +53,28 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const [exitModalVisible, setExitModalVisible] = useState(false);
   const [pendingNavAction, setPendingNavAction] = useState<any>(null);
 
-  const avatarPalette = [
-    colors.avatarRose, colors.avatarPeche, colors.avatarJaune, colors.avatarVert,
-    colors.avatarCiel, colors.avatarBleu, colors.avatarViole, colors.avatarFuchsia,
-  ];
-  const getAvatarColor = (i: number) => teamColors?.[i] ?? avatarPalette[i % avatarPalette.length];
-  const getAvatarTextColor = (i: number) => teamColors?.[i] ? colors.white : colors.white;
+  const getAvatarColor = (i: number) => teamColors?.[i] ?? playerColors?.[i] ?? getAvatarColorByIndex(i, colors);
+
+  // Expand team ranking into individual player entries for history/stats
+  const buildHistoryData = (ranking: { name: string; score: number }[]) => {
+    if (!teams || !(teams as string[][]).length) {
+      return { historyPlayers: players as string[], historyRanking: ranking };
+    }
+    const historyRanking: { name: string; score: number }[] = [];
+    for (const entry of ranking) {
+      const teamIdx = (players as string[]).indexOf(entry.name);
+      const members: string[] = (teams as string[][])[teamIdx] ?? [];
+      const names = members.length > 0 ? members : [entry.name];
+      for (const member of names) {
+        historyRanking.push({ name: member, score: entry.score });
+      }
+    }
+    return { historyPlayers: (teams as string[][]).flat(), historyRanking };
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: effectiveGameName,
       headerRight: () => (
         <Pressable
           onPress={() => setRulesModalVisible(true)}
@@ -80,22 +97,26 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     return unsubscribe;
   }, [navigation, endGameVisible]);
 
-  const addRound = () => setScores(engine.addRound(scores));
+  const addRound = () => {
+    setScores(engine.addRound(scores));
+    setBaseScores(engine.addRound(baseScores));
+  };
 
   const updateScore = (playerIndex: number, roundIndex: number, value: number, base: number) => {
     setBaseScores(prev => engine.updateScore(prev, playerIndex, roundIndex, base));
     const updated = engine.updateScore(scores, playerIndex, roundIndex, value);
     setScores(updated);
-    const result = engine.checkEndGame(updated, players, sessionScoreLimit, sessionRoundLimit);
+    const result = engine.checkEndGame(updated, players, sessionScoreLimit, sessionRoundLimit, effectiveLowestScoreWins);
     if (result.hasEnded) {
       setRanking(result.ranking!);
       setEndGameVisible(true);
+      const { historyPlayers, historyRanking } = buildHistoryData(result.ranking!);
       saveGameToHistory({
         id: Date.now().toString(),
-        gameName,
+        gameName: effectiveGameName,
         date: new Date().toISOString(),
-        players,
-        ranking: result.ranking!,
+        players: historyPlayers,
+        ranking: historyRanking,
       });
     }
   };
@@ -107,16 +128,17 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     const finalRanking = players
       .map((name: string, i: number) => ({ name, score: currentTotals[i] }))
       .sort((a: { score: number }, b: { score: number }) =>
-        config.lowestScoreWins ? a.score - b.score : b.score - a.score
+        effectiveLowestScoreWins ? a.score - b.score : b.score - a.score
       );
     setRanking(finalRanking);
     setEndGameVisible(true);
+    const { historyPlayers, historyRanking } = buildHistoryData(finalRanking);
     saveGameToHistory({
       id: Date.now().toString(),
       gameName,
       date: new Date().toISOString(),
-      players,
-      ranking: finalRanking,
+      players: historyPlayers,
+      ranking: historyRanking,
     });
   };
 
@@ -128,7 +150,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
   const getTotalColor = (total: number) => {
     if (minTotal === maxTotal) return colors.text;
-    if (config.lowestScoreWins) {
+    if (effectiveLowestScoreWins) {
       if (total === minTotal) return colors.primary;
       if (total === maxTotal) return colors.danger;
     } else {
@@ -164,11 +186,11 @@ export default function ScoreboardScreen({ route, navigation }: any) {
                 <View style={{ flexDirection: 'row', backgroundColor: colors.background }}>
                   {players.map((player: string, index: number) => (
                     <View key={index} style={[styles.playerHeaderCol, { width: playerColWidth }]}>
-                      <View style={[styles.avatar, { backgroundColor: getAvatarColor(index) }]}>
-                        <Text style={[styles.avatarText, { color: getAvatarTextColor(index) }]}>
-                          {player.trim().slice(0, 2).toUpperCase()}
-                        </Text>
-                      </View>
+                      <PlayerAvatar
+                        name={player}
+                        color={getAvatarColor(index)}
+                        initials={teamColors ? `E${index + 1}` : undefined}
+                      />
                       <Text style={styles.playerName} numberOfLines={1}>{player}</Text>
                       <Text style={[styles.totalScore, { color: getTotalColor(totals[index]) }]}>
                         {totals[index]}
@@ -234,7 +256,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {config.description && (
-                <Text style={[styles.caption, { lineHeight: 20, marginBottom: 12 }]}>{config.description}</Text>
+                <Text style={[styles.caption, { lineHeight: 20 }]}>{config.description}</Text>
               )}
               {config.detailedRules && (
                 <Text style={[styles.caption, { lineHeight: 20 }]}>{config.detailedRules}</Text>

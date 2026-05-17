@@ -11,6 +11,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeEditScoreModalStyles } from '../theme/styles';
 import { QuickAction } from '../core/types';
+import NumericKeypad from './NumericKeypad';
 
 type Props = {
   visible: boolean;
@@ -23,13 +24,6 @@ type Props = {
   onClose: () => void;
   onValidate: (total: number, base: number) => void;
 };
-
-const PAD_ROWS = [
-  ['1', '2', '3'],
-  ['4', '5', '6'],
-  ['7', '8', '9'],
-  ['⌫', '0', null],
-];
 
 
 export default function EditScoreModal({
@@ -159,29 +153,7 @@ export default function EditScoreModal({
             </View>
           )}
 
-          <View style={styles.keypadModal}>
-            {PAD_ROWS.map((row, ri) => (
-              <View key={ri} style={styles.keyRow}>
-                {row.map((key, ci) => {
-                  if (key === null) {
-                    return <View key={ci} style={styles.keyEmpty} />;
-                  }
-                  if (key === '⌫') {
-                    return (
-                      <Pressable key={ci} style={({ pressed }) => [styles.keyCard, pressed && styles.keyPressed]} onPress={backspace}>
-                        <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
-                      </Pressable>
-                    );
-                  }
-                  return (
-                    <Pressable key={ci} style={({ pressed: p }) => [styles.keyCard, p && styles.keyPressed]} onPress={() => pressKey(key)}>
-                      <Text style={styles.keyText}>{key}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))}
-          </View>
+          <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
 
           {quickActions && quickActions.length > 0 && (
             <View style={styles.quickActionsSection}>
