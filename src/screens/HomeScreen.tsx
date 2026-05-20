@@ -77,7 +77,7 @@ export default function HomeScreen() {
           key={game.name}
           style={({ pressed }) => [
             styles.card, styles.cardRow,
-            game.cardSubtitle && styles.freeGameCard,
+            game.cardHighlight && styles.freeGameCard,
             pressed && styles.cardPressed,
           ]}
           onPress={() => handleStartGame(game.name)}

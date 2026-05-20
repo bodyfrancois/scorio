@@ -8,5 +8,6 @@ export const freeLibreConfig: GameConfig = {
   lowestScoreWinsToggle: true,
   scoreLimit: 100,
   cardSubtitle: 'Partie sur mesure, règles libres',
+  cardHighlight: true,
   description: "Créez votre partie sur mesure avec vos propres règles. Compatible avec n'importe quel jeu de société !",
 };
