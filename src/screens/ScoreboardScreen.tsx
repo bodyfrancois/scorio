@@ -256,10 +256,10 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {config.description && (
-                <Text style={[styles.caption, { lineHeight: 20 }]}>{config.description}</Text>
+                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{config.description}</Text>
               )}
               {config.detailedRules && (
-                <Text style={[styles.caption, { lineHeight: 20 }]}>{config.detailedRules}</Text>
+                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{config.detailedRules}</Text>
               )}
             </ScrollView>
 
@@ -306,6 +306,9 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           playerIndex={selectedPlayerIndex}
           quickActions={sessionQuickActions}
           roundTotal={config.roundTotal}
+          scoreMin={config.scoreMin}
+          scoreMax={config.scoreMax}
+          scoreInputMode={config.scoreInputMode}
           currentRoundBases={baseScores.map(row => row[selectedRoundIndex])}
           onClose={() => setModalVisible(false)}
           onValidate={(total, base) => {

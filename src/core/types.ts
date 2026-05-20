@@ -31,6 +31,9 @@ export interface GameConfig {
   scoreLimit?: number;
   roundLimit?: number;
   roundTotal?: number;
+  scoreMin?: number;
+  scoreMax?: number;
+  scoreInputMode?: 'keypad' | 'stepper';
   image?: any; // require('...') local asset
   lowestScoreWins: boolean;
   isDiceGame?: boolean;

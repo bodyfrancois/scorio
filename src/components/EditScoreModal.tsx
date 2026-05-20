@@ -20,6 +20,9 @@ type Props = {
   playerIndex?: number;
   quickActions?: QuickAction[];
   roundTotal?: number;
+  scoreMin?: number;
+  scoreMax?: number;
+  scoreInputMode?: 'keypad' | 'stepper';
   currentRoundBases?: (number | null)[];
   onClose: () => void;
   onValidate: (total: number, base: number) => void;
@@ -33,6 +36,9 @@ export default function EditScoreModal({
   playerIndex,
   quickActions,
   roundTotal,
+  scoreMin,
+  scoreMax,
+  scoreInputMode = 'keypad',
   currentRoundBases,
   onClose,
   onValidate,
@@ -42,6 +48,7 @@ export default function EditScoreModal({
   const styles = useMemo(() => makeEditScoreModalStyles(colors), [colors]);
 
   const [input, setInput] = useState('');
+  const [stepperValue, setStepperValue] = useState(scoreMin ?? 0);
   const [activeActions, setActiveActions] = useState<Set<number>>(new Set());
 
   const remaining = (() => {
@@ -63,7 +70,9 @@ export default function EditScoreModal({
   useEffect(() => {
     if (!visible) return;
     setActiveActions(new Set());
-    if (isLastPlayer && remaining != null && remaining >= 0) {
+    if (scoreInputMode === 'stepper') {
+      setStepperValue(scoreMin ?? 0);
+    } else if (isLastPlayer && remaining != null && remaining >= 0) {
       setInput(String(remaining));
     } else {
       setInput('');
@@ -77,12 +86,14 @@ export default function EditScoreModal({
     if (action.isCapot && roundTotal != null) return sum + (action.value - roundTotal);
     return sum + action.value;
   }, 0);
-  const keypadValue = parseInt(input, 10) || 0;
+  const keypadValue = scoreInputMode === 'stepper' ? stepperValue : (parseInt(input, 10) || 0);
   const total = keypadValue + actionsTotal;
-  const hasValue = input.length > 0 || activeActions.size > 0;
+  const hasValue = scoreInputMode === 'stepper' ? true : (input.length > 0 || activeActions.size > 0);
 
   const isOver = remaining !== null && keypadValue > remaining;
-  const isValid = hasValue && !isOver;
+  const isBelowMin = scoreMin !== undefined && total < scoreMin;
+  const isAboveMax = scoreMax !== undefined && total > scoreMax;
+  const isValid = hasValue && !isOver && !isBelowMin && !isAboveMax;
 
   const pressKey = (key: string) => {
     if (input.length >= 4) return;
@@ -125,7 +136,7 @@ export default function EditScoreModal({
             <Text style={styles.playerHighlight}>{playerName}</Text>
           </Text>
 
-          <View style={[styles.display, isOver && styles.displayError]}>
+          <View style={[styles.display, (isOver || isAboveMax || isBelowMin) && styles.displayError]}>
             <Text style={[styles.displayValue, !hasValue && styles.displayPlaceholder]}>
               {hasValue ? total : '0'}
             </Text>
@@ -136,24 +147,47 @@ export default function EditScoreModal({
             )}
           </View>
 
-          {remaining !== null && (
-            <View style={[styles.remainingRow, isOver && styles.remainingRowError]}>
+          {(remaining !== null || isAboveMax || isBelowMin) && (
+            <View style={[styles.remainingRow, (isOver || isAboveMax || isBelowMin) && styles.remainingRowError]}>
               <Ionicons
-                name={isOver ? 'warning-outline' : 'flag-outline'}
+                name={(isOver || isAboveMax || isBelowMin) ? 'warning-outline' : 'flag-outline'}
                 size={13}
-                color={isOver ? colors.danger : colors.textMuted}
+                color={(isOver || isAboveMax || isBelowMin) ? colors.danger : colors.textMuted}
               />
-              <Text style={[styles.muted, isOver && styles.remainingTextError]}>
-                {isOver
-                  ? `Dépassement de ${keypadValue - remaining} pts (max ${remaining})`
+              <Text style={[styles.muted, (isOver || isAboveMax || isBelowMin) && styles.remainingTextError]}>
+                {isAboveMax
+                  ? `Valeur max : ${scoreMax}`
+                  : isBelowMin
+                  ? `Valeur min : ${scoreMin}`
+                  : isOver
+                  ? `Dépassement de ${keypadValue - remaining!} pts (max ${remaining})`
                   : isLastPlayer
                   ? `Score imposé : ${remaining} pts`
-                  : `Points restants : ${remaining - keypadValue} pts`}
+                  : `Points restants : ${remaining! - keypadValue} pts`}
               </Text>
             </View>
           )}
 
-          <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
+          {scoreInputMode === 'stepper' ? (
+            <View style={styles.stepperContainer}>
+              <Pressable
+                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, stepperValue <= (scoreMin ?? 0) && styles.stepperBtnDisabled]}
+                onPress={() => setStepperValue(v => Math.max(scoreMin ?? 0, v - 1))}
+                disabled={stepperValue <= (scoreMin ?? 0)}
+              >
+                <Ionicons name="remove" size={48} color={stepperValue <= (scoreMin ?? 0) ? colors.textMuted : colors.text} />
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, stepperValue >= (scoreMax ?? Infinity) && styles.stepperBtnDisabled]}
+                onPress={() => setStepperValue(v => Math.min(scoreMax ?? Infinity, v + 1))}
+                disabled={stepperValue >= (scoreMax ?? Infinity)}
+              >
+                <Ionicons name="add" size={48} color={stepperValue >= (scoreMax ?? Infinity) ? colors.textMuted : colors.text} />
+              </Pressable>
+            </View>
+          ) : (
+            <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
+          )}
 
           {quickActions && quickActions.length > 0 && (
             <View style={styles.quickActionsSection}>

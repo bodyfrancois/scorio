@@ -1439,6 +1439,38 @@ export const makeEditScoreModalStyles = (c: typeof lightColors) => ({
     chipValueActive: {
       color: c.primary,
     },
+    stepperContainer: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      gap: 40,
+      paddingVertical: S.xl,
+    },
+    stepperBtn: {
+      width: 140,
+      height: 140,
+      borderRadius: R.lg,
+      borderWidth: 2,
+      borderColor: c.primary,
+      backgroundColor: c.primarySubtle,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      marginBottom: S['3xl'],
+    },
+    stepperBtnPressed: {
+      backgroundColor: c.primaryLight,
+    },
+    stepperBtnDisabled: {
+      opacity: 0.3,
+      borderColor: c.border,
+    },
+    stepperValue: {
+      fontSize: 56,
+      fontWeight: FW.bold,
+      color: c.text,
+      minWidth: 64,
+      textAlign: 'center' as const,
+    },
   }),
 });
 

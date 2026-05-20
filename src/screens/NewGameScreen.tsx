@@ -444,7 +444,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                 <View style={styles.iconBoxSm}>
                   <Ionicons name="podium-outline" size={18} color={colors.textSecondary} />
                 </View>
-                <Text style={styles.body}>{t.winnerMode}ddd</Text>
+                <Text style={styles.body}>{t.winnerMode}</Text>
               </View>
               <View style={styles.radioRow}>
                 <Pressable
@@ -541,7 +541,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               />
             </Pressable>
             {rulesExpanded && (
-              <Text style={[styles.caption, { marginTop: 10, lineHeight: 20 }]}>{config.detailedRules}</Text>
+              <Text style={[styles.bodySecondary, { marginTop: 10, lineHeight: 20 }]}>{config.detailedRules}</Text>
             )}
           </>
         )}

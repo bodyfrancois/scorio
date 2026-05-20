@@ -11,13 +11,18 @@ import { hiloEngine } from '../games/hilo/logic';
 import { skyjoEngine } from '../games/skyjo/logic';
 import { ligrettoEngine } from '../games/ligretto/logic';
 import { sixquiprendeEngine } from '../games/6quiprend/logic';
+import { fiveKingEngine } from '../games/5_rois/logic';
+import { piliPiliEngine } from '../games/pili_pili/logic';
+
 
 const engines: Record<string, GameEngine> = {
   'MODE LIBRE': freeLibreEngine,
+  '5 ROIS': fiveKingEngine,
   'UNO': unoEngine,
   'SPEED BAC': speedbacEngine,
   'BELOTE': beloteEngine,
-    'DÉS': diceEngine,
+  'DÉS': diceEngine,
+  'PILI PILI': piliPiliEngine,
   'FLIP 7': flip7Engine,
   'HILO': hiloEngine,
   '6 QUI PREND': sixquiprendeEngine,
