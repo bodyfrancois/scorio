@@ -153,6 +153,13 @@ const translations = {
     statsOther: 'Autre',
     statsSur: 'sur',
 
+    // DiceSetupScreen / DiceRollerScreen
+    diceCount: 'NOMBRE DE DÉS',
+    diceType: 'NOMBRES DE FACES',
+    rollAll: 'Lancer tous les dés',
+    rollSingle: 'Lancer ce dé',
+    diceHint: 'Tape un dé ou lance-les tous',
+
     // AboutScreen
     description: 'Scorio est une application de gestion de scores pour vos jeux de société préférés.',
     aboutBio: "Développeur freelance, j'ai créé Scorio pour le simple plaisir de jouer à des jeux de société avec mes amis. C'est un projet personnel, développé avec passion — sans publicité, sans abonnement.",
@@ -311,6 +318,13 @@ const translations = {
     statsParties2: 'games',
     statsOther: 'Other',
     statsSur: 'out of',
+
+    // DiceSetupScreen / DiceRollerScreen
+    diceCount: 'NUMBER OF DICE',
+    diceType: 'NUMBER OF FACES',
+    rollAll: 'Roll all dice',
+    rollSingle: 'Roll this die',
+    diceHint: 'Tap a die or roll them all',
 
     // AboutScreen
     description: 'Scorio is a score tracking app for your favorite board games.',

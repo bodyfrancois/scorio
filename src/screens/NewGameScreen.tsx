@@ -444,7 +444,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                 <View style={styles.iconBoxSm}>
                   <Ionicons name="podium-outline" size={18} color={colors.textSecondary} />
                 </View>
-                <Text style={styles.body}>{t.winnerMode}</Text>
+                <Text style={styles.body}>{t.winnerMode}ddd</Text>
               </View>
               <View style={styles.radioRow}>
                 <Pressable

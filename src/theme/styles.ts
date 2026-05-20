@@ -76,7 +76,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       shadowRadius: 0,
       elevation: 2,
       borderWidth: 1,
-      borderColor: c.borderSubtle,
+      borderColor: c.border,
     },
 
     /**
@@ -88,6 +88,8 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       alignItems: 'center',
       gap: S.md,
       marginBottom: S.base,
+      borderWidth: 1,
+      borderColor: c.border,
     },
 
     /** Carte petite : 16px coins, padding 16, 2px bordure (historique)
@@ -561,6 +563,8 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     /** Micro 14px — badges, unités */
     micro: { fontSize: FS.xs, color: c.textMuted },
 
+    bodyStrong: { fontSize: FS.base, fontWeight: FW.bold, color: c.text },
+
     // ─── Affichage numérique (pavé / saisie score) ────────────────────────
 
     /** Grande valeur numérique affichée (40px) */
@@ -995,13 +999,14 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
     },
     radioRow: {
       flexDirection: 'row' as const,
-      gap: S.sm,
     },
+
     radioOption: {
       flex: 1,
       alignItems: 'center' as const,
       gap: S.sm,
       paddingVertical: S.md,
+      fontWeight: FW.extrabold,
       paddingHorizontal: S.md,
       borderRadius: R.md,
       borderWidth: 0.5,

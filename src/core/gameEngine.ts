@@ -1,4 +1,5 @@
 import { GameEngine } from './types';
+import { diceEngine } from '../games/dice/logic';
 import { freeLibreEngine } from '../games/freelibre/logic';
 import { unoEngine } from '../games/uno/logic';
 import { beloteEngine } from '../games/belote/logic';
@@ -14,14 +15,14 @@ import { sixquiprendeEngine } from '../games/6quiprend/logic';
 const engines: Record<string, GameEngine> = {
   'MODE LIBRE': freeLibreEngine,
   'UNO': unoEngine,
-    'SPEED BAC': speedbacEngine,
+  'SPEED BAC': speedbacEngine,
   'BELOTE': beloteEngine,
+    'DÉS': diceEngine,
   'FLIP 7': flip7Engine,
   'HILO': hiloEngine,
   '6 QUI PREND': sixquiprendeEngine,
-    'TAROT': tarotEngine,
+  'TAROT': tarotEngine,
   'LIGRETTO': ligrettoEngine,
-
   'SKYJO': skyjoEngine,
   'SCRABBLE': scrabbleEngine,
 };

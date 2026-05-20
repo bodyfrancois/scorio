@@ -35,7 +35,12 @@ export default function HomeScreen() {
   }, [searchQuery, games]);
 
   const handleStartGame = (gameName: string) => {
-    navigation.navigate('NewGame', { gameName });
+    const game = games.find(g => g.name === gameName);
+    if (game?.isDiceGame) {
+      (navigation as any).navigate('DiceSetup');
+    } else {
+      navigation.navigate('NewGame', { gameName });
+    }
   };
 
   return (
@@ -77,11 +82,7 @@ export default function HomeScreen() {
           ]}
           onPress={() => handleStartGame(game.name)}
         >
-          {game.cardSubtitle ? (
-            <View /*style={styles.freeGameIconBox}*/>
-              {/* <Ionicons name="options-outline" size={30} color={colors.primary} /> */}
-            </View>
-          ) : game.image ? (
+          {game.image ? (
             <Image
               source={game.image}
               style={styles.gameImage}

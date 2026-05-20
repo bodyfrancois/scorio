@@ -28,6 +28,8 @@ function HeaderGradient() {
 import HomeScreen from './src/screens/HomeScreen';
 import NewGameScreen from './src/screens/NewGameScreen';
 import ScoreboardScreen from './src/screens/ScoreboardScreen';
+import DiceSetupScreen from './src/screens/DiceSetupScreen';
+import DiceRollerScreen from './src/screens/DiceRollerScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
 import PlayersScreen from './src/screens/PlayersScreen';
 import StatsScreen from './src/screens/StatsScreen';
@@ -196,6 +198,36 @@ function AppInner() {
             headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Lanceur de dés — paramètres */}
+        <Stack.Screen
+          name="DiceSetup"
+          component={DiceSetupScreen}
+          options={({ navigation }: any) => ({
+            title: 'Lanceur de dés',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Lanceur de dés — jeu */}
+        <Stack.Screen
+          name="DiceRoller"
+          component={DiceRollerScreen}
+          options={({ navigation }: any) => ({
+            title: 'Lancer les dés',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />

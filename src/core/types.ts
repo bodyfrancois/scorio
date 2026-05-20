@@ -33,6 +33,7 @@ export interface GameConfig {
   roundTotal?: number;
   image?: any; // require('...') local asset
   lowestScoreWins: boolean;
+  isDiceGame?: boolean;
   lowestScoreWinsToggle?: boolean;
   timeLimitToggle?: boolean;
   quickActionsName?: string;

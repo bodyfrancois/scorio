@@ -1,3 +1,5 @@
+import { DiceType } from '../components/DiceShape';
+
 export type RootStackParamList = {
   Main: undefined;
   NewGame: { gameName: string };
@@ -5,4 +7,6 @@ export type RootStackParamList = {
     gameName: string;
     players: string[];
   };
+  DiceSetup: undefined;
+  DiceRoller: { diceCount: number; diceType: DiceType };
 };
