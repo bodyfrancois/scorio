@@ -125,10 +125,11 @@ function GameCard({ item, colors, t }: { item: GameHistoryItem; colors: typeof l
 
       <View>
         {visible.map((player, i) => {
-          let rank = 1;
+          const betterScores = new Set<number>();
           for (let j = 0; j < i; j++) {
-            if (item.ranking[j].score > player.score) rank++;
+            if (item.ranking[j].score !== player.score) betterScores.add(item.ranking[j].score);
           }
+          const rank = betterScores.size + 1;
           return (
             <PlayerCard
               key={`${player.name}-${i}`}

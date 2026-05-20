@@ -14,14 +14,15 @@ import { sixquiprendeEngine } from '../games/6quiprend/logic';
 const engines: Record<string, GameEngine> = {
   'MODE LIBRE': freeLibreEngine,
   'UNO': unoEngine,
+    'SPEED BAC': speedbacEngine,
   'BELOTE': beloteEngine,
-  'SKYJO': skyjoEngine,
   'FLIP 7': flip7Engine,
   'HILO': hiloEngine,
-  'SPEED BAC': speedbacEngine,
   '6 QUI PREND': sixquiprendeEngine,
+    'TAROT': tarotEngine,
   'LIGRETTO': ligrettoEngine,
-  'TAROT': tarotEngine,
+
+  'SKYJO': skyjoEngine,
   'SCRABBLE': scrabbleEngine,
 };
 

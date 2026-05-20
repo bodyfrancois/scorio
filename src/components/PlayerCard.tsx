@@ -51,13 +51,13 @@ export default function PlayerCard(props: Props) {
         <Text style={[s.bodyMedium, { flex: 1 }]}>{props.name}</Text>
         <View style={{ flexDirection: 'row', gap: 4 }}>
           <Pressable
-            style={({ pressed }) => [{ padding: 8 }, pressed && s.pressed]}
+            style={({ pressed }) => [{ padding: 8, borderRadius: 8, backgroundColor: colors.surfaceAlt }, pressed && s.pressed]}
             onPress={props.onEdit}
           >
             <IconPen size={18} color={colors.textSecondary} />
           </Pressable>
           <Pressable
-            style={({ pressed }) => [{ padding: 8 }, pressed && s.pressed]}
+            style={({ pressed }) => [{ padding: 8, borderRadius: 8, backgroundColor: colors.surfaceAlt }, pressed && s.pressed]}
             onPress={props.onDelete}
           >
             <Ionicons name="trash-outline" size={18} color={colors.danger} />
@@ -77,7 +77,7 @@ export default function PlayerCard(props: Props) {
         onPress={props.onPress}
       >
         <MedalBadge rank={props.rank + 1} />
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 , paddingVertical: 5}}>
           <Text style={s.itemTitle}>{props.player.name}</Text>
           <Text style={[s.muted, { marginTop: 2 }]}>
             {props.player.wins} {t.statsVictories} / {props.player.games} {t.statsParties}
@@ -92,7 +92,7 @@ export default function PlayerCard(props: Props) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
       <MedalBadge rank={props.rank} />
-      <Text style={[s.dd, { flex: 1 }]}>{props.name}</Text>
+      <Text style={[s.body, { flex: 1 }]}>{props.name}</Text>
       <Text style={[s.itemTitle, { marginLeft: 'auto' }]}>{props.score} pts</Text>
     </View>
   );

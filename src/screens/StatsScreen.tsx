@@ -285,13 +285,15 @@ export default function StatsScreen({ navigation }: any) {
                 <Text style={styles.sectionLabel}>{t.statsPlayerRanking}</Text>
                 <View style={[styles.card, { marginBottom: 32 }]}>
                   {stats.players.map((player, i) => (
-                    <PlayerCard
-                      key={player.name}
-                      variant="stats"
-                      player={player}
-                      rank={i}
-                      onPress={() => navigation.navigate('PlayerDetail', { player })}
-                    />
+                    <React.Fragment key={player.name}>
+                      {i > 0 && <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 2 }} />}
+                      <PlayerCard
+                        variant="stats"
+                        player={player}
+                        rank={i}
+                        onPress={() => navigation.navigate('PlayerDetail', { player })}
+                      />
+                    </React.Fragment>
                   ))}
                 </View>
               </>

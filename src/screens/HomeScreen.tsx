@@ -17,6 +17,7 @@ import { getAvailableGames } from '../core/gameEngine';
 import { RootStackParamList } from '../types/navigations';
 import { makeHomeStyles } from '../theme/styles';
 import { IllustrationCartes } from './HistoryScreen';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -126,16 +127,23 @@ export default function HomeScreen() {
       
 
       {/* Donate */}
-      <View style={[styles.card, styles.cardAbout, { marginTop: 24, alignItems: 'center' }]}>
+      <View style={[styles.card, styles.cardAbout, { marginTop: 24, padding: 0 }]}>
+        <LinearGradient
+          colors={[colors.secondary, colors.secondarySubtle]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 3, y: -1 }}
+          style={{ borderRadius: 16, padding: 16, alignItems: 'center', overflow: 'hidden' }}
+        >
           <Ionicons name="heart" size={48} color={colors.white} style={{ marginBottom: 10 }} />
           <Text style={[styles.itemTitle, { color: colors.white, marginBottom: 20 }]}>{t.aboutDonate}</Text>
           <Text style={[styles.body, { color: colors.white, textAlign: 'center', lineHeight: 20, marginBottom: 20 }]}>{t.aboutDonateHint}</Text>
           <Pressable
-          style={({ pressed }) => [styles.btnPrimary, { alignSelf: 'stretch' }, pressed && styles.pressed]}
-          onPress={() => Linking.openURL('https://ko-fi.com/misterbuddy')}
-        >
-          <Text style={styles.btnPrimaryText}>{t.aboutDonateCTA}</Text>
-        </Pressable>
+            style={({ pressed }) => [styles.btnPrimary, { alignSelf: 'stretch' }, pressed && styles.pressed]}
+            onPress={() => Linking.openURL('https://ko-fi.com/misterbuddy')}
+          >
+            <Text style={styles.btnPrimaryText}>{t.aboutDonateCTA}</Text>
+          </Pressable>
+        </LinearGradient>
       </View>
 
       {/* Footer */}

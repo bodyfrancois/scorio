@@ -519,7 +519,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         </View>
 
         {config.description && (
-          <Text style={[styles.caption, { lineHeight: 18 }]}>{config.description}</Text>
+          <Text style={[styles.bodySecondary]}>{config.description}</Text>
         )}
 
         {config.detailedRules && (
