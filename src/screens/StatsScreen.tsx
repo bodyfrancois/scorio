@@ -29,8 +29,8 @@ import InfoRow from '../components/InfoRow';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
-const DONUT_PALETTE = ['#4d2983', '#0a9396', '#94d2bd', '#ee9b00', '#bb3e03'];
-const DONUT_OTHER_COLOR = '#d8d8d8';
+const DONUT_PALETTE_LIGHT = ['#4d2983', '#0a9396', '#94d2bd', '#ee9b00', '#bb3e03'];
+const DONUT_PALETTE_DARK  = ['#9D6FE8', '#f6c020', '#3a9080', '#d08a00', '#cc4508'];
 const MAX_DONUT_SLICES  = 5;
 
 // ─── Helpers donut ────────────────────────────────────────────────────────────
@@ -100,11 +100,13 @@ function DonutChart({
   data,
   total,
   isDark,
+  colors,
   t,
 }: {
   data: DonutSlice[];
   total: number;
   isDark: boolean;
+  colors: any;
   t: any;
 }) {
   const SIZE   = 250;
@@ -112,6 +114,9 @@ function DonutChart({
   const outerR = 105, innerR = 63;
   const cornerR = 8;
   const GAP    = data.length > 1 ? 4 : 0;
+
+  const DONUT_PALETTE = isDark ? DONUT_PALETTE_DARK : DONUT_PALETTE_LIGHT;
+  const donutOtherColor = isDark ? colors.searchBackground : '#d8d8d8';
 
   const top  = data.slice(0, MAX_DONUT_SLICES);
   const rest = data.slice(MAX_DONUT_SLICES);
@@ -128,7 +133,7 @@ function DonutChart({
 
   const segColors = [
     ...top.map((_, i) => DONUT_PALETTE[i % DONUT_PALETTE.length]),
-    ...(rest.length > 0 ? [DONUT_OTHER_COLOR] : []),
+    ...(rest.length > 0 ? [donutOtherColor] : []),
   ];
 
   let cumAngle = 0;
@@ -140,8 +145,8 @@ function DonutChart({
     return { ...d, path: roundedDonutPath(cx, cy, outerR, innerR, startDeg, endDeg, cornerR), color: segColors[i] };
   });
 
-  const textColor  = isDark ? '#F1F5F9' : '#1E293B';
-  const mutedColor = isDark ? '#64748B' : '#94A3B8';
+  const textColor  = colors.text;
+  const mutedColor = colors.textMuted;
 
   return (
     <View style={{ alignItems: 'center' }}>
@@ -200,7 +205,7 @@ export default function StatsScreen({ navigation }: any) {
           style={({ pressed }) => [styles.hdrBtn, { marginRight: 16 }, pressed && { opacity: 0.72 }]}
           hitSlop={8}
         >
-          <Ionicons name="filter-outline" size={20} color="#fff" />
+          <Ionicons name="filter-outline" size={20} color={colors.white} />
           {isFiltered && <View style={styles.hdrPoint} />}
         </Pressable>
       ),
@@ -244,7 +249,7 @@ export default function StatsScreen({ navigation }: any) {
               {/* Donut */}
               {!filter.game && stats.donutData.length > 0 && (
                 <View style={styles.donutWrap}>
-                  <DonutChart data={stats.donutData} total={stats.totalGames} isDark={isDark} t={t} />
+                  <DonutChart data={stats.donutData} total={stats.totalGames} isDark={isDark} colors={colors} t={t} />
                 </View>
               )}
 

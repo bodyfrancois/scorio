@@ -21,29 +21,24 @@ import FilterModal, { FilterState } from '../components/FilterModal';
 
 /* ─── Helpers ─────────────────────────────────────────────── */
 
-const MOIS_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-];
-
-function formatDate(iso: string) {
+function formatDate(iso: string, locale: string) {
   const d = new Date(iso);
-  const mois = MOIS_FR[d.getMonth()].slice(0, 3);
+  const mois = d.toLocaleString(locale, { month: 'short' });
   const jour = String(d.getDate()).padStart(2, '0');
   const h    = String(d.getHours()).padStart(2, '0');
   const m    = String(d.getMinutes()).padStart(2, '0');
   return `${mois} ${jour} • ${h}:${m}`;
 }
 
-function keyMonth(iso: string) {
+function keyMonth(iso: string, locale: string) {
   const d = new Date(iso);
-  return `${MOIS_FR[d.getMonth()].toUpperCase()} ${d.getFullYear()}`;
+  return `${d.toLocaleString(locale, { month: 'long' }).toUpperCase()} ${d.getFullYear()}`;
 }
 
-function groupByMonth(items: GameHistoryItem[]) {
+function groupByMonth(items: GameHistoryItem[], locale: string) {
   const map: Record<string, GameHistoryItem[]> = {};
   items.forEach((item) => {
-    const key = keyMonth(item.date);
+    const key = keyMonth(item.date, locale);
     if (!map[key]) map[key] = [];
     map[key].push(item);
   });
@@ -100,7 +95,7 @@ export function IllustrationCartes({ colors }: { colors: typeof lightColors }) {
 
 const MAX_VISIBLE = 3;
 
-function GameCard({ item, colors, t }: { item: GameHistoryItem; colors: typeof lightColors; t: ReturnType<typeof useTranslation> }) {
+function GameCard({ item, colors, locale, t }: { item: GameHistoryItem; colors: typeof lightColors; locale: string; t: ReturnType<typeof useTranslation> }) {
   const config = getGameConfig(item.gameName);
   const [expanded, setExpanded] = useState(false);
   const hasMore = item.ranking.length > MAX_VISIBLE;
@@ -119,7 +114,7 @@ function GameCard({ item, colors, t }: { item: GameHistoryItem; colors: typeof l
         )}
         <View>
           <Text style={s.itemTitle}>{item.gameName}</Text>
-          <Text style={[s.caption, { marginTop: 2 }]}>{formatDate(item.date)}</Text>
+          <Text style={[s.caption, { marginTop: 2 }]}>{formatDate(item.date, locale)}</Text>
         </View>
       </View>
 
@@ -246,14 +241,14 @@ export default function HistoryScreen({ navigation }: any) {
             style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
             hitSlop={8}
           >
-            <Ionicons name="trash-outline" size={20} color="#fff" />
+            <Ionicons name="trash-outline" size={20} color={colors.white} />
           </Pressable>
           <Pressable
             onPress={() => setFiltersOpen(true)}
             style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
             hitSlop={8}
           >
-            <Ionicons name="filter-outline" size={20} color="#fff" />
+            <Ionicons name="filter-outline" size={20} color={colors.white} />
             {hasFilters && <View style={styles.hdrPoint} />}
           </Pressable>
         </View>
@@ -271,7 +266,8 @@ export default function HistoryScreen({ navigation }: any) {
     });
   }, [history, filter]);
 
-  const sections = useMemo(() => groupByMonth(filtered), [filtered]);
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
+  const sections = useMemo(() => groupByMonth(filtered, locale), [filtered, locale]);
 
   return (
     <View style={styles.container}>
@@ -292,7 +288,7 @@ export default function HistoryScreen({ navigation }: any) {
           renderSectionHeader={({ section: { title } }) => (
             <Text style={[styles.sectionLabel, { marginTop: 16, marginBottom: 8 }]}>{title}</Text>
           )}
-          renderItem={({ item }) => <GameCard item={item} colors={colors} t={t} />}
+          renderItem={({ item }) => <GameCard item={item} colors={colors} locale={locale} t={t} />}
         />
       )}
 

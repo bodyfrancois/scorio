@@ -69,7 +69,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       backgroundColor: c.card,
       borderRadius: R.lg,
       padding: S.base,
-      marginBottom: S['3xl'],
+      marginBottom: S['base'],
       shadowColor: c.shadowCard,
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.05,
@@ -141,11 +141,12 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     cardAbout:{
       marginBottom: S.base,
       backgroundColor: c.secondary,
-      shadowColor: c.secondarySubtle,
+      shadowColor: c.donateGradientEnd,
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.8,
       shadowRadius: 0,
       elevation: 2,
+      borderWidth: 0,
     },
 
     // ─── Modales & Sheets ─────────────────────────────────────────────────
@@ -312,7 +313,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     },
     btnDisabled: {
       opacity: 0.3,
-      shadowColor: '#410872',
+      shadowColor: c.shadowPrimary,
       shadowOffset: { width: 0, height: 4 },
     },
 
@@ -496,7 +497,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       width: 7,
       height: 7,
       borderRadius: 4,
-      backgroundColor: '#fff',
+      backgroundColor: c.white,
     },
 
     // ─── Bouton d'action inline (en-tête de section) ──────────────────────
@@ -830,14 +831,14 @@ export const makeHomeStyles = (c: typeof lightColors) => ({
     },
     // ── Mode Libre ───────────────────────────────────────────
     freeGameCard: {
-      backgroundColor: c.primarySubtle,
-      shadowColor: c.primaryLight,
+      backgroundColor: c.freeCardBg,
+      shadowColor: c.freeCardShadow,
       shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.5,
+      shadowOpacity: 1,
       shadowRadius: 0,
-      elevation: 2,
+      elevation: 3,
       borderWidth: 1,
-      borderColor: c.primaryLight,
+      borderColor: c.freeCardBorder,
     },
     /*freeGameIconBox: {
       width: 72,
@@ -909,7 +910,7 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
     },
     playerCardFocused: {
       borderColor: c.borderActive,
-      shadowColor: '#94A3B8',
+      shadowColor: c.borderActive,
       shadowOpacity: 1,
     },
     playerCardDuplicate: {
@@ -987,6 +988,23 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       gap: S.xs,
+    },
+    settingDivider: {
+      height: 1,
+      backgroundColor: c.border,
+      marginTop: S.md,
+      marginBottom: S.sm,
+    },
+    settingToggleRow: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: S.md,
+    },
+    settingSubRow: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: S.md,
+      paddingTop: S.sm,
     },
     expandButton: {
       marginTop: S.md,
@@ -1188,6 +1206,26 @@ export const makeScoreboardStyles = (c: typeof lightColors, ROUND_COL: number, P
       alignItems: 'center' as const,
       marginBottom: S.base,
     },
+    timerBanner: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      gap: 6,
+      paddingVertical: S.sm,
+      paddingHorizontal: S.base,
+      borderRadius: R.md,
+      marginBottom: S.base,
+    },
+    timerText: {
+      fontSize: FS.base,
+      fontWeight: FW.bold,
+    },
+    roundBanner: {
+      fontSize: FS.sm,
+      fontWeight: FW.semibold,
+      color: c.textMuted,
+      marginLeft: S.sm,
+    },
   }),
 });
 
@@ -1203,7 +1241,7 @@ export const makeStatsStyles = (c: typeof lightColors) => ({
     },
     kpiBlock: {
       flex: 1,
-      backgroundColor: c.white,
+      backgroundColor: c.card,
       borderRadius: R.md,
       borderWidth: 1,
       borderColor: c.border,

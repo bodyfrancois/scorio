@@ -23,20 +23,26 @@ export const freeLibreEngine: GameEngine = {
     return scores.map((row) => sumArray(row));
   },
 
-  checkEndGame(scores, players, scoreLimit?, _roundLimit?, lowestScoreWins?) {
+  checkEndGame(scores, players, scoreLimit?, roundLimit?, lowestScoreWins?) {
     const lastRound = scores[0].length - 1;
     const roundCompleted = scores.every((row) => row[lastRound] !== null);
     if (!roundCompleted) return { hasEnded: false };
 
     const totals = scores.map((row) => sumArray(row));
-    const limit = scoreLimit ?? freeLibreConfig.scoreLimit ?? 100;
-    const hasEnded = totals.some((t) => t >= limit);
-    if (!hasEnded) return { hasEnded: false };
 
-    const ranking = lowestScoreWins
+    const rank = () => lowestScoreWins
       ? sortRankingAscending(players, totals)
       : sortRankingDescending(players, totals);
 
-    return { hasEnded: true, ranking };
+    if (roundLimit != null && (lastRound + 1) >= roundLimit) {
+      return { hasEnded: true, ranking: rank() };
+    }
+
+    const limit = scoreLimit ?? freeLibreConfig.scoreLimit ?? 100;
+    if (totals.some((t) => t >= limit)) {
+      return { hasEnded: true, ranking: rank() };
+    }
+
+    return { hasEnded: false };
   },
 };

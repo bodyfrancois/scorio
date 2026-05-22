@@ -43,7 +43,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* ── APPARENCE ── */}
-        <Text style={styles.sectionLabel}>{t.appearance}</Text>
+        <Text style={[styles.sectionLabel, { marginTop: 10 }]}>{t.appearance}</Text>
         <View style={styles.card}>
           <View style={styles.listRow}>
             <View style={[styles.iconBoxSm, { marginRight: 12 }]}>

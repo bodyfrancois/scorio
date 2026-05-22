@@ -53,7 +53,7 @@ export default function PlayerDetailScreen({ route }: any) {
     >
       <Text style={styles.pageTitle}>{player.name}</Text>
 
-      <View style={[styles.card, { marginBottom: 40 }]}>
+      <View style={[styles.card, { marginBottom: 30 }]}>
         {statRows.map((row, i) => (
           <InfoRow
             key={i}

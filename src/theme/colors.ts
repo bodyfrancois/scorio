@@ -50,6 +50,23 @@ export const lightColors = {
   goldSubtle:          '#FEF3C7',   // fond badge 1ère place
   goldText:            '#D97706',   // texte badge 1ère place
 
+  // ── Rangs ─────────────────────────────────────────────────
+  rank1Color:          '#F59E0B',   // or
+  rank1Bg:             '#FEF3C7',
+  rank2Color:          '#94A3B8',   // argent
+  rank2Bg:             '#F1F5F9',
+  rank3Color:          '#CD7F32',   // bronze
+  rank3Bg:             '#FDF0E6',
+
+  // ── Donate (fixe, identique light/dark) ──────────────────
+  donateGradientStart: '#0a9396',
+  donateGradientEnd:   '#005152',
+
+  // ── Carte Mode Libre (home) ───────────────────────────────
+  freeCardBg:          '#F2EDFA',
+  freeCardBorder:      '#C4B5E8',
+  freeCardShadow:      '#C4B5E8',
+
   // ── Avatars (pastels) ────────────────────────────────────
   avatarColor0:        '#01353f',
   avatarColor1:        '#005f73',
@@ -93,7 +110,7 @@ export const darkColors: typeof lightColors = {
   // ── Texte ────────────────────────────────────────────────
   text:                '#F1F5F9',
   textSecondary:       '#94A3B8',
-  textMuted:           '#64748B',
+  textMuted:           '#7A8FA6',
   white:               '#FFFFFF',
   textOnDark:          'rgba(21, 20, 20, 0.7)',
   textOnLight:         '#0F172A',
@@ -116,6 +133,23 @@ export const darkColors: typeof lightColors = {
   gold:                '#F59E0B',
   goldSubtle:          '#3B2A00',
   goldText:            '#F59E0B',
+
+  // ── Rangs ─────────────────────────────────────────────────
+  rank1Color:          '#F59E0B',   // or
+  rank1Bg:             '#624700',
+  rank2Color:          '#94A3B8',   // argent
+  rank2Bg:             '#576880',
+  rank3Color:          '#CD7F32',   // bronze
+  rank3Bg:             '#532a00',
+
+  // ── Donate (fixe, identique light/dark) ──────────────────
+  donateGradientStart: '#0a9396',
+  donateGradientEnd:   '#005152',
+
+  // ── Carte Mode Libre (home) – tonalité bleue en dark ─────
+  freeCardBg:          '#08475a',
+  freeCardBorder:      '#00a7d9',
+  freeCardShadow:      '#03313f',
 
   // ── Avatars (dark mode) ───────────────────────────────────
   avatarColor0:        '#0a8fa6',

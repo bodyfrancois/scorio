@@ -38,6 +38,9 @@ export interface GameConfig {
   lowestScoreWins: boolean;
   isDiceGame?: boolean;
   cardHighlight?: boolean;
+  scoreLimitToggle?: boolean;
+  roundLimitToggle?: boolean;
+  teamsToggle?: boolean;
   lowestScoreWinsToggle?: boolean;
   timeLimitToggle?: boolean;
   quickActionsName?: string;

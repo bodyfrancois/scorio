@@ -85,6 +85,7 @@ const translations = {
     // Mode Libre – nom du jeu
     gameNameLabel: 'NOM DU JEU',
     freeGameDefaultName: 'Mode jeu libre',
+    gameNamePlaceholder: 'Saisissez le nom du jeu',
 
     // Mode Libre – condition de victoire
     winnerMode: 'Condition de victoire',
@@ -96,6 +97,20 @@ const translations = {
     noLimit: 'Pas de limite',
     timeLimitTitle: 'LIMITE DE TEMPS',
     timeLimitSubtitle: 'Durée maximale de la partie',
+
+    // Mode Libre – limite de manches
+    roundLimitToggleLabel: 'Limite de manches',
+
+    // Mode Libre – équipes
+    teamMode: 'Jouer en équipe',
+    teamCount: 'Nombre d\'équipes',
+    playersPerTeam: 'Joueurs par équipe',
+
+    // Sous-libellés des options (NewGameScreen)
+    scoreLimitGoal: 'Objectif en points',
+    duration: 'Durée',
+    roundCount: 'Nombre de manches',
+    rounds: 'manches',
 
     // AboutScreen – feedback
     feedbackTitle: 'Laisser un commentaire',
@@ -251,6 +266,7 @@ const translations = {
     // Free Mode – game name
     gameNameLabel: 'GAME NAME',
     freeGameDefaultName: 'Free game',
+    gameNamePlaceholder: 'Enter the game name',
 
     // Free Mode – winner condition
     winnerMode: 'Winner condition',
@@ -262,6 +278,20 @@ const translations = {
     noLimit: 'No limit',
     timeLimitTitle: 'TIME LIMIT',
     timeLimitSubtitle: 'Maximum game duration',
+
+    // Free Mode – round limit
+    roundLimitToggleLabel: 'Round limit',
+
+    // Free Mode – teams
+    teamMode: 'Play in teams',
+    teamCount: 'Number of teams',
+    playersPerTeam: 'Players per team',
+
+    // Sub-labels for options (NewGameScreen)
+    scoreLimitGoal: 'Score target',
+    duration: 'Duration',
+    roundCount: 'Number of rounds',
+    rounds: 'rounds',
 
     // AboutScreen – feedback
     feedbackTitle: 'Leave a comment',

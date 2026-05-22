@@ -30,7 +30,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const t = useTranslation(language);
   const styles = useMemo(() => makeScoreboardStyles(colors, ROUND_COL, PLAYER_COL, HEADER_H, ROW_H), [colors]);
 
-  const { players, gameName, displayName, teamColors, playerColors, teams, sessionScoreLimit, sessionRoundLimit, sessionLowestScoreWins, sessionQuickActions } = route.params;
+  const { players, gameName, displayName, teamColors, playerColors, teams, sessionScoreLimit, sessionRoundLimit, sessionTimeLimit, sessionLowestScoreWins, sessionQuickActions } = route.params;
   const effectiveGameName: string = displayName ?? gameName;
   const engine = getGameEngine(gameName);
   const { config } = engine;
@@ -48,6 +48,9 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const [selectedRoundIndex, setSelectedRoundIndex] = useState<number | null>(null);
   const [endGameVisible, setEndGameVisible] = useState(false);
   const [ranking, setRanking] = useState<RankingItem[]>([]);
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(
+    sessionTimeLimit ? sessionTimeLimit * 60 : null
+  );
 
   const [rulesModalVisible, setRulesModalVisible] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
@@ -72,6 +75,13 @@ export default function ScoreboardScreen({ route, navigation }: any) {
     return { historyPlayers: (teams as string[][]).flat(), historyRanking };
   };
 
+  useEffect(() => {
+    if (timeRemaining === null || endGameVisible) return;
+    if (timeRemaining <= 0) { endGameManually(); return; }
+    const id = setTimeout(() => setTimeRemaining(t => t !== null ? t - 1 : null), 1000);
+    return () => clearTimeout(id);
+  }, [timeRemaining, endGameVisible]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: effectiveGameName,
@@ -81,7 +91,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           style={({ pressed }) => [styles.hdrBtn, { marginRight: 16 }, pressed && { opacity: 0.72 }]}
           hitSlop={8}
         >
-          <Ionicons name="information-circle-outline" size={20} color="#fff" />
+          <Ionicons name="information-circle-outline" size={20} color={colors.white} />
         </Pressable>
       ),
     });
@@ -145,6 +155,16 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const totals = engine.getTotals(scores);
   const numberOfRounds = scores[0]?.length ?? 0;
 
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+  const timerColor = timeRemaining === null ? colors.primary
+    : timeRemaining > (sessionTimeLimit ?? 0) * 60 * 0.5 ? '#22c55e'
+    : timeRemaining > (sessionTimeLimit ?? 0) * 60 * 0.25 ? '#f59e0b'
+    : colors.danger;
+
   const minTotal = Math.min(...totals);
   const maxTotal = Math.max(...totals);
 
@@ -168,6 +188,13 @@ export default function ScoreboardScreen({ route, navigation }: any) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
+        {timeRemaining !== null && (
+          <View style={[styles.timerBanner, { backgroundColor: timerColor + '22' }]}>
+            <Ionicons name="timer-outline" size={16} color={timerColor} />
+            <Text style={[styles.timerText, { color: timerColor }]}>{formatTime(timeRemaining)}</Text>
+          </View>
+        )}
+
         <View style={styles.tableCard}>
           <View style={{ flexDirection: 'row' }}>
 
@@ -225,10 +252,20 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           </View>
         </View>
 
-        <Pressable style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
-          <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
-          <Text style={styles.addBtnText}>{t.addRound}</Text>
-        </Pressable>
+        {(!sessionRoundLimit || numberOfRounds < sessionRoundLimit) && (
+          <Pressable style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
+            <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
+            <Text style={styles.addBtnText}>{t.addRound}</Text>
+            {sessionRoundLimit && (
+              <Text style={styles.roundBanner}>{numberOfRounds} / {sessionRoundLimit}</Text>
+            )}
+          </Pressable>
+        )}
+        {sessionRoundLimit && numberOfRounds >= sessionRoundLimit && (
+          <View style={styles.addRoundBtn}>
+            <Text style={styles.roundBanner}>{numberOfRounds} / {sessionRoundLimit} {t.rounds}</Text>
+          </View>
+        )}
 
       </ScrollView>
 

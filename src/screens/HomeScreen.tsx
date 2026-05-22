@@ -130,7 +130,7 @@ export default function HomeScreen() {
       {/* Donate */}
       <View style={[styles.card, styles.cardAbout, { marginTop: 24, padding: 0 }]}>
         <LinearGradient
-          colors={[colors.secondary, colors.secondarySubtle]}
+          colors={[colors.donateGradientStart, colors.donateGradientEnd]}
           start={{ x: 0, y: 0 }}
           end={{ x: 3, y: -1 }}
           style={{ borderRadius: 16, padding: 16, alignItems: 'center', overflow: 'hidden' }}

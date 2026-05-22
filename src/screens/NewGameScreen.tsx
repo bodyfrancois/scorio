@@ -35,8 +35,6 @@ export default function NewGameScreen({ route, navigation }: any) {
   const { gameName } = route.params ?? { gameName: 'Jeu' };
   const { config } = getGameEngine(gameName);
 
-  const isTeamMode = !!config.teams;
-
   const [players, setPlayers] = useState<string[]>(['']);
   const [playerColorKeys, setPlayerColorKeys] = useState<(string | null)[]>([null]);
 
@@ -50,17 +48,18 @@ export default function NewGameScreen({ route, navigation }: any) {
     if (!config.teams) return [];
     return Array.from({ length: config.teams.count }, (_, i) => `Équipe ${i + 1}`);
   });
-  const teamColors = Array.from(
-    { length: config.teams?.count ?? 0 },
-    (_, i) => TEAM_COLORS[i % TEAM_COLORS.length]
-  );
-
   const [sessionGameName, setSessionGameName] = useState('');
   const [sessionScoreLimit, setSessionScoreLimit] = useState<number>(config.scoreLimit ?? 500);
   const [sessionRoundLimit, setSessionRoundLimit] = useState<number>(config.roundLimit ?? 10);
   const [sessionLowestScoreWins, setSessionLowestScoreWins] = useState<boolean>(config.lowestScoreWins);
   const [sessionTimeLimit, setSessionTimeLimit] = useState<number | null>(null);
+  const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
+  const [roundLimitEnabled, setRoundLimitEnabled] = useState(false);
+  const [teamsEnabled, setTeamsEnabled] = useState(false);
+  const [sessionTeamCount, setSessionTeamCount] = useState(2);
+  const [sessionPlayersPerTeam, setSessionPlayersPerTeam] = useState(2);
   const [quickActionsEnabled, setQuickActionsEnabled] = useState<boolean>(!!config.quickActions?.length);
+  const [scoreLimitEnabled, setScoreLimitEnabled] = useState(false);
   const [scoreLimitModalVisible, setScoreLimitModalVisible] = useState(false);
   const [roundLimitModalVisible, setRoundLimitModalVisible] = useState(false);
   const [timeLimitModalVisible, setTimeLimitModalVisible] = useState(false);
@@ -81,6 +80,26 @@ export default function NewGameScreen({ route, navigation }: any) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }, []);
+
+  const isTeamMode = !!config.teams || (!!config.teamsToggle && teamsEnabled);
+  const effectiveTeams = config.teams ?? (isTeamMode ? {
+    count: sessionTeamCount,
+    minPlayersPerTeam: 1,
+    maxPlayersPerTeam: 10,
+  } : undefined);
+  const teamColors = Array.from(
+    { length: effectiveTeams?.count ?? 0 },
+    (_, i) => TEAM_COLORS[i % TEAM_COLORS.length]
+  );
+
+  useEffect(() => {
+    if (config.teams) return;
+    if (!teamsEnabled) { setTeamPlayers([]); setTeamNames([]); return; }
+    setTeamPlayers(Array.from({ length: sessionTeamCount }, () =>
+      Array.from({ length: sessionPlayersPerTeam }, () => '')
+    ));
+    setTeamNames(Array.from({ length: sessionTeamCount }, (_, i) => `Équipe ${i + 1}`));
+  }, [teamsEnabled, sessionTeamCount, sessionPlayersPerTeam]);
 
   const getAvatarColor = (index: number) => {
     const key = playerColorKeys[index];
@@ -151,8 +170,8 @@ export default function NewGameScreen({ route, navigation }: any) {
   };
 
   const addTeamPlayer = (teamIndex: number) => {
-    if (!config.teams) return;
-    if (teamPlayers[teamIndex].length >= config.teams.maxPlayersPerTeam) return;
+    if (!effectiveTeams) return;
+    if (teamPlayers[teamIndex].length >= effectiveTeams.maxPlayersPerTeam) return;
     const updated = teamPlayers.map((team) => [...team]);
     updated[teamIndex] = [...updated[teamIndex], ''];
     setTeamPlayers(updated);
@@ -179,8 +198,8 @@ export default function NewGameScreen({ route, navigation }: any) {
   const isValidPlayerCount = isTeamMode
     ? validTeams.every(
         (team) =>
-          team.length >= (config.teams?.minPlayersPerTeam ?? 1) &&
-          team.length <= (config.teams?.maxPlayersPerTeam ?? 99)
+          team.length >= (effectiveTeams?.minPlayersPerTeam ?? 1) &&
+          team.length <= (effectiveTeams?.maxPlayersPerTeam ?? 99)
       )
     : validPlayers.length >= config.minPlayers && validPlayers.length <= config.maxPlayers;
 
@@ -189,7 +208,7 @@ export default function NewGameScreen({ route, navigation }: any) {
       Alert.alert(
         'Configuration invalide',
         isTeamMode
-          ? `Chaque équipe doit avoir entre ${config.teams!.minPlayersPerTeam} et ${config.teams!.maxPlayersPerTeam} joueur(s).`
+          ? `Chaque équipe doit avoir entre ${effectiveTeams!.minPlayersPerTeam} et ${effectiveTeams!.maxPlayersPerTeam} joueur(s).`
           : `Le nombre de joueurs doit être entre ${config.minPlayers} et ${config.maxPlayers}.`
       );
       return;
@@ -199,6 +218,11 @@ export default function NewGameScreen({ route, navigation }: any) {
     const displayName = config.cardSubtitle
       ? (sessionGameName.trim() || t.freeGameDefaultName)
       : undefined;
+    const resolvedRoundLimit = (config.roundLimit != null || roundLimitEnabled) ? sessionRoundLimit : undefined;
+    const resolvedTimeLimit = timeLimitEnabled ? (sessionTimeLimit ?? 30) : undefined;
+    const resolvedScoreLimit = config.scoreLimitToggle
+      ? (scoreLimitEnabled ? sessionScoreLimit : undefined)
+      : (config.scoreLimit != null ? sessionScoreLimit : undefined);
 
     if (isTeamMode) {
       navigation.navigate('Scoreboard', {
@@ -207,8 +231,9 @@ export default function NewGameScreen({ route, navigation }: any) {
         players: validTeams.map((_, i) => teamNames[i]?.trim() || `Équipe ${i + 1}`),
         teams: validTeams,
         teamColors,
-        sessionScoreLimit: config.scoreLimit != null ? sessionScoreLimit : undefined,
-        sessionRoundLimit: config.roundLimit != null ? sessionRoundLimit : undefined,
+        sessionScoreLimit: resolvedScoreLimit,
+        sessionRoundLimit: resolvedRoundLimit,
+        sessionTimeLimit: resolvedTimeLimit,
         sessionQuickActions,
       });
     } else {
@@ -225,15 +250,16 @@ export default function NewGameScreen({ route, navigation }: any) {
         displayName,
         players: validPlayers,
         playerColors: validPlayerColors,
-        sessionScoreLimit: config.scoreLimit != null ? sessionScoreLimit : undefined,
-        sessionRoundLimit: config.roundLimit != null ? sessionRoundLimit : undefined,
+        sessionScoreLimit: resolvedScoreLimit,
+        sessionRoundLimit: resolvedRoundLimit,
+        sessionTimeLimit: resolvedTimeLimit,
         sessionLowestScoreWins: config.lowestScoreWinsToggle ? sessionLowestScoreWins : undefined,
         sessionQuickActions,
       });
     }
   };
 
-  const hasSettings = config.scoreLimit != null || config.roundLimit != null || !!config.quickActions?.length || !!config.lowestScoreWinsToggle || !!config.timeLimitToggle || !!config.cardSubtitle;
+  const hasSettings = config.scoreLimit != null || config.roundLimit != null || !!config.quickActions?.length || !!config.lowestScoreWinsToggle || !!config.timeLimitToggle || !!config.roundLimitToggle || !!config.scoreLimitToggle || !!config.teamsToggle || !!config.cardSubtitle;
 
   return (
     <>
@@ -243,58 +269,119 @@ export default function NewGameScreen({ route, navigation }: any) {
       showsVerticalScrollIndicator={false}
     >
 
-      {!isTeamMode && (
-        <>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionLabel, styles.sectionLabelNoMargin]}>{t.players}</Text>
-            {players.length < config.maxPlayers && (
-              <Pressable onPress={addPlayer} style={styles.addBtn}>
-                <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
-                <Text style={styles.addBtnText}>{t.addPlayer}</Text>
-              </Pressable>
-            )}
+      {!!config.cardSubtitle && (
+        <View style={[styles.card, styles.cardRow]}>
+          <View style={styles.iconBoxSm}>
+            <Ionicons name="create-outline" size={18} color={colors.textSecondary} />
           </View>
+          <TextInput
+            style={styles.playerInput}
+            placeholder={t.gameNamePlaceholder}
+            placeholderTextColor={colors.textMuted}
+            value={sessionGameName}
+            onChangeText={setSessionGameName}
+          />
+        </View>
+      )}
 
-          <View>
-            {players.map((player, index) => (
-              <View
-                key={index}
-                style={[
-                  [styles.card, styles.cardRow],
-                  focusedKey === `p${index}` && styles.playerCardFocused,
-                  duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
-                ]}
-              >
-                <PlayerAvatar name={player.trim() || '—'} color={getAvatarColor(index)} />
-                <TextInput
-                  placeholder={t.playerName}
-                  value={player}
-                  onChangeText={(text) => updatePlayer(index, text)}
-                  onFocus={() => setFocusedKey(`p${index}`)}
-                  onBlur={() => setFocusedKey(null)}
-                  style={styles.playerInput}
-                  placeholderTextColor={colors.textMuted}
-                />
-                {favorites.length > 0 && (
-                  <Pressable onPress={() => openFavSheet(index)} hitSlop={8}>
-                    <Ionicons name="star-outline" size={20} color={colors.primary} />
-                  </Pressable>
-                )}
-                {players.length > 1 && (
-                  <Pressable onPress={() => removePlayer(index)} hitSlop={8}>
-                    <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
-                  </Pressable>
-                )}
-              </View>
-            ))}
+      {config.teamsToggle && (
+        <View style={[styles.card, { marginBottom: 40 }]}>
+          <View style={styles.settingToggleRow}>
+            <View style={styles.iconBoxSm}>
+              <Ionicons name="people-outline" size={18} color={colors.textSecondary} />
+            </View>
+            <Text style={[styles.body, { flex: 1 }]}>{t.teamMode}</Text>
+            <Switch
+              value={teamsEnabled}
+              onValueChange={setTeamsEnabled}
+              trackColor={{ false: colors.searchBackground, true: colors.primaryLight }}
+              thumbColor={teamsEnabled ? colors.primary : colors.textMuted}
+              ios_backgroundColor={colors.searchBackground}
+            />
           </View>
-        </>
+          {teamsEnabled && (
+            <>
+              <View style={styles.settingDivider} />
+              <View style={styles.settingSubRow}>
+                <Text style={[styles.body, { flex: 1 }]}>{t.teamCount}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <Pressable onPress={() => setSessionTeamCount(v => Math.max(2, v - 1))} hitSlop={8}>
+                    <Ionicons name="remove-circle-outline" size={22} color={sessionTeamCount > 2 ? colors.primary : colors.textMuted} />
+                  </Pressable>
+                  <Text style={styles.itemTitle}>{sessionTeamCount}</Text>
+                  <Pressable onPress={() => setSessionTeamCount(v => Math.min(8, v + 1))} hitSlop={8}>
+                    <Ionicons name="add-circle-outline" size={22} color={sessionTeamCount < 8 ? colors.primary : colors.textMuted} />
+                  </Pressable>
+                </View>
+              </View>
+              <View style={styles.settingDivider} />
+              <View style={styles.settingSubRow}>
+                <Text style={[styles.body, { flex: 1 }]}>{t.playersPerTeam}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <Pressable onPress={() => setSessionPlayersPerTeam(v => Math.max(1, v - 1))} hitSlop={8}>
+                    <Ionicons name="remove-circle-outline" size={22} color={sessionPlayersPerTeam > 1 ? colors.primary : colors.textMuted} />
+                  </Pressable>
+                  <Text style={styles.itemTitle}>{sessionPlayersPerTeam}</Text>
+                  <Pressable onPress={() => setSessionPlayersPerTeam(v => Math.min(5, v + 1))} hitSlop={8}>
+                    <Ionicons name="add-circle-outline" size={22} color={sessionPlayersPerTeam < 5 ? colors.primary : colors.textMuted} />
+                  </Pressable>
+                </View>
+              </View>
+            </>
+          )}
+        </View>
+      )}
+
+      <View style={styles.sectionHeader}>
+        <Text style={[styles.sectionLabel, styles.sectionLabelNoMargin]}>
+          {isTeamMode ? t.teams : t.players}
+        </Text>
+        {!isTeamMode && players.length < config.maxPlayers && (
+          <Pressable onPress={addPlayer} style={styles.addBtn}>
+            <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
+            <Text style={styles.addBtnText}>{t.addPlayer}</Text>
+          </Pressable>
+        )}
+      </View>
+
+      {!isTeamMode && (
+        <View>
+          {players.map((player, index) => (
+            <View
+              key={index}
+              style={[
+                [styles.card, styles.cardRow],
+                focusedKey === `p${index}` && styles.playerCardFocused,
+                duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
+              ]}
+            >
+              <PlayerAvatar name={player.trim() || '—'} color={getAvatarColor(index)} />
+              <TextInput
+                placeholder={t.playerName}
+                value={player}
+                onChangeText={(text) => updatePlayer(index, text)}
+                onFocus={() => setFocusedKey(`p${index}`)}
+                onBlur={() => setFocusedKey(null)}
+                style={styles.playerInput}
+                placeholderTextColor={colors.textMuted}
+              />
+              {favorites.length > 0 && (
+                <Pressable onPress={() => openFavSheet(index)} hitSlop={8}>
+                  <Ionicons name="star-outline" size={20} color={colors.primary} />
+                </Pressable>
+              )}
+              {players.length > 1 && (
+                <Pressable onPress={() => removePlayer(index)} hitSlop={8}>
+                  <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
+                </Pressable>
+              )}
+            </View>
+          ))}
+        </View>
       )}
 
       {isTeamMode && (
         <>
-          <Text style={styles.sectionLabel}>{t.teams}</Text>
-
           {teamPlayers.map((teamMembers, teamIndex) => {
             const teamColor = teamColors[teamIndex];
             const nameFocusKey = `t${teamIndex}_name`;
@@ -313,7 +400,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                     placeholderTextColor={colors.textMuted}
                     style={styles.teamNameInput}
                   />
-                  {teamMembers.length < (config.teams?.maxPlayersPerTeam ?? 99) && (
+                  {teamMembers.length < (effectiveTeams?.maxPlayersPerTeam ?? 99) && (
                     <Pressable onPress={() => addTeamPlayer(teamIndex)} style={styles.addBtn}>
                       <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
                       <Text style={styles.addBtnText}>{t.add}</Text>
@@ -347,7 +434,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                             <Ionicons name="star-outline" size={20} color={colors.primary} />
                           </Pressable>
                         )}
-                        {teamMembers.length > (config.teams?.minPlayersPerTeam ?? 1) && (
+                        {teamMembers.length > (effectiveTeams?.minPlayersPerTeam ?? 1) && (
                           <Pressable onPress={() => removeTeamPlayer(teamIndex, playerIndex)}>
                             <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
                           </Pressable>
@@ -369,22 +456,8 @@ export default function NewGameScreen({ route, navigation }: any) {
             {t.gameSettings}
           </Text>
 
-          {!!config.cardSubtitle && (
-            <View style={[styles.card, styles.cardRow]}>
-              <View style={styles.iconBoxSm}>
-                <Ionicons name="create-outline" size={18} color={colors.textSecondary} />
-              </View>
-              <TextInput
-                style={styles.playerInput}
-                placeholder={t.freeGameDefaultName}
-                placeholderTextColor={colors.textMuted}
-                value={sessionGameName}
-                onChangeText={setSessionGameName}
-              />
-            </View>
-          )}
-
-          {config.scoreLimit != null && (
+          {/* Score limit – fixed (non-toggle games like UNO) */}
+          {config.scoreLimit != null && !config.scoreLimitToggle && (
             <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
@@ -395,11 +468,9 @@ export default function NewGameScreen({ route, navigation }: any) {
             </Pressable>
           )}
 
+          {/* Round limit – fixed (non-toggle) */}
           {config.roundLimit != null && (
-            <Pressable
-              style={[[styles.card, styles.cardRow], config.scoreLimit != null && { marginTop: 8 }]}
-              onPress={() => setRoundLimitModalVisible(true)}
-            >
+            <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
               </View>
@@ -410,7 +481,7 @@ export default function NewGameScreen({ route, navigation }: any) {
           )}
 
           {!!config.quickActions?.length && (
-            <View style={[[styles.card, styles.cardRow], config.scoreLimit != null && { marginTop: 8 }]}>
+            <View style={[styles.card, styles.cardRow]}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="flash-outline" size={18} color={colors.textSecondary} />
               </View>
@@ -425,28 +496,102 @@ export default function NewGameScreen({ route, navigation }: any) {
             </View>
           )}
 
-          {config.timeLimitToggle && (
-            <Pressable style={[styles.card, styles.cardRow, { marginTop: 8 }]} onPress={() => setTimeLimitModalVisible(true)}>
-              <View style={styles.iconBoxSm}>
-                <Ionicons name="timer-outline" size={18} color={colors.textSecondary} />
+          {/* Score limit – toggle (Mode Libre) */}
+          {config.scoreLimitToggle && (
+            <View style={[styles.card, { marginTop: 0 }]}>
+              <View style={styles.settingToggleRow}>
+                <View style={styles.iconBoxSm}>
+                  <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
+                </View>
+                <Text style={[styles.body, { flex: 1 }]}>{t.scoreLimit}</Text>
+                <Switch
+                  value={scoreLimitEnabled}
+                  onValueChange={setScoreLimitEnabled}
+                  trackColor={{ false: colors.searchBackground, true: colors.primaryLight }}
+                  thumbColor={scoreLimitEnabled ? colors.primary : colors.textMuted}
+                  ios_backgroundColor={colors.searchBackground}
+                />
               </View>
-              <Text style={[styles.body, { flex: 1 }]}>{t.timeLimit}</Text>
-              <Text style={styles.itemTitle}>
-                {sessionTimeLimit != null ? `${sessionTimeLimit} min` : t.noLimit}
-              </Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
-            </Pressable>
+              {scoreLimitEnabled && (
+                <>
+                  <View style={styles.settingDivider} />
+                  <Pressable style={styles.settingSubRow} onPress={() => setScoreLimitModalVisible(true)}>
+                    <Text style={[styles.body, { flex: 1 }]}>{t.scoreLimitGoal}</Text>
+                    <Text style={styles.itemTitle}>{sessionScoreLimit} pts</Text>
+                    <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+                  </Pressable>
+                </>
+              )}
+            </View>
+          )}
+
+          {/* Limite de temps – toggle */}
+          {config.timeLimitToggle && (
+            <View style={[styles.card, { marginTop: 0 }]}>
+              <View style={styles.settingToggleRow}>
+                <View style={styles.iconBoxSm}>
+                  <Ionicons name="timer-outline" size={18} color={colors.textSecondary} />
+                </View>
+                <Text style={[styles.body, { flex: 1 }]}>{t.timeLimit}</Text>
+                <Switch
+                  value={timeLimitEnabled}
+                  onValueChange={setTimeLimitEnabled}
+                  trackColor={{ false: colors.searchBackground, true: colors.primaryLight }}
+                  thumbColor={timeLimitEnabled ? colors.primary : colors.textMuted}
+                  ios_backgroundColor={colors.searchBackground}
+                />
+              </View>
+              {timeLimitEnabled && (
+                <>
+                  <View style={styles.settingDivider} />
+                  <Pressable style={styles.settingSubRow} onPress={() => setTimeLimitModalVisible(true)}>
+                    <Text style={[styles.body, { flex: 1 }]}>{t.duration}</Text>
+                    <Text style={styles.itemTitle}>{sessionTimeLimit ?? 30} min</Text>
+                    <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+                  </Pressable>
+                </>
+              )}
+            </View>
+          )}
+
+          {/* Limite de manches – toggle */}
+          {config.roundLimitToggle && (
+            <View style={[styles.card, { marginTop: 0 }]}>
+              <View style={styles.settingToggleRow}>
+                <View style={styles.iconBoxSm}>
+                  <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
+                </View>
+                <Text style={[styles.body, { flex: 1 }]}>{t.roundLimitToggleLabel}</Text>
+                <Switch
+                  value={roundLimitEnabled}
+                  onValueChange={setRoundLimitEnabled}
+                  trackColor={{ false: colors.searchBackground, true: colors.primaryLight }}
+                  thumbColor={roundLimitEnabled ? colors.primary : colors.textMuted}
+                  ios_backgroundColor={colors.searchBackground}
+                />
+              </View>
+              {roundLimitEnabled && (
+                <>
+                  <View style={styles.settingDivider} />
+                  <Pressable style={styles.settingSubRow} onPress={() => setRoundLimitModalVisible(true)}>
+                    <Text style={[styles.body, { flex: 1 }]}>{t.roundCount}</Text>
+                    <Text style={styles.itemTitle}>{sessionRoundLimit}</Text>
+                    <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+                  </Pressable>
+                </>
+              )}
+            </View>
           )}
 
           {config.lowestScoreWinsToggle && (
             <View style={[styles.card]}>
-              <View style={[styles.cardRow, { marginBottom: 12 }]}>
+              <View style={[styles.cardRow, { marginBottom: 12, borderWidth: 0 }]}>
                 <View style={styles.iconBoxSm}>
                   <Ionicons name="podium-outline" size={18} color={colors.textSecondary} />
                 </View>
                 <Text style={styles.body}>{t.winnerMode}</Text>
               </View>
-              <View style={styles.radioRow}>
+              <View style={[styles.radioRow, { gap: 8 }]}>
                 <Pressable
                   style={[styles.radioOption, !sessionLowestScoreWins && styles.radioOptionSelected]}
                   onPress={() => setSessionLowestScoreWins(false)}

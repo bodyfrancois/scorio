@@ -92,9 +92,9 @@ export default function AboutScreen({ route }: any) {
         </View>
 
         {/* Donate */}
-        <View style={[styles.card, styles.cardAbout, { marginBottom: 40, padding: 0 }]}>
+        <View style={[styles.card, styles.cardAbout, { marginTop: 5, marginBottom: 40, padding: 0 }]}>
           <LinearGradient
-            colors={[colors.secondary, colors.secondarySubtle]}
+            colors={[colors.donateGradientStart, colors.donateGradientEnd]}
             start={{ x: 0, y: 0 }}
             end={{ x: 3, y: -1 }}
             style={{ borderRadius: 16, padding: 16, alignItems: 'center', overflow: 'hidden' }}
@@ -182,7 +182,7 @@ export default function AboutScreen({ route }: any) {
           </Pressable>
         </View>
 
-        <Text style={[styles.muted, { textAlign: 'center' }]}>by @MisterBuddy</Text>
+        <Text style={[styles.muted, { textAlign: 'center', marginTop: 45 }]}>by @MisterBuddy</Text>
       </ScrollView>
 
       <Modal visible={categoryPickerVisible} transparent animationType="slide">
