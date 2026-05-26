@@ -22,6 +22,7 @@ type Props = {
   roundTotal?: number;
   scoreMin?: number;
   scoreMax?: number;
+  scoreStep?: number;
   scoreInputMode?: 'keypad' | 'stepper';
   currentRoundBases?: (number | null)[];
   onClose: () => void;
@@ -39,6 +40,7 @@ export default function EditScoreModal({
   scoreMin,
   scoreMax,
   scoreInputMode = 'keypad',
+  scoreStep = 1,
   currentRoundBases,
   onClose,
   onValidate,
@@ -172,18 +174,18 @@ export default function EditScoreModal({
           {scoreInputMode === 'stepper' ? (
             <View style={styles.stepperContainer}>
               <Pressable
-                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, stepperValue <= (scoreMin ?? 0) && styles.stepperBtnDisabled]}
-                onPress={() => setStepperValue(v => Math.max(scoreMin ?? 0, v - 1))}
-                disabled={stepperValue <= (scoreMin ?? 0)}
+                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (scoreMin !== undefined && stepperValue <= scoreMin) && styles.stepperBtnDisabled]}
+                onPress={() => setStepperValue(v => scoreMin !== undefined ? Math.max(scoreMin, v - scoreStep) : v - scoreStep)}
+                disabled={scoreMin !== undefined && stepperValue <= scoreMin}
               >
-                <Ionicons name="remove" size={48} color={stepperValue <= (scoreMin ?? 0) ? colors.textMuted : colors.text} />
+                <Ionicons name="remove" size={48} color={(scoreMin !== undefined && stepperValue <= scoreMin) ? colors.textMuted : colors.text} />
               </Pressable>
               <Pressable
-                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, stepperValue >= (scoreMax ?? Infinity) && styles.stepperBtnDisabled]}
-                onPress={() => setStepperValue(v => Math.min(scoreMax ?? Infinity, v + 1))}
-                disabled={stepperValue >= (scoreMax ?? Infinity)}
+                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (scoreMax !== undefined && stepperValue >= scoreMax) && styles.stepperBtnDisabled]}
+                onPress={() => setStepperValue(v => scoreMax !== undefined ? Math.min(scoreMax, v + scoreStep) : v + scoreStep)}
+                disabled={scoreMax !== undefined && stepperValue >= scoreMax}
               >
-                <Ionicons name="add" size={48} color={stepperValue >= (scoreMax ?? Infinity) ? colors.textMuted : colors.text} />
+                <Ionicons name="add" size={48} color={(scoreMax !== undefined && stepperValue >= scoreMax) ? colors.textMuted : colors.text} />
               </Pressable>
             </View>
           ) : (

@@ -35,6 +35,7 @@ export interface GameConfig {
   roundTotal?: number;
   scoreMin?: number;
   scoreMax?: number;
+  scoreStep?: number;
   scoreInputMode?: 'keypad' | 'stepper';
   image?: any; // require('...') local asset
   lowestScoreWins: boolean;

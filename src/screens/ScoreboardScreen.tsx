@@ -349,6 +349,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           roundTotal={config.roundTotal}
           scoreMin={config.scoreMin}
           scoreMax={config.scoreMax}
+          scoreStep={config.scoreStep}
           scoreInputMode={config.scoreInputMode}
           currentRoundBases={baseScores.map(row => row[selectedRoundIndex])}
           onClose={() => setModalVisible(false)}

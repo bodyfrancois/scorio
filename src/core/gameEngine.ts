@@ -13,6 +13,7 @@ import { ligrettoEngine } from '../games/ligretto/logic';
 import { sixquiprendeEngine } from '../games/6quiprend/logic';
 import { fiveKingEngine } from '../games/5_rois/logic';
 import { piliPiliEngine } from '../games/pili_pili/logic';
+import { milleSabordsEngine } from '../games/mille_sabords/logic';
 
 
 const engines: Record<string, GameEngine> = {
@@ -21,6 +22,7 @@ const engines: Record<string, GameEngine> = {
   'UNO': unoEngine,
   'SPEED BAC': speedbacEngine,
   'BELOTE': beloteEngine,
+  'MILLE SABORDS': milleSabordsEngine,
   'DÉS': diceEngine,
   'PILI PILI': piliPiliEngine,
   'FLIP 7': flip7Engine,
