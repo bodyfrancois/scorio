@@ -697,21 +697,23 @@ export default function NewGameScreen({ route, navigation }: any) {
       <Pressable style={styles.overlay} onPress={() => setFavSheetVisible(false)}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <Text style={[styles.labelPrimary, { marginBottom: 4 }]}>{t.fromFavorites}</Text>
-          {favorites.map((fav, i) => (
-            <Pressable
-              key={fav.name}
-              style={({ pressed }) => [
-                styles.favItem,
-                i === favorites.length - 1 && styles.favItemLast,
-                pressed && styles.cardPressed,
-              ]}
-              onPress={() => selectFavorite(fav)}
-            >
-              <PlayerAvatar name={fav.name} color={getAvatarColorByKey(fav.colorKey, colors)} />
-              <Text style={[styles.bodyMedium, { flex: 1 }]}>{fav.name}</Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
-            </Pressable>
-          ))}
+          <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 580 }}>
+            {favorites.map((fav, i) => (
+              <Pressable
+                key={fav.name}
+                style={({ pressed }) => [
+                  styles.favItem,
+                  i === favorites.length - 1 && styles.favItemLast,
+                  pressed && styles.cardPressed,
+                ]}
+                onPress={() => selectFavorite(fav)}
+              >
+                <PlayerAvatar name={fav.name} color={getAvatarColorByKey(fav.colorKey, colors)} />
+                <Text style={[styles.bodyMedium, { flex: 1 }]}>{fav.name}</Text>
+                <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
+              </Pressable>
+            ))}
+          </ScrollView>
         </Pressable>
       </Pressable>
     </Modal>

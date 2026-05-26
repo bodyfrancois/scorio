@@ -555,6 +555,8 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     body: { fontSize: FS.base, color: c.text },
     /** Corps medium 18px — labels nav, formulaires */
     bodyMedium: { fontSize: FS.base, fontWeight: FW.medium, color: c.text },
+    /** Corps medium 18px — labels nav, formulaires */
+    bodyTable: { fontSize: FS.lg, fontWeight: FW.medium, color: c.text },
     /** Corps secondaire 18px — sous-titres de modales */
     bodySecondary: { fontSize: FS.base, color: c.textSecondary },
     /** Légende 16px — dates, descriptions courtes */
@@ -1147,7 +1149,7 @@ export const makeScoreboardStyles = (c: typeof lightColors, ROUND_COL: number, P
       textAlign: 'center' as const,
     },
     totalScore: {
-      fontSize: FS.lg,
+      fontSize: FS.xl,
       fontWeight: FW.extrabold,
       letterSpacing: LS.tight,
     },
@@ -1433,7 +1435,8 @@ export const makeEditScoreModalStyles = (c: typeof lightColors) => ({
       fontWeight: FW.semibold,
     },
     quickActionsSection: {
-      marginBottom: S.base,
+      marginTop: S.md,
+      marginBottom: S['4xl'],
     },
     quickActionsLabel: {
       fontSize: FS.xs,

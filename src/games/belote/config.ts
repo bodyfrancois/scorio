@@ -13,11 +13,11 @@ export const beloteConfig: GameConfig = {
   quickActionsName: 'Annonces',
   quickActions: [
     { label: 'Belote', value: 20 },
-    { label: 'Tierce', value: 20 },
-    { label: 'Cinquante', value: 50 },
-    { label: 'Cent', value: 100 },
-    { label: 'Carré', value: 100 },
-    { label: 'Carré Valet', value: 200 },
+    { label: 'Tierce', value: 20, maxCount: 4 },
+    { label: 'Cinquante', value: 50, maxCount: 3 },
+    { label: 'Cent', value: 100, maxCount: 3 },
+    { label: 'Carré', value: 100, maxCount: 3 },
+    { label: 'Carré Valet', value: 200, maxCount: 1 },
     { label: 'Capot', value: 252, isCapot: true },
   ],
   teams: {

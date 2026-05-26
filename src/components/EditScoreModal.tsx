@@ -49,7 +49,7 @@ export default function EditScoreModal({
 
   const [input, setInput] = useState('');
   const [stepperValue, setStepperValue] = useState(scoreMin ?? 0);
-  const [activeActions, setActiveActions] = useState<Set<number>>(new Set());
+  const [actionCounts, setActionCounts] = useState<Map<number, number>>(new Map());
 
   const remaining = (() => {
     if (roundTotal == null || playerIndex == null || !currentRoundBases) return null;
@@ -69,7 +69,7 @@ export default function EditScoreModal({
 
   useEffect(() => {
     if (!visible) return;
-    setActiveActions(new Set());
+    setActionCounts(new Map());
     if (scoreInputMode === 'stepper') {
       setStepperValue(scoreMin ?? 0);
     } else if (isLastPlayer && remaining != null && remaining >= 0) {
@@ -79,16 +79,17 @@ export default function EditScoreModal({
     }
   }, [visible]);
 
-  const actionsTotal = Array.from(activeActions).reduce((sum, i) => {
+  const actionsTotal = Array.from(actionCounts.entries()).reduce((sum, [i, count]) => {
+    if (count === 0) return sum;
     const action = quickActions?.[i];
     if (!action) return sum;
     // Capot : la base est déjà forcée à roundTotal → le bonus effectif = value - roundTotal
     if (action.isCapot && roundTotal != null) return sum + (action.value - roundTotal);
-    return sum + action.value;
+    return sum + action.value * count;
   }, 0);
   const keypadValue = scoreInputMode === 'stepper' ? stepperValue : (parseInt(input, 10) || 0);
   const total = keypadValue + actionsTotal;
-  const hasValue = scoreInputMode === 'stepper' ? true : (input.length > 0 || activeActions.size > 0);
+  const hasValue = scoreInputMode === 'stepper' ? true : (input.length > 0 || Array.from(actionCounts.values()).some(c => c > 0));
 
   const isOver = remaining !== null && keypadValue > remaining;
   const isBelowMin = scoreMin !== undefined && total < scoreMin;
@@ -102,17 +103,17 @@ export default function EditScoreModal({
 
   const backspace = () => setInput((prev) => prev.slice(0, -1));
 
-  const toggleAction = (index: number) => {
+  const incrementAction = (index: number) => {
     const action = quickActions?.[index];
-    setActiveActions((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
+    const maxCount = action?.maxCount ?? 1;
+    setActionCounts((prev) => {
+      const next = new Map(prev);
+      const current = next.get(index) ?? 0;
+      if (current >= maxCount) {
         next.delete(index);
-        // Si capot désactivé, effacer la base auto-remplie
         if (action?.isCapot) setInput('');
       } else {
-        next.add(index);
-        // Capot : forcer la base à roundTotal (162) pour que l'équipe adverse voie remaining=0
+        next.set(index, current + 1);
         if (action?.isCapot && roundTotal != null) setInput(String(roundTotal));
       }
       return next;
@@ -198,15 +199,16 @@ export default function EditScoreModal({
                 contentContainerStyle={styles.quickActionsRow}
               >
                 {quickActions.map((action, index) => {
-                  const isActive = activeActions.has(index);
+                  const count = actionCounts.get(index) ?? 0;
+                  const isActive = count > 0;
                   return (
                     <Pressable
                       key={index}
                       style={({ pressed }) => [styles.chip, isActive && styles.chipActive, pressed && styles.pressed]}
-                      onPress={() => toggleAction(index)}
+                      onPress={() => incrementAction(index)}
                     >
                       <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
-                        {action.label}
+                        {action.label}{count > 1 ? ` ×${count}` : ''}
                       </Text>
                     </Pressable>
                   );

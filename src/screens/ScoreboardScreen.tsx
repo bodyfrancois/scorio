@@ -43,6 +43,9 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
   const [scores, setScores] = useState(engine.initializeScores(players));
   const [baseScores, setBaseScores] = useState(engine.initializeScores(players));
+  const [roundActionGroups, setRoundActionGroups] = useState<(string[] | null)[][]>(
+    () => engine.initializeScores(players).map(row => row.map(() => null))
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<number | null>(null);
   const [selectedRoundIndex, setSelectedRoundIndex] = useState<number | null>(null);
@@ -110,6 +113,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const addRound = () => {
     setScores(engine.addRound(scores));
     setBaseScores(engine.addRound(baseScores));
+    setRoundActionGroups(prev => prev.map(row => [...row, null]));
   };
 
   const updateScore = (playerIndex: number, roundIndex: number, value: number, base: number) => {
@@ -238,7 +242,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
                           setModalVisible(true);
                         }}
                       >
-                        <Text style={[styles.body, scores[playerIndex][roundIndex] === null && styles.scoreEmpty]}>
+                        <Text style={[styles.bodyTable, scores[playerIndex][roundIndex] === null && styles.scoreEmpty]}>
                           {scores[playerIndex][roundIndex] ?? '–'}
                         </Text>
                       </Pressable>
@@ -359,6 +363,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
         ranking={ranking}
         onReplay={() => {
           setScores(engine.initializeScores(players));
+          setBaseScores(engine.initializeScores(players));
           setEndGameVisible(false);
         }}
         onHome={() => {

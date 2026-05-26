@@ -10,6 +10,8 @@ export type QuickAction = {
   value: number;
   /** Capot : remporter tous les plis. Active auto-remplit la base avec roundTotal. */
   isCapot?: boolean;
+  /** Nombre maximum de fois que cette annonce peut être sélectionnée (défaut : 1). */
+  maxCount?: number;
 };
 
 export type TeamConfig = {
