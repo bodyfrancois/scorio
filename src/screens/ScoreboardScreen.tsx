@@ -352,6 +352,8 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           scoreStep={config.scoreStep}
           scoreInputMode={config.scoreInputMode}
           currentRoundBases={baseScores.map(row => row[selectedRoundIndex])}
+          exclusiveScoring={config.exclusiveRoundScoring}
+          quickActionGroups={config.quickActionGroups}
           onClose={() => setModalVisible(false)}
           onValidate={(total, base) => {
             updateScore(selectedPlayerIndex, selectedRoundIndex, total, base);

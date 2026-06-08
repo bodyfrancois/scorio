@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeEditScoreModalStyles } from '../theme/styles';
-import { QuickAction } from '../core/types';
+import { QuickAction, QuickActionGroup } from '../core/types';
 import NumericKeypad from './NumericKeypad';
 
 type Props = {
@@ -19,12 +19,14 @@ type Props = {
   roundNumber: number;
   playerIndex?: number;
   quickActions?: QuickAction[];
+  quickActionGroups?: QuickActionGroup[];
   roundTotal?: number;
   scoreMin?: number;
   scoreMax?: number;
   scoreStep?: number;
   scoreInputMode?: 'keypad' | 'stepper';
   currentRoundBases?: (number | null)[];
+  exclusiveScoring?: boolean;
   onClose: () => void;
   onValidate: (total: number, base: number) => void;
 };
@@ -36,12 +38,14 @@ export default function EditScoreModal({
   roundNumber,
   playerIndex,
   quickActions,
+  quickActionGroups,
   roundTotal,
   scoreMin,
   scoreMax,
   scoreInputMode = 'keypad',
   scoreStep = 1,
   currentRoundBases,
+  exclusiveScoring,
   onClose,
   onValidate,
 }: Props) {
@@ -52,6 +56,14 @@ export default function EditScoreModal({
   const [input, setInput] = useState('');
   const [stepperValue, setStepperValue] = useState(scoreMin ?? 0);
   const [actionCounts, setActionCounts] = useState<Map<number, number>>(new Map());
+
+  const otherPlayerScoredFirst =
+    exclusiveScoring === true &&
+    currentRoundBases != null &&
+    playerIndex != null &&
+    currentRoundBases.some((v, i) => i !== playerIndex && v !== null && v > 0);
+
+  const effectiveScoreMax = otherPlayerScoredFirst ? 0 : scoreMax;
 
   const remaining = (() => {
     if (roundTotal == null || playerIndex == null || !currentRoundBases) return null;
@@ -73,7 +85,7 @@ export default function EditScoreModal({
     if (!visible) return;
     setActionCounts(new Map());
     if (scoreInputMode === 'stepper') {
-      setStepperValue(scoreMin ?? 0);
+      setStepperValue(otherPlayerScoredFirst ? 0 : (scoreMin ?? 0));
     } else if (isLastPlayer && remaining != null && remaining >= 0) {
       setInput(String(remaining));
     } else {
@@ -81,9 +93,14 @@ export default function EditScoreModal({
     }
   }, [visible]);
 
+  const flatActions: QuickAction[] = useMemo(
+    () => quickActionGroups?.flatMap(g => g.actions) ?? quickActions ?? [],
+    [quickActionGroups, quickActions]
+  );
+
   const actionsTotal = Array.from(actionCounts.entries()).reduce((sum, [i, count]) => {
     if (count === 0) return sum;
-    const action = quickActions?.[i];
+    const action = flatActions[i];
     if (!action) return sum;
     // Capot : la base est déjà forcée à roundTotal → le bonus effectif = value - roundTotal
     if (action.isCapot && roundTotal != null) return sum + (action.value - roundTotal);
@@ -95,7 +112,7 @@ export default function EditScoreModal({
 
   const isOver = remaining !== null && keypadValue > remaining;
   const isBelowMin = scoreMin !== undefined && total < scoreMin;
-  const isAboveMax = scoreMax !== undefined && total > scoreMax;
+  const isAboveMax = effectiveScoreMax !== undefined && total > effectiveScoreMax;
   const isValid = hasValue && !isOver && !isBelowMin && !isAboveMax;
 
   const pressKey = (key: string) => {
@@ -106,7 +123,7 @@ export default function EditScoreModal({
   const backspace = () => setInput((prev) => prev.slice(0, -1));
 
   const incrementAction = (index: number) => {
-    const action = quickActions?.[index];
+    const action = flatActions[index];
     const maxCount = action?.maxCount ?? 1;
     setActionCounts((prev) => {
       const next = new Map(prev);
@@ -159,7 +176,7 @@ export default function EditScoreModal({
               />
               <Text style={[styles.muted, (isOver || isAboveMax || isBelowMin) && styles.remainingTextError]}>
                 {isAboveMax
-                  ? `Valeur max : ${scoreMax}`
+                  ? `Valeur max : ${effectiveScoreMax}`
                   : isBelowMin
                   ? `Valeur min : ${scoreMin}`
                   : isOver
@@ -181,18 +198,53 @@ export default function EditScoreModal({
                 <Ionicons name="remove" size={48} color={(scoreMin !== undefined && stepperValue <= scoreMin) ? colors.textMuted : colors.text} />
               </Pressable>
               <Pressable
-                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (scoreMax !== undefined && stepperValue >= scoreMax) && styles.stepperBtnDisabled]}
-                onPress={() => setStepperValue(v => scoreMax !== undefined ? Math.min(scoreMax, v + scoreStep) : v + scoreStep)}
-                disabled={scoreMax !== undefined && stepperValue >= scoreMax}
+                style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax) && styles.stepperBtnDisabled]}
+                onPress={() => setStepperValue(v => effectiveScoreMax !== undefined ? Math.min(effectiveScoreMax, v + scoreStep) : v + scoreStep)}
+                disabled={effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax}
               >
-                <Ionicons name="add" size={48} color={(scoreMax !== undefined && stepperValue >= scoreMax) ? colors.textMuted : colors.text} />
+                <Ionicons name="add" size={48} color={(effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax) ? colors.textMuted : colors.text} />
               </Pressable>
             </View>
           ) : (
             <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
           )}
 
-          {quickActions && quickActions.length > 0 && (
+          {quickActionGroups && quickActionGroups.length > 0 ? (
+            <View style={styles.quickActionsSection}>
+              {quickActionGroups.map((group, groupIndex) => {
+                const offset = quickActionGroups
+                  .slice(0, groupIndex)
+                  .reduce((sum, g) => sum + g.actions.length, 0);
+                return (
+                  <View key={groupIndex} style={{ marginBottom: 16 }}>
+                    <Text style={[styles.quickActionsLabel, { marginBottom: 4 }]}>{group.label}</Text>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={styles.quickActionsRow}
+                    >
+                      {group.actions.map((action, actionIndex) => {
+                        const flatIndex = offset + actionIndex;
+                        const count = actionCounts.get(flatIndex) ?? 0;
+                        const isActive = count > 0;
+                        return (
+                          <Pressable
+                            key={flatIndex}
+                            style={({ pressed }) => [styles.chip, isActive && styles.chipActive, pressed && styles.pressed]}
+                            onPress={() => incrementAction(flatIndex)}
+                          >
+                            <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
+                              {action.label}{count > 1 ? ` ×${count}` : ''}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+                );
+              })}
+            </View>
+          ) : quickActions && quickActions.length > 0 ? (
             <View style={styles.quickActionsSection}>
               <Text style={styles.quickActionsLabel}>{t.announceLabel}</Text>
               <ScrollView
@@ -217,7 +269,7 @@ export default function EditScoreModal({
                 })}
               </ScrollView>
             </View>
-          )}
+          ) : null}
 
           <View style={styles.buttons}>
             <Pressable

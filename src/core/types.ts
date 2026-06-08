@@ -14,6 +14,11 @@ export type QuickAction = {
   maxCount?: number;
 };
 
+export type QuickActionGroup = {
+  label: string;
+  actions: QuickAction[];
+};
+
 export type TeamConfig = {
   count: number;
   minPlayersPerTeam: number;
@@ -48,7 +53,9 @@ export interface GameConfig {
   timeLimitToggle?: boolean;
   quickActionsName?: string;
   quickActions?: QuickAction[];
+  quickActionGroups?: QuickActionGroup[];
   teams?: TeamConfig;
+  exclusiveRoundScoring?: boolean;
 }
 
 export interface GameEngine {
