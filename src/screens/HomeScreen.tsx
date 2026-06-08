@@ -28,9 +28,12 @@ export default function HomeScreen() {
   const games = getAvailableGames();
   const [searchQuery, setSearchQuery] = useState('');
 
+  const normalize = (str: string) =>
+    str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
   const filteredGames = useMemo(() => {
     return games.filter((game) =>
-      game.name.toLowerCase().includes(searchQuery.toLowerCase())
+      normalize(game.name).includes(normalize(searchQuery))
     );
   }, [searchQuery, games]);
 
