@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,8 @@ import {
   Platform,
   UIManager,
   ScrollView,
-  Image,
   Switch,
 } from 'react-native';
-import { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { loadFavorites, FavoritePlayer } from '../storage/favoritePlayers';
 import { TEAM_COLORS } from '../theme/colors';
@@ -25,6 +23,9 @@ import { useTranslation } from '../i18n';
 import { makeNewGameStyles } from '../theme/styles';
 import PlayerAvatar from '../components/PlayerAvatar';
 import { getAvatarColorByIndex, getAvatarColorByKey } from '../utils/avatarColors';
+import GameRulesCard from '../components/GameRulesCard';
+import FavoritesSheet from '../components/FavoritesSheet';
+import TeamsToggleCard from '../components/TeamsToggleCard';
 
 
 export default function NewGameScreen({ route, navigation }: any) {
@@ -64,9 +65,11 @@ export default function NewGameScreen({ route, navigation }: any) {
   const [roundLimitModalVisible, setRoundLimitModalVisible] = useState(false);
   const [timeLimitModalVisible, setTimeLimitModalVisible] = useState(false);
 
-  const [rulesExpanded, setRulesExpanded] = useState(false);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<FavoritePlayer[]>([]);
+  const [favSheetVisible, setFavSheetVisible] = useState(false);
+  const [favTargetIndex, setFavTargetIndex] = useState<number | null>(null);
+  const [favTeamTarget, setFavTeamTarget] = useState<{ teamIndex: number; playerIndex: number } | null>(null);
 
   useFocusEffect(useCallback(() => {
     loadFavorites().then(setFavorites);
@@ -111,10 +114,6 @@ export default function NewGameScreen({ route, navigation }: any) {
     updated[index] = value;
     setPlayers(updated);
   };
-
-  const [favSheetVisible, setFavSheetVisible] = useState(false);
-  const [favTargetIndex, setFavTargetIndex] = useState<number | null>(null);
-  const [favTeamTarget, setFavTeamTarget] = useState<{ teamIndex: number; playerIndex: number } | null>(null);
 
   const openFavSheet = (index: number) => {
     setFavTeamTarget(null);
@@ -285,51 +284,14 @@ export default function NewGameScreen({ route, navigation }: any) {
       )}
 
       {config.teamsToggle && (
-        <View style={[styles.card, { marginBottom: 40 }]}>
-          <View style={styles.settingToggleRow}>
-            <View style={styles.iconBoxSm}>
-              <Ionicons name="people-outline" size={18} color={colors.textSecondary} />
-            </View>
-            <Text style={[styles.body, { flex: 1 }]}>{t.teamMode}</Text>
-            <Switch
-              value={teamsEnabled}
-              onValueChange={setTeamsEnabled}
-              trackColor={{ false: colors.searchBackground, true: colors.primaryLight }}
-              thumbColor={teamsEnabled ? colors.primary : colors.textMuted}
-              ios_backgroundColor={colors.searchBackground}
-            />
-          </View>
-          {teamsEnabled && (
-            <>
-              <View style={styles.settingDivider} />
-              <View style={styles.settingSubRow}>
-                <Text style={[styles.body, { flex: 1 }]}>{t.teamCount}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                  <Pressable onPress={() => setSessionTeamCount(v => Math.max(2, v - 1))} hitSlop={8}>
-                    <Ionicons name="remove-circle-outline" size={22} color={sessionTeamCount > 2 ? colors.primary : colors.textMuted} />
-                  </Pressable>
-                  <Text style={styles.itemTitle}>{sessionTeamCount}</Text>
-                  <Pressable onPress={() => setSessionTeamCount(v => Math.min(8, v + 1))} hitSlop={8}>
-                    <Ionicons name="add-circle-outline" size={22} color={sessionTeamCount < 8 ? colors.primary : colors.textMuted} />
-                  </Pressable>
-                </View>
-              </View>
-              <View style={styles.settingDivider} />
-              <View style={styles.settingSubRow}>
-                <Text style={[styles.body, { flex: 1 }]}>{t.playersPerTeam}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                  <Pressable onPress={() => setSessionPlayersPerTeam(v => Math.max(1, v - 1))} hitSlop={8}>
-                    <Ionicons name="remove-circle-outline" size={22} color={sessionPlayersPerTeam > 1 ? colors.primary : colors.textMuted} />
-                  </Pressable>
-                  <Text style={styles.itemTitle}>{sessionPlayersPerTeam}</Text>
-                  <Pressable onPress={() => setSessionPlayersPerTeam(v => Math.min(5, v + 1))} hitSlop={8}>
-                    <Ionicons name="add-circle-outline" size={22} color={sessionPlayersPerTeam < 5 ? colors.primary : colors.textMuted} />
-                  </Pressable>
-                </View>
-              </View>
-            </>
-          )}
-        </View>
+        <TeamsToggleCard
+          enabled={teamsEnabled}
+          onToggle={setTeamsEnabled}
+          teamCount={sessionTeamCount}
+          onTeamCountChange={setSessionTeamCount}
+          playersPerTeam={sessionPlayersPerTeam}
+          onPlayersPerTeamChange={setSessionPlayersPerTeam}
+        />
       )}
 
       <View style={styles.sectionHeader}>
@@ -456,7 +418,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             {t.gameSettings}
           </Text>
 
-          {/* Score limit – fixed (non-toggle games like UNO) */}
           {config.scoreLimit != null && !config.scoreLimitToggle && (
             <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
@@ -468,7 +429,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             </Pressable>
           )}
 
-          {/* Round limit – fixed (non-toggle) */}
           {config.roundLimit != null && (
             <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
@@ -496,7 +456,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             </View>
           )}
 
-          {/* Score limit – toggle (Mode Libre) */}
           {config.scoreLimitToggle && (
             <View style={[styles.card, { marginTop: 0 }]}>
               <View style={styles.settingToggleRow}>
@@ -525,7 +484,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             </View>
           )}
 
-          {/* Limite de temps – toggle */}
           {config.timeLimitToggle && (
             <View style={[styles.card, { marginTop: 0 }]}>
               <View style={styles.settingToggleRow}>
@@ -554,7 +512,6 @@ export default function NewGameScreen({ route, navigation }: any) {
             </View>
           )}
 
-          {/* Limite de manches – toggle */}
           {config.roundLimitToggle && (
             <View style={[styles.card, { marginTop: 0 }]}>
               <View style={styles.settingToggleRow}>
@@ -630,93 +587,16 @@ export default function NewGameScreen({ route, navigation }: any) {
         {t.gameRules}
       </Text>
 
-      <View style={styles.card}>
+      <GameRulesCard config={config} />
 
-        <View style={styles.rulesCardHeader}>
-          {config.image && (
-            <Image source={config.image} style={styles.rulesImage} resizeMode="cover" />
-          )}
-          <View style={styles.rulesCardMeta}>
-            <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{config.name}</Text>
-            <View style={styles.rulesInfoRow}>
-              <Ionicons name="people-outline" size={13} color={colors.textMuted} />
-              <Text style={styles.muted}>
-                {config.minPlayers === config.maxPlayers
-                  ? config.minPlayers
-                  : `${config.minPlayers}-${config.maxPlayers}`}
-              </Text>
-              {config.estimatedDuration && (
-                <>
-                  <Text style={styles.muted}>·</Text>
-                  <Ionicons name="time-outline" size={13} color={colors.textMuted} />
-                  <Text style={styles.muted}>{config.estimatedDuration} min</Text>
-                </>
-              )}
-              {config.age && (
-                <>
-                  <Text style={styles.muted}>·</Text>
-                  <Ionicons name="person-outline" size={13} color={colors.textMuted} />
-                  <Text style={styles.muted}>{config.age}</Text>
-                </>
-              )}
-            </View>
-          </View>
-        </View>
-
-        {config.description && (
-          <Text style={[styles.bodySecondary]}>{config.description}</Text>
-        )}
-
-        {config.detailedRules && (
-          <>
-            <Pressable
-              style={styles.expandButton}
-              onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                setRulesExpanded(!rulesExpanded);
-              }}
-            >
-              <Text style={styles.addBtnText}>
-                {rulesExpanded ? t.hideRules : t.showRules}
-              </Text>
-              <Ionicons
-                name={rulesExpanded ? 'chevron-up' : 'chevron-down'}
-                size={16}
-                color={colors.primary}
-              />
-            </Pressable>
-            {rulesExpanded && (
-              <Text style={[styles.bodySecondary, { marginTop: 10, lineHeight: 20 }]}>{config.detailedRules}</Text>
-            )}
-          </>
-        )}
-      </View>
     </ScrollView>
 
-    <Modal visible={favSheetVisible} transparent animationType="slide">
-      <Pressable style={styles.overlay} onPress={() => setFavSheetVisible(false)}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <Text style={[styles.labelPrimary, { marginBottom: 4 }]}>{t.fromFavorites}</Text>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 580 }}>
-            {favorites.map((fav, i) => (
-              <Pressable
-                key={fav.name}
-                style={({ pressed }) => [
-                  styles.favItem,
-                  i === favorites.length - 1 && styles.favItemLast,
-                  pressed && styles.cardPressed,
-                ]}
-                onPress={() => selectFavorite(fav)}
-              >
-                <PlayerAvatar name={fav.name} color={getAvatarColorByKey(fav.colorKey, colors)} />
-                <Text style={[styles.bodyMedium, { flex: 1 }]}>{fav.name}</Text>
-                <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
-              </Pressable>
-            ))}
-          </ScrollView>
-        </Pressable>
-      </Pressable>
-    </Modal>
+    <FavoritesSheet
+      visible={favSheetVisible}
+      favorites={favorites}
+      onClose={() => setFavSheetVisible(false)}
+      onSelect={selectFavorite}
+    />
 
     <ScoreLimitModal
       visible={scoreLimitModalVisible}

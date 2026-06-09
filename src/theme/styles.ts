@@ -92,51 +92,8 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       borderColor: c.border,
     },
 
-    /** Carte petite : 16px coins, padding 16, 2px bordure (historique)
-    cardSm: {
-      flexDirection: 'row',
-      backgroundColor: c.card,
-      borderRadius: R.lg,
-      padding: S.base,
-      marginBottom: S.base,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-    },*/
 
-    /** Carte medium : 20px coins, padding 16, 1px bordure (stats, détail joueur)
-    cardMd: {
-      backgroundColor: c.card,
-      borderRadius: R.xl,
-      padding: S.base,
-      marginBottom: S.base,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-    },**/
 
-    /** Carte liste paramètres : 24px coins, 8px padding intérieur pour rows */
-    cardList: {
-      backgroundColor: c.card,
-      borderRadius: R.lg,
-      padding: S.base,
-      marginBottom: S.base,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-    },
 
     cardAbout:{
       marginBottom: S.base,
@@ -250,23 +207,6 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       fontSize: FS.base,
       fontWeight: FW.bold,
       color: c.white,
-    },
-    btnPrimaryAbout: {
-      backgroundColor: c.secondary,
-      shadowColor: c.secondaryText,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 1,
-      shadowRadius: 0,
-      elevation: 10,
-      borderRadius: R.lg,
-      paddingHorizontal: S.base,
-      paddingVertical: S.base,  
-      alignItems: 'center',
-    },
-    btnPrimaryTextAbout: {
-      fontSize: FS.base,
-      fontWeight: FW.bold,
-      color: c.secondaryText,
     },
     btnPrimaryTextSmall: {
       fontSize: FS.sm,
@@ -496,7 +436,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       right: 5,
       width: 7,
       height: 7,
-      borderRadius: 4,
+      borderRadius: R.xs,
       backgroundColor: c.white,
     },
 
@@ -508,15 +448,9 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     avatar: {
       width: 40,
       height: 40,
-      borderRadius: 20,
+      borderRadius: R.full,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    /** Initiales dans un avatar (texte) */
-    avatarText: {
-      fontSize: FS.sm,
-      fontWeight: FW.bold,
-      color: c.white,
     },
 
     // ─── Titres & textes communs ──────────────────────────────────────────
@@ -563,8 +497,6 @@ export const makeSharedStyles = (c: typeof lightColors) =>
     caption: { fontSize: FS.sm, color: c.textSecondary },
     /** Texte atténué 16px */
     muted: { fontSize: FS.sm, color: c.textMuted },
-    /** Micro 14px — badges, unités */
-    micro: { fontSize: FS.xs, color: c.textMuted },
 
     bodyStrong: { fontSize: FS.base, fontWeight: FW.bold, color: c.text },
 
@@ -693,9 +625,6 @@ export const makeSharedStyles = (c: typeof lightColors) =>
 export const makeAboutStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    secondaryText:{
-      color: c.secondaryText,
-    },
     iconBox: {
       width: 64,
       height: 64,
@@ -775,7 +704,7 @@ export const makeAboutStyles = (c: typeof lightColors) => ({
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       justifyContent: 'space-between' as const,
-      paddingVertical: 14,
+      paddingVertical: S.card,
       borderBottomWidth: 1,
       borderBottomColor: c.borderSubtle,
     },
@@ -1054,19 +983,12 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
       gap: S.md,
-      paddingVertical: 14,
+      paddingVertical: S.card,
       borderBottomWidth: 1,
       borderBottomColor: c.borderSubtle,
     },
     favItemLast: {
       borderBottomWidth: 0,
-    },
-    favAvatar: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
     },
   }),
 });
@@ -1074,18 +996,6 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
 export const makePlayersStyles = (c: typeof lightColors) => ({
   ...makeSharedStyles(c),
   ...StyleSheet.create({
-    rowActions: {
-      flexDirection: 'row' as const,
-      gap: S.xs,
-    },
-    iconBtn: {
-      width: 36,
-      height: 36,
-      borderRadius: R.md,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      backgroundColor: c.background,
-    },
   }),
 });
 
@@ -1182,7 +1092,7 @@ export const makeScoreboardStyles = (c: typeof lightColors, ROUND_COL: number, P
     },
     endGameBtn: {
       width: '100%' as const,
-      paddingVertical: 16,
+      paddingVertical: S.base,
       borderRadius: R.lg,
       backgroundColor: c.primary,
       alignItems: 'center' as const,
@@ -1256,103 +1166,16 @@ export const makeStatsStyles = (c: typeof lightColors) => ({
       fontWeight: FW.extrabold,
       color: c.text,
     },
-    kpiLabel: {
-      fontSize: FS.xs,
-      fontWeight: FW.bold,
-      color: c.textMuted,
-      textTransform: 'uppercase' as const,
-      letterSpacing: LS.label,
-      textAlign: 'center' as const,
-    },
     playerCard: {
       marginBottom: 10,
       overflow: 'hidden' as const,
       borderColor: c.borderSubtle,
       borderBottomWidth: 1,
     },
-    playerCardMain: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      paddingBottom: S.xl,
-      gap: 10,
-    },
-    rankBadge: {
-      width: 34, height: 34, borderRadius: 10,
-      alignItems: 'center' as const, justifyContent: 'center' as const,
-    },
-    rankText: { fontSize: FS.sm, fontWeight: FW.extrabold },
-    playerNameBlock: { flex: 1 },
-    streakBadge: {
-      flexDirection: 'row' as const, alignItems: 'center' as const, gap: 3,
-      paddingHorizontal: S.sm, paddingVertical: S.xs, borderRadius: R.md,
-      backgroundColor: c.goldSubtle,
-    },
-    streakText: { fontSize: FS.sm, fontWeight: FW.bold, color: c.goldText },
-    gameCard: {
-      backgroundColor: c.card,
-      borderRadius: R.xl,
-      marginBottom: S.md,
-      borderWidth: 1,
-      borderColor: c.borderSubtle,
-      shadowColor: c.shadowCard,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.05,
-      shadowRadius: 0,
-      elevation: 2,
-    },
-    gameCardHeader: {
-      flexDirection: 'row' as const, alignItems: 'center' as const,
-      gap: S.card, padding: S.card, paddingBottom: S.md,
-    },
     gameImage: {
       width: 52, height: 52, borderRadius: R.md,
       borderWidth: 1, borderColor: c.border,
     },
-    gameImagePlaceholder: {
-      width: 52, height: 52, borderRadius: R.md,
-      backgroundColor: c.primarySubtle,
-      alignItems: 'center' as const, justifyContent: 'center' as const,
-    },
-    gameHeaderInfo: { flex: 1 },
-    gameCountBadge: {
-      alignSelf: 'flex-start' as const,
-      paddingHorizontal: S.sm, paddingVertical: 3, borderRadius: 10,
-      backgroundColor: c.primarySubtle,
-    },
-    gameCountText: { fontSize: FS.sm, fontWeight: FW.bold, color: c.primary },
-    gameDivider: { height: 1, backgroundColor: c.borderSubtle, marginHorizontal: S.card },
-    gameHighlights: {
-      flexDirection: 'row' as const, padding: S.card, paddingTop: S.md, gap: S.sm,
-    },
-    highlightCard: {
-      flex: 1, backgroundColor: c.background,
-      borderRadius: R.lg, padding: 10, alignItems: 'center' as const,
-    },
-    highlightIcon: {
-      width: 28, height: 28, borderRadius: R.sm,
-      alignItems: 'center' as const, justifyContent: 'center' as const, marginBottom: 6,
-    },
-    highlightLabel: {
-      fontSize: FS.xs, fontWeight: FW.bold, color: c.textMuted,
-      textTransform: 'uppercase' as const, letterSpacing: LS.wider,
-      marginBottom: S.xs, textAlign: 'center' as const,
-    },
-    highlightValue: {
-      fontSize: FS.sm, fontWeight: FW.extrabold, color: c.text, textAlign: 'center' as const,
-    },
-    gameRankingSection: {
-      paddingHorizontal: S.card, paddingBottom: S.card,
-    },
-    gameRankRow: {
-      flexDirection: 'row' as const, alignItems: 'center' as const,
-      paddingVertical: S.sm,
-      borderTopWidth: 1, borderTopColor: c.borderSubtle,
-      gap: 10,
-    },
-    gameRankNum: { fontSize: FS.sm, fontWeight: FW.bold, color: c.textMuted, width: 18, textAlign: 'center' as const },
-    gameRankName: { flex: 1, fontSize: FS.sm, fontWeight: FW.medium, color: c.text },
-    gameRankBadge: { paddingHorizontal: S.sm, paddingVertical: 3, borderRadius: 10 },
-    gameRankBadgeText: { fontSize: FS.xs, fontWeight: FW.bold },
   }),
 });
 
@@ -1386,7 +1209,6 @@ export const makeHistoryStyles = (c: typeof lightColors) => ({
     logo:         { width: 48, height: 48, borderRadius: R.md, borderWidth: 1, borderColor: c.border },
     logoFallback: { width: 48, height: 48, borderRadius: R.md, backgroundColor: c.primarySubtle, alignItems: 'center' as const, justifyContent: 'center' as const },
     logoLetter:   { fontSize: FS.lg, fontWeight: FW.bold, color: c.primary },
-    playerRow:    { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 10, paddingVertical: S.sm, borderTopWidth: 1, borderTopColor: c.borderSubtle },
     playerName:   { flex: 1, fontSize: FS.sm, fontWeight: FW.medium, color: c.text },
     seeMore:      { marginTop: 10, alignItems: 'center' as const },
     btnDangerFull: {
@@ -1400,7 +1222,6 @@ export const makeHistoryStyles = (c: typeof lightColors) => ({
     // Main HistoryScreen
     list:         { paddingHorizontal: S.base, paddingBottom: S.xl, paddingTop: S.sm },
     emptyCenter:  { flex: 1, alignItems: 'center' as const, justifyContent: 'center' as const, gap: S.sm },
-    emptyBodyTxt: { fontSize: FS.sm, color: c.textMuted, textAlign: 'center' as const, paddingHorizontal: S['3xl'] },
   }),
 });
 
@@ -1455,7 +1276,7 @@ export const makeEditScoreModalStyles = (c: typeof lightColors) => ({
       gap: S.xs,
       paddingHorizontal: S.md,
       paddingVertical: S.sm,
-      borderRadius: 20,
+      borderRadius: R.xl,
       backgroundColor: c.background,
       borderWidth: 1,
       borderColor: c.border,
@@ -1470,14 +1291,6 @@ export const makeEditScoreModalStyles = (c: typeof lightColors) => ({
       color: c.textSecondary,
     },
     chipLabelActive: {
-      color: c.primary,
-    },
-    chipValue: {
-      fontSize: FS.sm,
-      fontWeight: FW.bold,
-      color: c.textMuted,
-    },
-    chipValueActive: {
       color: c.primary,
     },
     stepperContainer: {
@@ -1504,13 +1317,6 @@ export const makeEditScoreModalStyles = (c: typeof lightColors) => ({
     stepperBtnDisabled: {
       opacity: 0.3,
       borderColor: c.border,
-    },
-    stepperValue: {
-      fontSize: 56,
-      fontWeight: FW.bold,
-      color: c.text,
-      minWidth: 64,
-      textAlign: 'center' as const,
     },
   }),
 });
@@ -1682,27 +1488,6 @@ export const makeEndGameModalStyles = (c: typeof lightColors) => ({
       paddingHorizontal: S.card,
       paddingVertical: S.md,
       gap: S.md,
-    },
-    badge: {
-      width: 24,
-      height: 24,
-      borderRadius: R.md,
-      backgroundColor: c.searchBackground,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-    },
-    badgeText: {
-      fontSize: FS.sm,
-      fontWeight: FW.medium,
-      color: c.textSecondary,
-    },
-    scoreInfo: {
-      alignItems: 'flex-end' as const,
-    },
-    endScore: {
-      fontSize: FS.base,
-      fontWeight: FW.semibold,
-      color: c.text,
     },
     replayBtnLayout: {
       flexDirection: 'row' as const,

@@ -1,7 +1,7 @@
 import { GameConfig } from '../../core/types';
 
 export const tarotConfig: GameConfig = {
-  name: 'Tarot',
+  name: 'TAROT',
   minPlayers: 2,
   maxPlayers: 10,
   estimatedDuration: 20,
