@@ -40,7 +40,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
           <View style={styles.iconBoxBrand}>
             <Text style={styles.iconLetter}>S</Text>
           </View>
-          <Text style={styles.subheading}>Scorio</Text>
+          <Text style={styles.subheading}>ScorUp</Text>
         </View>
         <Pressable onPress={() => props.navigation.closeDrawer()} hitSlop={10}>
           <Ionicons name="close" size={22} color={colors.textSecondary} />

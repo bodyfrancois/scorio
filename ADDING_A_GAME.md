@@ -1,4 +1,4 @@
-# Ajouter un nouveau jeu dans Scorio
+# Ajouter un nouveau jeu dans Scorup
 
 Ce guide décrit toutes les étapes pour intégrer un nouveau jeu dans l'application.
 

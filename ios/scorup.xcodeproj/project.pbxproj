@@ -11,25 +11,25 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		AFF836C98EFAA4629133A8DD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7FB4817FE7EA66C6FE915134 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C2DE69AB4A2513633F087EF9 /* libPods-scorio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A541F036527425174853D1 /* libPods-scorio.a */; };
+		C2DE69AB4A2513633F087EF9 /* libPods-scorup.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A541F036527425174853D1 /* libPods-scorup.a */; };
 		F06B623DCB58097B20063FEB /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39BF6871356B24687521264 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* scorio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scorio.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = scorio/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = scorio/Info.plist; sourceTree = "<group>"; };
-		65A541F036527425174853D1 /* libPods-scorio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-scorio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FB4817FE7EA66C6FE915134 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = scorio/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = scorio/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B39BF6871356B24687521264 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-scorio/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* scorup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scorup.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = scorup/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = scorup/Info.plist; sourceTree = "<group>"; };
+		65A541F036527425174853D1 /* libPods-scorup.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-scorup.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FB4817FE7EA66C6FE915134 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = scorup/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = scorup/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B39BF6871356B24687521264 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-scorup/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		DF59E426C3605F75797DBA59 /* Pods-scorio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scorio.debug.xcconfig"; path = "Target Support Files/Pods-scorio/Pods-scorio.debug.xcconfig"; sourceTree = "<group>"; };
-		E287F6D4FFEE89BFE305DD89 /* Pods-scorio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scorio.release.xcconfig"; path = "Target Support Files/Pods-scorio/Pods-scorio.release.xcconfig"; sourceTree = "<group>"; };
+		DF59E426C3605F75797DBA59 /* Pods-scorup.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scorup.debug.xcconfig"; path = "Target Support Files/Pods-scorup/Pods-scorup.debug.xcconfig"; sourceTree = "<group>"; };
+		E287F6D4FFEE89BFE305DD89 /* Pods-scorup.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scorup.release.xcconfig"; path = "Target Support Files/Pods-scorup/Pods-scorup.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = scorio/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* scorio-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "scorio-Bridging-Header.h"; path = "scorio/scorio-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = scorup/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* scorup-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "scorup-Bridging-Header.h"; path = "scorup/scorup-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,32 +37,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2DE69AB4A2513633F087EF9 /* libPods-scorio.a in Frameworks */,
+				C2DE69AB4A2513633F087EF9 /* libPods-scorup.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* scorio */ = {
+		13B07FAE1A68108700A75B9A /* scorup */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* scorio-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* scorup-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				7FB4817FE7EA66C6FE915134 /* PrivacyInfo.xcprivacy */,
 			);
-			name = scorio;
+			name = scorup;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				65A541F036527425174853D1 /* libPods-scorio.a */,
+				65A541F036527425174853D1 /* libPods-scorup.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -70,8 +70,8 @@
 		65DA50284D2EC1B97F54AA2A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DF59E426C3605F75797DBA59 /* Pods-scorio.debug.xcconfig */,
-				E287F6D4FFEE89BFE305DD89 /* Pods-scorio.release.xcconfig */,
+				DF59E426C3605F75797DBA59 /* Pods-scorup.debug.xcconfig */,
+				E287F6D4FFEE89BFE305DD89 /* Pods-scorup.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -86,7 +86,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* scorio */,
+				13B07FAE1A68108700A75B9A /* scorup */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -101,7 +101,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* scorio.app */,
+				13B07F961A680F5B00A75B9A /* scorup.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,31 +112,31 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = scorio/Supporting;
+			path = scorup/Supporting;
 			sourceTree = "<group>";
 		};
 		F9D7B54C928A546C766FF4D9 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				FA7F4FE6069080BB05713EF6 /* scorio */,
+				FA7F4FE6069080BB05713EF6 /* scorup */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		FA7F4FE6069080BB05713EF6 /* scorio */ = {
+		FA7F4FE6069080BB05713EF6 /* scorup */ = {
 			isa = PBXGroup;
 			children = (
 				B39BF6871356B24687521264 /* ExpoModulesProvider.swift */,
 			);
-			name = scorio;
+			name = scorup;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* scorio */ = {
+		13B07F861A680F5B00A75B9A /* scorup */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "scorio" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "scorup" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				C0A9368A59BF303B5CD32C67 /* [Expo] Configure project */,
@@ -151,9 +151,9 @@
 			);
 			dependencies = (
 			);
-			name = scorio;
-			productName = scorio;
-			productReference = 13B07F961A680F5B00A75B9A /* scorio.app */;
+			name = scorup;
+			productName = scorup;
+			productReference = 13B07F961A680F5B00A75B9A /* scorup.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -169,7 +169,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "scorio" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "scorup" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -182,7 +182,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* scorio */,
+				13B07F861A680F5B00A75B9A /* scorup */,
 			);
 		};
 /* End PBXProject section */
@@ -225,7 +225,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-scorio/Pods-scorio-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-scorup/Pods-scorup-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -234,7 +234,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-scorio/Pods-scorio-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-scorup/Pods-scorup-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
@@ -252,7 +252,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-scorio-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-scorup-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -265,7 +265,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-scorio/Pods-scorio-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-scorup/Pods-scorup-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
@@ -296,7 +296,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-scorio/Pods-scorio-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-scorup/Pods-scorup-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C0A9368A59BF303B5CD32C67 /* [Expo] Configure project */ = {
@@ -310,18 +310,18 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/scorio/scorio.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-scorio/expo-configure-project.sh",
+				"$(SRCROOT)/scorup/scorup.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-scorup/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-scorio/ExpoModulesProvider.swift",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-scorup/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-scorio/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-scorup/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -340,11 +340,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DF59E426C3605F75797DBA59 /* Pods-scorio.debug.xcconfig */;
+			baseConfigurationReference = DF59E426C3605F75797DBA59 /* Pods-scorup.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = scorio/scorio.entitlements;
+				CODE_SIGN_ENTITLEMENTS = scorup/scorup.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G9WRT4J6C5;
 				ENABLE_BITCODE = NO;
@@ -352,7 +352,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = scorio/Info.plist;
+				INFOPLIST_FILE = scorup/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -365,9 +365,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bodyfrancois.scorio;
-				PRODUCT_NAME = scorio;
-				SWIFT_OBJC_BRIDGING_HEADER = "scorio/scorio-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bodyfrancois.scorup;
+				PRODUCT_NAME = scorup;
+				SWIFT_OBJC_BRIDGING_HEADER = "scorup/scorup-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -377,14 +377,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E287F6D4FFEE89BFE305DD89 /* Pods-scorio.release.xcconfig */;
+			baseConfigurationReference = E287F6D4FFEE89BFE305DD89 /* Pods-scorup.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = scorio/scorio.entitlements;
+				CODE_SIGN_ENTITLEMENTS = scorup/scorup.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G9WRT4J6C5;
-				INFOPLIST_FILE = scorio/Info.plist;
+				INFOPLIST_FILE = scorup/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -397,9 +397,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bodyfrancois.scorio;
-				PRODUCT_NAME = scorio;
-				SWIFT_OBJC_BRIDGING_HEADER = "scorio/scorio-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bodyfrancois.scorup;
+				PRODUCT_NAME = scorup;
+				SWIFT_OBJC_BRIDGING_HEADER = "scorup/scorup-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -527,7 +527,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "scorio" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "scorup" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -536,7 +536,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "scorio" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "scorup" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

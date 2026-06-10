@@ -176,10 +176,10 @@ const translations = {
     diceHint: 'Tape un dé ou lance-les tous',
 
     // AboutScreen
-    description: 'Scorio est une application de gestion de scores pour vos jeux de société préférés.',
-    aboutBio: "Développeur freelance, j'ai créé Scorio pour le simple plaisir de jouer à des jeux de société avec mes amis. C'est un projet personnel, développé avec passion — sans publicité, sans abonnement.",
+    description: 'ScorUp est une application de gestion de scores pour vos jeux de société préférés.',
+    aboutBio: "Développeur freelance, j'ai créé ScorUp pour le simple plaisir de jouer à des jeux de société avec mes amis. C'est un projet personnel, développé avec passion — sans publicité, sans abonnement.",
     aboutDonate: 'Soutenir le projet',
-    aboutDonateHint: "Scorio est une application gratuite et sans pub. Si elle vous plaît, vous pouvez soutenir son développement en faisant un don. C'est entièrement facultatif, mais chaque contribution est vraiment appréciée !",
+    aboutDonateHint: "ScorUp est une application gratuite et sans pub. Si elle vous plaît, vous pouvez soutenir son développement en faisant un don. C'est entièrement facultatif, mais chaque contribution est vraiment appréciée !",
     aboutDonateCTA: 'Faire un don',
   },
   en: {
@@ -357,10 +357,10 @@ const translations = {
     diceHint: 'Tap a die or roll them all',
 
     // AboutScreen
-    description: 'Scorio is a score tracking app for your favorite board games.',
-    aboutBio: "I'm a freelance developer. I created Scorio for the simple joy of playing board games with friends. It's a personal project, built with passion — no ads, no subscriptions.",
+    description: 'ScorUp is a score tracking app for your favorite board games.',
+    aboutBio: "I'm a freelance developer. I created ScorUp for the simple joy of playing board games with friends. It's a personal project, built with passion — no ads, no subscriptions.",
     aboutDonate: 'Support the project',
-    aboutDonateHint: "Scorio is a free app with no ads. If you enjoy Scorio, you can support its development by making a donation. It's entirely optional, but every contribution is truly appreciated!",
+    aboutDonateHint: "ScorUp is a free app with no ads. If you enjoy ScorUp, you can support its development by making a donation. It's entirely optional, but every contribution is truly appreciated!",
     aboutDonateCTA: 'Make a donation',
   },
 };

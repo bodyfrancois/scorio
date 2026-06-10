@@ -11,7 +11,7 @@ export type GameHistoryItem = {
   }[];
 };
 
-const HISTORY_KEY = 'SCORIO_HISTORY';
+const HISTORY_KEY = 'SCORUP_HISTORY';
 
 /* Sauvegarder une partie */
 export const saveGameToHistory = async (

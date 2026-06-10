@@ -43,7 +43,7 @@ export default function SplashScreen({ onFinish }: Props) {
           <View style={[styles.iconBox, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
             <Text style={[styles.iconLetter, { color: colors.white }]}>S</Text>
           </View>
-          <Text style={[styles.appName, { color: colors.white }]}>Scorio</Text>
+          <Text style={[styles.appName, { color: colors.white }]}>ScorUp</Text>
         </View>
       </View>
 

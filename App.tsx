@@ -62,7 +62,7 @@ function HeaderLogo() {
       <View style={[logoStyles.iconBox, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
         <Text style={[logoStyles.iconLetter, { color: '#fff' }]}>S</Text>
       </View>
-      <Text style={[logoStyles.label, { color: '#fff' }]}>Scorio</Text>
+      <Text style={[logoStyles.label, { color: '#fff' }]}>ScorUp</Text>
     </View>
   );
 }

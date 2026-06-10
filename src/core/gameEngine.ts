@@ -22,10 +22,10 @@ import { petanqueEngine } from '../games/petanque/logic';
 
 const engines: Record<string, GameEngine> = {
   'MODE LIBRE': freeLibreEngine,
-  'PALET': paletEngine,
   '5 ROIS': fiveKingEngine,
   'UNO': unoEngine,
   'SPEED BAC': speedbacEngine,
+  'PALET': paletEngine,
   'BELOTE': beloteEngine,
   'MILLE SABORDS': milleSabordsEngine,
   'DÉS': diceEngine,

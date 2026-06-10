@@ -156,7 +156,7 @@ export default function HomeScreen() {
           <View style={styles.footerLogoIcon}>
             <Text style={styles.footerLogoLetter}>S</Text>
           </View>
-          <Text style={styles.footerLogoText}>Scorio</Text>
+          <Text style={styles.footerLogoText}>ScorUp</Text>
         </View>
 
         <Text style={styles.footerTagline}>{t.freeApp}</Text>

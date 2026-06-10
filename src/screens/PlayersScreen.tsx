@@ -123,7 +123,7 @@ export default function PlayersScreen() {
               onDelete={() => openDelete(player.name)}
             />
           ))
-        )}sdsd
+        )}
       </ScrollView>
 
       {/* Modal Ajout / Édition */}

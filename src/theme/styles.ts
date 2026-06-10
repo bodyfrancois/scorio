@@ -637,7 +637,7 @@ export const makeAboutStyles = (c: typeof lightColors) => ({
     iconLetter: {
       color: c.white,
       fontWeight: FW.extrabold,
-      fontSize: 38,
+      fontSize: 40,
     },
     appName: {
       color: c.text,

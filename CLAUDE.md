@@ -60,7 +60,7 @@ Quand je lance `/review`, Claude doit :
 ### Conventions du projet à respecter
 
 ```
-Projet : Scorio — app mobile React Native / Expo (iOS + Android)
+Projet : Scorup — app mobile React Native / Expo (iOS + Android)
 
 Naming :
 - Composants : PascalCase (ex. ScoreCard, PlayerList)

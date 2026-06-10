@@ -6,7 +6,7 @@ export type FavoritePlayer = {
   colorKey: string;
 };
 
-const KEY = 'SCORIO_FAVORITES';
+const KEY = 'SCORUP_FAVORITES';
 
 export const loadFavorites = async (): Promise<FavoritePlayer[]> => {
   try {

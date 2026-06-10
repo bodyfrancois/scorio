@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "scorio",
-    "slug": "scorio",
+    "name": "Scorup",
+    "slug": "scorup",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bodyfrancois.scorio"
+      "bundleIdentifier": "com.bodyfrancois.scorup"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.scorio"
+      "package": "com.anonymous.scorup"
     },
     "web": {
       "favicon": "./assets/favicon.png"

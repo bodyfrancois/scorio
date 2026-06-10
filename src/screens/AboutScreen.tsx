@@ -87,7 +87,7 @@ export default function AboutScreen({ route }: any) {
           <View style={styles.iconBox}>
             <Text style={styles.iconLetter}>S</Text>
           </View>
-          <Text style={styles.appName}>Scorio</Text>
+          <Text style={styles.appName}>ScorUp</Text>
           <Text style={[styles.bodySecondary, { textAlign: 'center', lineHeight: 22 }]}>{t.aboutBio}</Text>
         </View>
 
