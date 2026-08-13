@@ -10,6 +10,25 @@ const translations = {
     settings: 'Paramètres',
     about: 'A propos',
 
+    // Accessibilité (labels lecteur d'écran, boutons icône seule)
+    back: 'Retour',
+    openMenu: 'Ouvrir le menu',
+    closeMenu: 'Fermer le menu',
+    close: 'Fermer',
+    edit: 'Modifier',
+    addFavoritePlayer: 'Ajouter un joueur depuis les favoris',
+    removePlayerAction: 'Retirer ce joueur',
+    decreaseDiceCount: 'Diminuer le nombre de dés',
+    increaseDiceCount: 'Augmenter le nombre de dés',
+    decreaseTeamCount: 'Diminuer le nombre d\'équipes',
+    increaseTeamCount: 'Augmenter le nombre d\'équipes',
+    decreasePlayersPerTeam: 'Diminuer le nombre de joueurs par équipe',
+    increasePlayersPerTeam: 'Augmenter le nombre de joueurs par équipe',
+    decreaseScore: 'Diminuer le score',
+    increaseScore: 'Augmenter le score',
+    eraseDigit: 'Effacer le dernier chiffre',
+    colorLabel: 'Couleur',
+
     // HomeScreen
     gameList: 'LISTE DE JEUX',
     searchPlaceholder: 'Rechercher un jeu...',
@@ -75,6 +94,7 @@ const translations = {
     enterScore: 'Saisissez le score de',
     validate: 'Valider',
     announceLabel: 'Annonces',
+    scoreEmpty: 'aucun score',
 
     // ScoreLimitModal / RoundLimitModal
     scoreLimitTitle: 'LIMITE DE SCORE',
@@ -119,10 +139,10 @@ const translations = {
     feedbackCategoryPlaceholder: 'Choisir un sujet...',
     feedbackTextPlaceholder: 'Votre message...',
     feedbackSend: 'Envoyer',
-    feedbackSuccess: 'Message envoyé ! Merci pour votre retour.',
+    feedbackSuccess: 'Votre application mail va s\'ouvrir avec le message pré-rempli. Merci pour votre retour !',
     feedbackErrorCategory: 'Veuillez choisir un sujet.',
     feedbackErrorText: 'Le message doit contenir au moins 10 caractères.',
-    feedbackErrorGeneral: 'Une erreur est survenue. Réessayez.',
+    feedbackErrorGeneral: 'Aucune application mail configurée sur cet appareil.',
     feedbackCatNewGame: 'Nouveau jeu',
     feedbackCatBug: 'Bug sur l\'application',
     feedbackCatOther: 'Autres',
@@ -181,6 +201,40 @@ const translations = {
     aboutDonate: 'Soutenir le projet',
     aboutDonateHint: "ScorUp est une application gratuite et sans pub. Si elle vous plaît, vous pouvez soutenir son développement en faisant un don. C'est entièrement facultatif, mais chaque contribution est vraiment appréciée !",
     aboutDonateCTA: 'Faire un don',
+
+    privacyPolicyTitle: 'Politique de confidentialité',
+    privacyPolicyUpdated: 'Dernière mise à jour : 13 août 2026',
+    privacyPolicyBody:
+      "Cette politique de confidentialité s'applique à l'application mobile Scorup (ci-après « l'Application »), éditée par [Ton nom légal complet] (ci-après « l'Éditeur »), disponible sur l'App Store et le Google Play Store.\n\n" +
+      "1. Résumé\n" +
+      "Scorup ne collecte, n'enregistre sur un serveur, ne transmet et ne vend aucune donnée personnelle. Toutes les informations que vous saisissez restent uniquement sur votre appareil.\n\n" +
+      "2. Quelles données sont traitées\n" +
+      "L'Application vous permet de créer des parties, d'ajouter des joueurs et de suivre des scores. Ces informations (noms de joueurs, scores, historique de parties, statistiques, préférences d'affichage) sont :\n\n" +
+      "• stockées exclusivement en local, sur votre appareil, via le mécanisme de stockage natif du système (AsyncStorage) ;\n" +
+      "• jamais transmises à l'Éditeur, à un serveur distant, ni à un tiers ;\n" +
+      "• accessibles uniquement par vous, depuis votre appareil.\n\n" +
+      "L'Éditeur n'a techniquement accès à aucune de ces données et ne peut ni les consulter, ni les modifier, ni les récupérer.\n\n" +
+      "3. Aucun compte, aucune connexion réseau requise\n" +
+      "Scorup fonctionne entièrement hors ligne. L'Application ne requiert pas de création de compte et n'effectue aucun appel réseau pour son fonctionnement.\n\n" +
+      "4. Publicité, traceurs et services tiers\n" +
+      "L'Application ne contient :\n\n" +
+      "• aucune publicité ;\n" +
+      "• aucun traceur publicitaire ou SDK de mesure d'audience (Google Analytics, Meta SDK, etc.) ;\n" +
+      "• aucun service d'achat intégré ;\n" +
+      "• aucun partage de données avec des tiers, puisqu'aucune donnée n'est collectée.\n\n" +
+      "5. Autorisations demandées sur votre appareil\n" +
+      "L'Application ne demande aucune autorisation particulière (pas d'accès à la caméra, à la localisation, aux contacts, au microphone ou aux photos) au-delà de ce qui est strictement nécessaire à son fonctionnement de base.\n\n" +
+      "6. Utilisation par des mineurs\n" +
+      "Scorup est une application familiale, utilisable par tout âge dans le cadre de jeux de société. Aucune donnée n'étant collectée ni transmise, l'Application ne présente pas de risque spécifique pour les données des mineurs et respecte à ce titre les exigences applicables (RGPD, COPPA) par absence totale de collecte.\n\n" +
+      "7. Vos droits\n" +
+      "Puisque vos données restent sur votre appareil et ne sont jamais transmises à l'Éditeur, vous en gardez l'entier contrôle : vous pouvez les consulter, les modifier ou les supprimer directement depuis l'Application, ou en désinstallant l'Application (ce qui supprime l'ensemble des données stockées localement).\n\n" +
+      "Pour toute question relative à cette politique, vous pouvez contacter l'Éditeur aux coordonnées ci-dessous.\n\n" +
+      "8. Modifications de cette politique\n" +
+      "Cette politique peut être mise à jour si l'Application évolue (ajout de publicité, de statistiques d'usage, d'une synchronisation en ligne, etc.). En cas de changement significatif dans la nature des données traitées, cette page sera mise à jour et la date de dernière modification en haut de page sera actualisée. Nous vous invitons à la consulter régulièrement.\n\n" +
+      "9. Contact\n" +
+      "Pour toute question concernant cette politique de confidentialité ou l'Application :\n\n" +
+      "Email : scorup.support@gmail.com\n\n" +
+      "Scorup — application de feuilles de score pour jeux de société.",
   },
   en: {
     // Navigation
@@ -190,6 +244,25 @@ const translations = {
     statistics: 'Statistics',
     settings: 'Settings',
     about: 'About',
+
+    // Accessibility (screen reader labels, icon-only buttons)
+    back: 'Back',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    close: 'Close',
+    edit: 'Edit',
+    addFavoritePlayer: 'Add a player from favorites',
+    removePlayerAction: 'Remove this player',
+    decreaseDiceCount: 'Decrease number of dice',
+    increaseDiceCount: 'Increase number of dice',
+    decreaseTeamCount: 'Decrease number of teams',
+    increaseTeamCount: 'Increase number of teams',
+    decreasePlayersPerTeam: 'Decrease players per team',
+    increasePlayersPerTeam: 'Increase players per team',
+    decreaseScore: 'Decrease score',
+    increaseScore: 'Increase score',
+    eraseDigit: 'Erase last digit',
+    colorLabel: 'Color',
 
     // HomeScreen
     gameList: 'GAME LIST',
@@ -256,6 +329,7 @@ const translations = {
     enterScore: 'Enter the score for',
     validate: 'Confirm',
     announceLabel: 'Announcements',
+    scoreEmpty: 'no score',
 
     // ScoreLimitModal / RoundLimitModal
     scoreLimitTitle: 'SCORE LIMIT',
@@ -300,10 +374,10 @@ const translations = {
     feedbackCategoryPlaceholder: 'Choose a subject...',
     feedbackTextPlaceholder: 'Your message...',
     feedbackSend: 'Send',
-    feedbackSuccess: 'Message sent! Thank you for your feedback.',
+    feedbackSuccess: 'Your mail app will open with the message pre-filled. Thanks for your feedback!',
     feedbackErrorCategory: 'Please select a subject.',
     feedbackErrorText: 'Message must be at least 10 characters.',
-    feedbackErrorGeneral: 'An error occurred. Please try again.',
+    feedbackErrorGeneral: 'No mail app is configured on this device.',
     feedbackCatNewGame: 'New game',
     feedbackCatBug: 'Bug report',
     feedbackCatOther: 'Other',
@@ -362,6 +436,40 @@ const translations = {
     aboutDonate: 'Support the project',
     aboutDonateHint: "ScorUp is a free app with no ads. If you enjoy ScorUp, you can support its development by making a donation. It's entirely optional, but every contribution is truly appreciated!",
     aboutDonateCTA: 'Make a donation',
+
+    privacyPolicyTitle: 'Privacy Policy',
+    privacyPolicyUpdated: 'Last updated: August 13, 2026',
+    privacyPolicyBody:
+      "This privacy policy applies to the Scorup mobile application (hereafter \"the App\"), published by [Your full legal name] (hereafter \"the Publisher\"), available on the App Store and Google Play Store.\n\n" +
+      "1. Summary\n" +
+      "Scorup does not collect, store on a server, transmit, or sell any personal data. All information you enter stays solely on your device.\n\n" +
+      "2. What data is processed\n" +
+      "The App lets you create games, add players, and track scores. This information (player names, scores, game history, statistics, display preferences) is:\n\n" +
+      "• stored exclusively locally, on your device, via the system's native storage mechanism (AsyncStorage);\n" +
+      "• never transmitted to the Publisher, a remote server, or any third party;\n" +
+      "• accessible only by you, from your device.\n\n" +
+      "The Publisher has no technical access to any of this data and cannot view, modify, or retrieve it.\n\n" +
+      "3. No account, no network connection required\n" +
+      "Scorup works entirely offline. The App does not require account creation and makes no network calls for its operation.\n\n" +
+      "4. Advertising, trackers and third-party services\n" +
+      "The App contains:\n\n" +
+      "• no advertising;\n" +
+      "• no advertising tracker or audience measurement SDK (Google Analytics, Meta SDK, etc.);\n" +
+      "• no in-app purchase service;\n" +
+      "• no data sharing with third parties, since no data is collected.\n\n" +
+      "5. Permissions requested on your device\n" +
+      "The App does not request any specific permissions (no access to the camera, location, contacts, microphone, or photos) beyond what is strictly necessary for its basic operation.\n\n" +
+      "6. Use by minors\n" +
+      "Scorup is a family-friendly app, usable by all ages for board game scoring. Since no data is collected or transmitted, the App presents no specific risk to minors' data and, on this basis, complies with applicable requirements (GDPR, COPPA) through the total absence of data collection.\n\n" +
+      "7. Your rights\n" +
+      "Since your data stays on your device and is never transmitted to the Publisher, you retain full control over it: you can view, modify, or delete it directly from the App, or by uninstalling the App (which removes all locally stored data).\n\n" +
+      "For any question regarding this policy, you may contact the Publisher using the details below.\n\n" +
+      "8. Changes to this policy\n" +
+      "This policy may be updated if the App evolves (addition of advertising, usage statistics, online sync, etc.). In the event of a significant change in the nature of the data processed, this page will be updated and the last-modified date at the top will be refreshed. We encourage you to review it periodically.\n\n" +
+      "9. Contact\n" +
+      "For any question regarding this privacy policy or the App:\n\n" +
+      "Email: scorup.support@gmail.com\n\n" +
+      "Scorup — scorekeeping app for board games.",
   },
 };
 

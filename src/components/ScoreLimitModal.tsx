@@ -71,11 +71,11 @@ export default function ScoreLimitModal({
   const isValid = !isNaN(parsedValue) && parsedValue >= minValue;
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={cancel}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          <Text style={[styles.labelPrimary, { marginBottom: 6 }]}>{title}</Text>
+          <Text style={[styles.labelPrimary, { marginBottom: 6 }]} accessibilityRole="header">{title}</Text>
           <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>{subtitle}</Text>
 
           <View style={styles.display}>
@@ -88,7 +88,7 @@ export default function ScoreLimitModal({
           <NumericKeypad onKeyPress={pressKey} onBackspace={backspace} />
 
           <View style={styles.buttons}>
-            <Pressable
+            <Pressable accessibilityRole="button"
               style={({ pressed }) => [styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled, pressed && isValid && styles.pressed]}
               onPress={validate}
               disabled={!isValid}
@@ -96,7 +96,7 @@ export default function ScoreLimitModal({
               <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
-            <Pressable style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={cancel}>
+            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={cancel}>
               <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>

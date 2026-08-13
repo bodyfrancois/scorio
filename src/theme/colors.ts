@@ -48,14 +48,14 @@ export const lightColors = {
   // ── Or / Récompenses ─────────────────────────────────────
   gold:                '#F59E0B',   // étoiles, couronne, badges
   goldSubtle:          '#FEF3C7',   // fond badge 1ère place
-  goldText:            '#D97706',   // texte badge 1ère place
+  goldText:            '#A25904',   // texte badge 1ère place (contraste AA sur goldSubtle)
 
   // ── Rangs ─────────────────────────────────────────────────
   rank1Color:          '#F59E0B',   // or
   rank1Bg:             '#FEF3C7',
-  rank2Color:          '#94A3B8',   // argent
+  rank2Color:          '#5C6F8A',   // argent (contraste AA sur rank2Bg)
   rank2Bg:             '#F1F5F9',
-  rank3Color:          '#CD7F32',   // bronze
+  rank3Color:          '#985E25',   // bronze (contraste AA sur rank3Bg)
   rank3Bg:             '#FDF0E6',
 
   // ── Donate (fixe, identique light/dark) ──────────────────
@@ -138,9 +138,9 @@ export const darkColors: typeof lightColors = {
   rank1Color:          '#F59E0B',   // or
   rank1Bg:             '#624700',
   rank2Color:          '#94A3B8',   // argent
-  rank2Bg:             '#576880',
+  rank2Bg:             '#2E3743',   // assombri pour contraste AA avec rank2Color
   rank3Color:          '#CD7F32',   // bronze
-  rank3Bg:             '#532a00',
+  rank3Bg:             '#3F2000',   // assombri pour contraste AA avec rank3Color
 
   // ── Donate (fixe, identique light/dark) ──────────────────
   donateGradientStart: '#0a9396',

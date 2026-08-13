@@ -37,10 +37,10 @@ export default function FilterModal({ visible, value, gameOptions, availableYear
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={s.overlay} onPress={onClose} />
+      <Pressable accessible={false} style={s.overlay} onPress={onClose} />
       <View style={s.sheet}>
         <View style={s.sheetHandle} />
-        <Text style={[s.subheading, { marginBottom: 20 }]}>{t.filterGames}</Text>
+        <Text style={[s.subheading, { marginBottom: 20 }]} accessibilityRole="header">{t.filterGames}</Text>
 
         {gameOptions.length > 0 && (
           <>
@@ -75,13 +75,13 @@ export default function FilterModal({ visible, value, gameOptions, availableYear
         </View>
 
         <View style={s.sheetActions}>
-          <Pressable
+          <Pressable accessibilityRole="button"
             style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]}
             onPress={() => { onApply({ game: null, month: null, year: null }); onClose(); }}
           >
             <Text style={s.btnSecondaryText}>{t.reset}</Text>
           </Pressable>
-          <Pressable
+          <Pressable accessibilityRole="button"
             style={({ pressed }) => [s.btn, s.btnPrimary, pressed && s.pressed]}
             onPress={() => { onApply(local); onClose(); }}
           >

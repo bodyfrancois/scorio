@@ -55,6 +55,8 @@ export default function DiceSetupScreen() {
             style={[styles.stepBtn, diceCount <= 1 && { opacity: 0.3 }]}
             onPress={() => setDiceCount(c => Math.max(1, c - 1))}
             disabled={diceCount <= 1}
+            accessibilityRole="button"
+            accessibilityLabel={t.decreaseDiceCount}
           >
             <Ionicons name="remove" size={16} color={colors.text} />
           </Pressable>
@@ -63,6 +65,8 @@ export default function DiceSetupScreen() {
             style={[styles.stepBtn, diceCount >= 6 && { opacity: 0.3 }]}
             onPress={() => setDiceCount(c => Math.min(6, c + 1))}
             disabled={diceCount >= 6}
+            accessibilityRole="button"
+            accessibilityLabel={t.increaseDiceCount}
           >
             <Ionicons name="add" size={16} color={colors.text} />
           </Pressable>
@@ -87,6 +91,8 @@ export default function DiceSetupScreen() {
                   pressed && styles.pressed,
                 ]}
                 onPress={() => setDiceType(type)}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: isSelected }}
               >
                 <View style={[
                   styles.radioCircle,
@@ -103,7 +109,7 @@ export default function DiceSetupScreen() {
       </View>
 
       {/* Bouton jouer */}
-      <Pressable
+      <Pressable accessibilityRole="button"
         style={({ pressed }) => [
           styles.btnPrimary,
           styles.btnPrimaryBig,

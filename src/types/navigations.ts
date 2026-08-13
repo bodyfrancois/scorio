@@ -9,4 +9,5 @@ export type RootStackParamList = {
   };
   DiceSetup: undefined;
   DiceRoller: { diceCount: number; diceType: DiceType };
+  Support: undefined;
 };

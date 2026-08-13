@@ -106,7 +106,7 @@ function GameCard({ item, colors, locale, t }: { item: GameHistoryItem; colors: 
     <View style={[s.card, { marginBottom: 16 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         {config?.image ? (
-          <Image source={config.image} style={s.logo} />
+          <Image source={config.image} style={s.logo} accessible={false} />
         ) : (
           <View style={s.logoFallback}>
             <Text style={s.logoLetter}>{item.gameName[0]}</Text>
@@ -138,7 +138,7 @@ function GameCard({ item, colors, locale, t }: { item: GameHistoryItem; colors: 
       </View>
 
       {hasMore && (
-        <Pressable
+        <Pressable accessibilityRole="button"
           style={({ pressed }) => [s.seeMore, pressed && { opacity: 0.72 }]}
           onPress={() => setExpanded(!expanded)}
         >
@@ -170,19 +170,19 @@ function ModalConfirmClear({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
-      <Pressable style={s.overlayCenter} onPress={onCancel}>
-        <Pressable onPress={(e) => e.stopPropagation()}>
+      <Pressable accessible={false} style={s.overlayCenter} onPress={onCancel}>
+        <Pressable accessible={false} onPress={(e) => e.stopPropagation()}>
           <View style={s.modalCard}>
-            <Text style={[s.subheading, { marginBottom: 8 }]}>{t.clearHistory}</Text>
+            <Text style={[s.subheading, { marginBottom: 8 }]} accessibilityRole="header">{t.clearHistory}</Text>
             <Text style={[s.caption, { marginBottom: 24, lineHeight: 20 }]}>{t.clearHistoryMsg}</Text>
             <View style={s.buttons}>
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [s.btn, s.btnSecondary, pressed && s.pressed]}
                 onPress={onCancel}
               >
                 <Text style={s.btnSecondaryText}>{t.cancel}</Text>
               </Pressable>
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [s.btn, s.btnDangerFull, pressed && s.pressed]}
                 onPress={onConfirm}
               >
@@ -240,6 +240,8 @@ export default function HistoryScreen({ navigation }: any) {
             onPress={() => setConfirmVisible(true)}
             style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t.clearHistory}
           >
             <Ionicons name="trash-outline" size={20} color={colors.white} />
           </Pressable>
@@ -247,6 +249,9 @@ export default function HistoryScreen({ navigation }: any) {
             onPress={() => setFiltersOpen(true)}
             style={({ pressed }) => [styles.hdrBtn, pressed && { opacity: 0.72 }]}
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t.filterGames}
+            accessibilityState={{ selected: hasFilters }}
           >
             <Ionicons name="filter-outline" size={20} color={colors.white} />
             {hasFilters && <View style={styles.hdrPoint} />}

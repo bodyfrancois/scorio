@@ -76,7 +76,7 @@ export default function PlayerDetailScreen({ route }: any) {
               return (
                 <View key={g.gameName} style={[styles.gameRow, i === 0 && styles.gameRowFirst]}>
                   {config?.image ? (
-                    <Image source={config.image} style={styles.gameLogo} resizeMode="cover" />
+                    <Image source={config.image} style={styles.gameLogo} resizeMode="cover" accessible={false} />
                   ) : (
                     <View style={styles.gameLogoFallback}>
                       <Ionicons name="game-controller" size={18} color={colors.primary} />

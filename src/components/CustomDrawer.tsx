@@ -12,6 +12,7 @@ import IconPlayers from './icons/IconPlayers';
 import IconStats from './icons/IconStats';
 import IconSettings from './icons/IconSettings';
 import IconAbout from './icons/IconAbout';
+import IconHeart from './icons/IconHeart';
 
 const version = Constants.expoConfig?.version ?? '1.0.0';
 const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? '1';
@@ -29,6 +30,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
     { name: 'Joueurs',       label: t.playersMenu, Icon: IconPlayers },
     { name: 'Statistiques',  label: t.statistics,  Icon: IconStats },
     { name: 'Paramètres',    label: t.settings,    Icon: IconSettings },
+    { name: 'Support',       label: t.aboutDonate, Icon: IconHeart },
     { name: 'A propos',      label: t.about,       Icon: IconAbout },
   ];
 
@@ -42,7 +44,12 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
           </View>
           <Text style={styles.subheading}>ScorUp</Text>
         </View>
-        <Pressable onPress={() => props.navigation.closeDrawer()} hitSlop={10}>
+        <Pressable
+          onPress={() => props.navigation.closeDrawer()}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={t.closeMenu}
+        >
           <Ionicons name="close" size={22} color={colors.textSecondary} />
         </Pressable>
       </View>
@@ -58,6 +65,8 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
               key={name}
               style={[styles.item, active && styles.itemActive]}
               onPress={() => props.navigation.navigate(name)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
             >
               <Icon size={22} color={active ? colors.primary : colors.text} />
               <Text style={[styles.bodyMedium, active && styles.labelActive]}>

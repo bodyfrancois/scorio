@@ -101,7 +101,7 @@ export default function PlayersScreen() {
       >
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>{t.favoritePlayers}</Text>
-          <Pressable onPress={openAdd} style={styles.addBtn}>
+          <Pressable accessibilityRole="button" onPress={openAdd} style={styles.addBtn}>
             <Text style={styles.addBtnText}>{t.addFavorite}</Text>
           </Pressable>
         </View>
@@ -127,14 +127,14 @@ export default function PlayersScreen() {
       </ScrollView>
 
       {/* Modal Ajout / Édition */}
-      <Modal visible={isAddOrEdit} transparent animationType="slide">
+      <Modal visible={isAddOrEdit} transparent animationType="slide" onRequestClose={closeModal}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.overlay}>
             <View style={styles.sheet}>
-              <Text style={[styles.subheading, { marginBottom: 20 }]}>
+              <Text style={[styles.subheading, { marginBottom: 20 }]} accessibilityRole="header">
                 {modal?.type === 'add' ? t.addFavorite : t.editFavorite}
               </Text>
               <TextInput
@@ -148,13 +148,14 @@ export default function PlayersScreen() {
                 onBlur={() => setInputFocused(false)}
                 returnKeyType="done"
                 onSubmitEditing={canConfirm ? handleConfirm : undefined}
+                accessibilityLabel={t.playerName}
               />
               <AvatarColorPicker
                 selectedKey={selectedColorKey}
                 onSelect={setSelectedColorKey}
               />
               <View style={styles.buttons}>
-                <Pressable
+                <Pressable accessibilityRole="button"
                   style={({ pressed }) => [
                     styles.btn, styles.btnPrimary,
                     !canConfirm && styles.btnDisabled,
@@ -165,7 +166,7 @@ export default function PlayersScreen() {
                 >
                   <Text style={styles.btnPrimaryText}>{t.save}</Text>
                 </Pressable>
-                <Pressable
+                <Pressable accessibilityRole="button"
                   style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
                   onPress={closeModal}
                 >
@@ -178,21 +179,21 @@ export default function PlayersScreen() {
       </Modal>
 
       {/* Modal Suppression */}
-      <Modal visible={modal?.type === 'delete'} transparent animationType="slide">
+      <Modal visible={modal?.type === 'delete'} transparent animationType="slide" onRequestClose={closeModal}>
         <View style={styles.overlay}>
           <View style={styles.sheet}>
-            <Text style={[styles.subheading, { marginBottom: 20 }]}>{t.confirmDeletePlayer}</Text>
+            <Text style={[styles.subheading, { marginBottom: 20 }]} accessibilityRole="header">{t.confirmDeletePlayer}</Text>
             <Text style={[styles.caption, { marginBottom: 20, lineHeight: 20 }]}>
               {modal?.type === 'delete' ? `"${modal.name}"` : ''}
             </Text>
             <View style={styles.buttons}>
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [styles.btn, styles.btnDanger, pressed && styles.pressed]}
                 onPress={handleConfirm}
               >
                 <Text style={styles.btnDangerText}>{t.deletePlayer}</Text>
               </Pressable>
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
                 onPress={closeModal}
               >

@@ -204,7 +204,7 @@ export default function EndGameModal({
     });
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={() => {}}>
       <View style={styles.overlay}>
         <View style={styles.modalCardEnd}>
 
@@ -214,7 +214,7 @@ export default function EndGameModal({
               <Confetti visible={visible} />
               <View style={styles.endTitleRow}>
                 <IconStar size={22} color={colors.gold} />
-                <Text style={[styles.heading, { letterSpacing: -1 }]}>{t.gameOver}</Text>
+                <Text style={[styles.heading, { letterSpacing: -1 }]} accessibilityRole="header">{t.gameOver}</Text>
                 <IconStar size={22} color={colors.gold} />
               </View>
             </View>
@@ -236,12 +236,12 @@ export default function EndGameModal({
             </View>
           )}
 
-          <Pressable style={({ pressed }) => [styles.btnPrimary, styles.replayBtnLayout, pressed && styles.pressed]} onPress={onReplay}>
+          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.btnPrimary, styles.replayBtnLayout, pressed && styles.pressed]} onPress={onReplay}>
             <IconReload size={20} color={colors.white} />
             <Text style={styles.btnPrimaryText}>{t.replay}</Text>
           </Pressable>
 
-          <Pressable style={({ pressed }) => [styles.btnSecondary, styles.homeBtnLayout, pressed && styles.pressed]} onPress={onHome}>
+          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.btnSecondary, styles.homeBtnLayout, pressed && styles.pressed]} onPress={onHome}>
             <IconHomeFill size={18} color={colors.text} />
             <Text style={styles.btnSecondaryText}>{t.backHome}</Text>
           </Pressable>

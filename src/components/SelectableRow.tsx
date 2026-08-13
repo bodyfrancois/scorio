@@ -19,6 +19,8 @@ export default function SelectableRow({ icon, label, selected, onPress }: Props)
     <Pressable
       style={({ pressed }) => [styles.listRow, pressed && styles.pressed]}
       onPress={onPress}
+      accessibilityRole="radio"
+      accessibilityState={{ selected }}
     >
       <View style={[styles.iconBoxSm, { marginRight: 12 }]}>{icon}</View>
       <Text style={[styles.body, selected && { color: colors.primary, fontWeight: '600' }]}>

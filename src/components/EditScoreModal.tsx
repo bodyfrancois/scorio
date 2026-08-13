@@ -146,11 +146,11 @@ export default function EditScoreModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          <Text style={[styles.labelPrimary, { marginBottom: 6 }]}>{t.round} {roundNumber}</Text>
+          <Text style={[styles.labelPrimary, { marginBottom: 6 }]} accessibilityRole="header">{t.round} {roundNumber}</Text>
           <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>
             {t.enterScore}{' '}
             <Text style={styles.playerHighlight}>{playerName}</Text>
@@ -194,6 +194,8 @@ export default function EditScoreModal({
                 style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (scoreMin !== undefined && stepperValue <= scoreMin) && styles.stepperBtnDisabled]}
                 onPress={() => setStepperValue(v => scoreMin !== undefined ? Math.max(scoreMin, v - scoreStep) : v - scoreStep)}
                 disabled={scoreMin !== undefined && stepperValue <= scoreMin}
+                accessibilityRole="button"
+                accessibilityLabel={t.decreaseScore}
               >
                 <Ionicons name="remove" size={48} color={(scoreMin !== undefined && stepperValue <= scoreMin) ? colors.textMuted : colors.text} />
               </Pressable>
@@ -201,6 +203,8 @@ export default function EditScoreModal({
                 style={({ pressed }) => [styles.stepperBtn, pressed && styles.stepperBtnPressed, (effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax) && styles.stepperBtnDisabled]}
                 onPress={() => setStepperValue(v => effectiveScoreMax !== undefined ? Math.min(effectiveScoreMax, v + scoreStep) : v + scoreStep)}
                 disabled={effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax}
+                accessibilityRole="button"
+                accessibilityLabel={t.increaseScore}
               >
                 <Ionicons name="add" size={48} color={(effectiveScoreMax !== undefined && stepperValue >= effectiveScoreMax) ? colors.textMuted : colors.text} />
               </Pressable>
@@ -232,6 +236,9 @@ export default function EditScoreModal({
                             key={flatIndex}
                             style={({ pressed }) => [styles.chip, isActive && styles.chipActive, pressed && styles.pressed]}
                             onPress={() => incrementAction(flatIndex)}
+                            accessibilityRole="button"
+                            accessibilityLabel={`${action.label}${count > 1 ? ` ×${count}` : ''}`}
+                            accessibilityState={{ selected: isActive }}
                           >
                             <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
                               {action.label}{count > 1 ? ` ×${count}` : ''}
@@ -260,6 +267,9 @@ export default function EditScoreModal({
                       key={index}
                       style={({ pressed }) => [styles.chip, isActive && styles.chipActive, pressed && styles.pressed]}
                       onPress={() => incrementAction(index)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${action.label}${count > 1 ? ` ×${count}` : ''}`}
+                      accessibilityState={{ selected: isActive }}
                     >
                       <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
                         {action.label}{count > 1 ? ` ×${count}` : ''}
@@ -272,7 +282,7 @@ export default function EditScoreModal({
           ) : null}
 
           <View style={styles.buttons}>
-            <Pressable
+            <Pressable accessibilityRole="button"
               style={({ pressed }) => [styles.btn, styles.btnPrimary, !isValid && styles.btnDisabled, pressed && isValid && styles.pressed]}
               onPress={validate}
               disabled={!isValid}
@@ -280,7 +290,7 @@ export default function EditScoreModal({
               <Text style={styles.btnPrimaryText}>{t.validate}</Text>
             </Pressable>
 
-            <Pressable style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={onClose}>
+            <Pressable accessibilityRole="button" style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]} onPress={onClose}>
               <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
             </Pressable>
           </View>

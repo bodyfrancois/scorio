@@ -1,6 +1,7 @@
 import { ScrollView, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
 import { AVATAR_PALETTE_KEYS, getAvatarColorByKey } from '../utils/avatarColors';
 
 type Props = {
@@ -9,7 +10,8 @@ type Props = {
 };
 
 export default function AvatarColorPicker({ selectedKey, onSelect }: Props) {
-  const { colors } = useTheme();
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
 
   return (
     <ScrollView
@@ -17,7 +19,7 @@ export default function AvatarColorPicker({ selectedKey, onSelect }: Props) {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ flexDirection: 'row', gap: 10, paddingHorizontal: 4, marginBottom: 20 }}
     >
-      {AVATAR_PALETTE_KEYS.map((key) => {
+      {AVATAR_PALETTE_KEYS.map((key, index) => {
         const bg = getAvatarColorByKey(key as string, colors);
         const isSelected = key === selectedKey;
         return (
@@ -35,6 +37,9 @@ export default function AvatarColorPicker({ selectedKey, onSelect }: Props) {
               borderWidth: isSelected ? 2.5 : 0,
               borderColor: colors.text,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={`${t.colorLabel} ${index + 1}`}
+            accessibilityState={{ selected: isSelected }}
           >
             {isSelected && <Ionicons name="checkmark" size={18} color="#fff" />}
           </Pressable>

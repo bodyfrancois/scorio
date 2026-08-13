@@ -93,6 +93,8 @@ export default function ScoreboardScreen({ route, navigation }: any) {
           onPress={() => setRulesModalVisible(true)}
           style={({ pressed }) => [styles.hdrBtn, { marginRight: 16 }, pressed && { opacity: 0.72 }]}
           hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t.rules}
         >
           <Ionicons name="information-circle-outline" size={20} color={colors.white} />
         </Pressable>
@@ -232,7 +234,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
                 {Array.from({ length: numberOfRounds }, (_, roundIndex) => (
                   <View key={roundIndex} style={{ flexDirection: 'row' }}>
-                    {players.map((_: string, playerIndex: number) => (
+                    {players.map((player: string, playerIndex: number) => (
                       <Pressable
                         key={playerIndex}
                         style={[styles.scoreCell, { width: playerColWidth }, roundIndex % 2 === 1 && { backgroundColor: colors.rowAlt }]}
@@ -241,6 +243,9 @@ export default function ScoreboardScreen({ route, navigation }: any) {
                           setSelectedRoundIndex(roundIndex);
                           setModalVisible(true);
                         }}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${player}, ${t.round} ${roundIndex + 1} : ${scores[playerIndex][roundIndex] ?? t.scoreEmpty}`}
+                        accessibilityHint={t.enterScore}
                       >
                         <Text style={[styles.bodyTable, scores[playerIndex][roundIndex] === null && styles.scoreEmpty]}>
                           {scores[playerIndex][roundIndex] ?? '–'}
@@ -257,7 +262,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
         </View>
 
         {(!sessionRoundLimit || numberOfRounds < sessionRoundLimit) && (
-          <Pressable style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
+          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.addRoundBtn, pressed && styles.pressed]} onPress={addRound}>
             <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
             <Text style={styles.addBtnText}>{t.addRound}</Text>
             {sessionRoundLimit && (
@@ -275,22 +280,31 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
       <View style={styles.endSection}>
         {!hasAutoEnd && (
-          <Pressable style={({ pressed }) => [styles.endGameBtn, pressed && styles.pressed]} onPress={endGameManually}>
+          <Pressable accessibilityRole="button" style={({ pressed }) => [styles.endGameBtn, pressed && styles.pressed]} onPress={endGameManually}>
             <Text style={styles.btnPrimaryText}>{t.endGameBtn}</Text>
           </Pressable>
         )}
       </View>
 
       {/* Modal règles */}
-      <Modal visible={rulesModalVisible} transparent animationType="slide">
+      <Modal
+        visible={rulesModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setRulesModalVisible(false)}
+      >
         <View style={styles.overlay}>
           <View style={styles.rulesSheet}>
 
             <View style={styles.rulesSheetHeader}>
-              <Text style={styles.subheading}>
+              <Text style={styles.subheading} accessibilityRole="header">
                 {t.rules} {config.name ? `– ${config.name}` : ''}
               </Text>
-              <Pressable onPress={() => setRulesModalVisible(false)}>
+              <Pressable
+                onPress={() => setRulesModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t.close}
+              >
                 <Ionicons name="close" size={22} color={colors.textSecondary} />
               </Pressable>
             </View>
@@ -309,15 +323,20 @@ export default function ScoreboardScreen({ route, navigation }: any) {
       </Modal>
 
       {/* Modal quitter */}
-      <Modal visible={exitModalVisible} transparent animationType="fade">
+      <Modal
+        visible={exitModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setExitModalVisible(false)}
+      >
         <View style={styles.overlayCenter}>
           <View style={styles.modalCard}>
 
-            <Text style={[styles.subheading, { marginBottom: 8 }]}>{t.quitGame}</Text>
+            <Text style={[styles.subheading, { marginBottom: 8 }]} accessibilityRole="header">{t.quitGame}</Text>
             <Text style={[styles.caption, { marginBottom: 28 }]}>{t.progressLost}</Text>
 
             <View style={styles.buttons}>
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
                 onPress={() => {
                   setExitModalVisible(false);
@@ -327,7 +346,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
                 <Text style={styles.btnSecondaryText}>{t.yes}</Text>
               </Pressable>
 
-              <Pressable
+              <Pressable accessibilityRole="button"
                 style={({ pressed }) => [styles.btn, styles.btnPrimary, pressed && styles.pressed]}
                 onPress={() => setExitModalVisible(false)}
               >

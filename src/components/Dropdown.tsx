@@ -25,6 +25,9 @@ export function DropdownSelect({ value, options, placeholder, onChange }: Dropdo
       <Pressable
         style={[s.ddInput, open && s.ddInputOpen]}
         onPress={() => setOpen((o) => !o)}
+        accessibilityRole="button"
+        accessibilityLabel={label ?? placeholder}
+        accessibilityState={{ expanded: open }}
       >
         <Text style={[s.ddPlaceholder, label !== null && { color: colors.text, fontWeight: '500' }]}>
           {label ?? placeholder}
@@ -34,7 +37,12 @@ export function DropdownSelect({ value, options, placeholder, onChange }: Dropdo
       {open && (
         <View style={s.ddList}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Pressable style={s.ddOption} onPress={() => { onChange(null); setOpen(false); }}>
+            <Pressable
+              style={s.ddOption}
+              onPress={() => { onChange(null); setOpen(false); }}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: value === null }}
+            >
               <Text style={[s.ddOptionText, value === null && s.ddOptionTextActive]}>{placeholder}</Text>
               {value === null && <Ionicons name="checkmark" size={16} color={colors.primary} />}
             </Pressable>
@@ -45,6 +53,8 @@ export function DropdownSelect({ value, options, placeholder, onChange }: Dropdo
                   key={opt.value}
                   style={[s.ddOption, active && s.ddOptionActive]}
                   onPress={() => { onChange(opt.value); setOpen(false); }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
                 >
                   <Text style={[s.ddOptionText, active && s.ddOptionTextActive]}>{opt.label}</Text>
                   {active && <Ionicons name="checkmark" size={16} color={colors.primary} />}
@@ -77,11 +87,14 @@ export function DropdownGame({ value, options, placeholder, onChange }: Dropdown
       <Pressable
         style={[s.ddInput, open && s.ddInputOpen]}
         onPress={() => setOpen((o) => !o)}
+        accessibilityRole="button"
+        accessibilityLabel={value ?? placeholder}
+        accessibilityState={{ expanded: open }}
       >
         {value !== null ? (
           <View style={s.ddValueRow}>
             {getGameConfig(value)?.image && (
-              <Image source={getGameConfig(value)!.image} style={s.ddLogoSmall} />
+              <Image source={getGameConfig(value)!.image} style={s.ddLogoSmall} accessible={false} />
             )}
             <Text style={s.ddValueText}>{value}</Text>
           </View>
@@ -93,7 +106,12 @@ export function DropdownGame({ value, options, placeholder, onChange }: Dropdown
       {open && (
         <View style={s.ddList}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Pressable style={s.ddOption} onPress={() => { onChange(null); setOpen(false); }}>
+            <Pressable
+              style={s.ddOption}
+              onPress={() => { onChange(null); setOpen(false); }}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: value === null }}
+            >
               <Text style={[s.ddOptionText, value === null && s.ddOptionTextActive]}>{placeholder}</Text>
               {value === null && <Ionicons name="checkmark" size={16} color={colors.primary} />}
             </Pressable>
@@ -105,9 +123,11 @@ export function DropdownGame({ value, options, placeholder, onChange }: Dropdown
                   key={opt}
                   style={[s.ddOption, active && s.ddOptionActive]}
                   onPress={() => { onChange(opt); setOpen(false); }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
                 >
                   <View style={s.ddValueRow}>
-                    {config?.image && <Image source={config.image} style={s.ddLogoSmall} />}
+                    {config?.image && <Image source={config.image} style={s.ddLogoSmall} accessible={false} />}
                     <Text style={[s.ddOptionText, active && s.ddOptionTextActive]}>{opt}</Text>
                   </View>
                   {active && <Ionicons name="checkmark" size={16} color={colors.primary} />}

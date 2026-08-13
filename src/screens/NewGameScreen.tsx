@@ -279,6 +279,7 @@ export default function NewGameScreen({ route, navigation }: any) {
             placeholderTextColor={colors.textMuted}
             value={sessionGameName}
             onChangeText={setSessionGameName}
+            accessibilityLabel={t.gameNamePlaceholder}
           />
         </View>
       )}
@@ -299,7 +300,7 @@ export default function NewGameScreen({ route, navigation }: any) {
           {isTeamMode ? t.teams : t.players}
         </Text>
         {!isTeamMode && players.length < config.maxPlayers && (
-          <Pressable onPress={addPlayer} style={styles.addBtn}>
+          <Pressable accessibilityRole="button" onPress={addPlayer} style={styles.addBtn}>
             <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
             <Text style={styles.addBtnText}>{t.addPlayer}</Text>
           </Pressable>
@@ -326,14 +327,25 @@ export default function NewGameScreen({ route, navigation }: any) {
                 onBlur={() => setFocusedKey(null)}
                 style={styles.playerInput}
                 placeholderTextColor={colors.textMuted}
+                accessibilityLabel={`${t.playerName} ${index + 1}`}
               />
               {favorites.length > 0 && (
-                <Pressable onPress={() => openFavSheet(index)} hitSlop={8}>
+                <Pressable
+                  onPress={() => openFavSheet(index)}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel={t.addFavoritePlayer}
+                >
                   <Ionicons name="star-outline" size={20} color={colors.primary} />
                 </Pressable>
               )}
               {players.length > 1 && (
-                <Pressable onPress={() => removePlayer(index)} hitSlop={8}>
+                <Pressable
+                  onPress={() => removePlayer(index)}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel={t.removePlayerAction}
+                >
                   <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
                 </Pressable>
               )}
@@ -361,9 +373,10 @@ export default function NewGameScreen({ route, navigation }: any) {
                     placeholder={`Équipe ${teamIndex + 1}`}
                     placeholderTextColor={colors.textMuted}
                     style={styles.teamNameInput}
+                    accessibilityLabel={`Nom de l'équipe ${teamIndex + 1}`}
                   />
                   {teamMembers.length < (effectiveTeams?.maxPlayersPerTeam ?? 99) && (
-                    <Pressable onPress={() => addTeamPlayer(teamIndex)} style={styles.addBtn}>
+                    <Pressable accessibilityRole="button" onPress={() => addTeamPlayer(teamIndex)} style={styles.addBtn}>
                       <Ionicons name="add-circle-outline" size={16} color={colors.primary} />
                       <Text style={styles.addBtnText}>{t.add}</Text>
                     </Pressable>
@@ -390,14 +403,24 @@ export default function NewGameScreen({ route, navigation }: any) {
                           onBlur={() => setFocusedKey(null)}
                           style={styles.playerInput}
                           placeholderTextColor={colors.textMuted}
+                          accessibilityLabel={`${t.playerName} ${playerIndex + 1} – Équipe ${teamIndex + 1}`}
                         />
                         {favorites.length > 0 && (
-                          <Pressable onPress={() => openFavSheetTeam(teamIndex, playerIndex)} hitSlop={8}>
+                          <Pressable
+                            onPress={() => openFavSheetTeam(teamIndex, playerIndex)}
+                            hitSlop={8}
+                            accessibilityRole="button"
+                            accessibilityLabel={t.addFavoritePlayer}
+                          >
                             <Ionicons name="star-outline" size={20} color={colors.primary} />
                           </Pressable>
                         )}
                         {teamMembers.length > (effectiveTeams?.minPlayersPerTeam ?? 1) && (
-                          <Pressable onPress={() => removeTeamPlayer(teamIndex, playerIndex)}>
+                          <Pressable
+                            onPress={() => removeTeamPlayer(teamIndex, playerIndex)}
+                            accessibilityRole="button"
+                            accessibilityLabel={t.removePlayerAction}
+                          >
                             <Ionicons name="remove-circle-outline" size={22} color={colors.textMuted} />
                           </Pressable>
                         )}
@@ -419,7 +442,7 @@ export default function NewGameScreen({ route, navigation }: any) {
           </Text>
 
           {config.scoreLimit != null && !config.scoreLimitToggle && (
-            <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
+            <Pressable accessibilityRole="button" style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
               </View>
@@ -430,7 +453,7 @@ export default function NewGameScreen({ route, navigation }: any) {
           )}
 
           {config.roundLimit != null && (
-            <Pressable style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
+            <Pressable accessibilityRole="button" style={[styles.card, styles.cardRow]} onPress={() => setScoreLimitModalVisible(true)}>
               <View style={styles.iconBoxSm}>
                 <Ionicons name="refresh-outline" size={18} color={colors.textSecondary} />
               </View>
@@ -474,7 +497,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               {scoreLimitEnabled && (
                 <>
                   <View style={styles.settingDivider} />
-                  <Pressable style={styles.settingSubRow} onPress={() => setScoreLimitModalVisible(true)}>
+                  <Pressable accessibilityRole="button" style={styles.settingSubRow} onPress={() => setScoreLimitModalVisible(true)}>
                     <Text style={[styles.body, { flex: 1 }]}>{t.scoreLimitGoal}</Text>
                     <Text style={styles.itemTitle}>{sessionScoreLimit} pts</Text>
                     <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
@@ -502,7 +525,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               {timeLimitEnabled && (
                 <>
                   <View style={styles.settingDivider} />
-                  <Pressable style={styles.settingSubRow} onPress={() => setTimeLimitModalVisible(true)}>
+                  <Pressable accessibilityRole="button" style={styles.settingSubRow} onPress={() => setTimeLimitModalVisible(true)}>
                     <Text style={[styles.body, { flex: 1 }]}>{t.duration}</Text>
                     <Text style={styles.itemTitle}>{sessionTimeLimit ?? 30} min</Text>
                     <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
@@ -530,7 +553,7 @@ export default function NewGameScreen({ route, navigation }: any) {
               {roundLimitEnabled && (
                 <>
                   <View style={styles.settingDivider} />
-                  <Pressable style={styles.settingSubRow} onPress={() => setRoundLimitModalVisible(true)}>
+                  <Pressable accessibilityRole="button" style={styles.settingSubRow} onPress={() => setRoundLimitModalVisible(true)}>
                     <Text style={[styles.body, { flex: 1 }]}>{t.roundCount}</Text>
                     <Text style={styles.itemTitle}>{sessionRoundLimit}</Text>
                     <Ionicons name="chevron-forward" size={16} color={colors.iconMuted} />
@@ -552,6 +575,8 @@ export default function NewGameScreen({ route, navigation }: any) {
                 <Pressable
                   style={[styles.radioOption, !sessionLowestScoreWins && styles.radioOptionSelected]}
                   onPress={() => setSessionLowestScoreWins(false)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: !sessionLowestScoreWins }}
                 >
                   <View style={[styles.radioCircle, !sessionLowestScoreWins && styles.radioCircleSelected]} />
                   <Text style={[styles.caption, !sessionLowestScoreWins && { color: colors.primary }]}>{t.highestWins}</Text>
@@ -559,6 +584,8 @@ export default function NewGameScreen({ route, navigation }: any) {
                 <Pressable
                   style={[styles.radioOption, sessionLowestScoreWins && styles.radioOptionSelected]}
                   onPress={() => setSessionLowestScoreWins(true)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: sessionLowestScoreWins }}
                 >
                   <View style={[styles.radioCircle, sessionLowestScoreWins && styles.radioCircleSelected]} />
                   <Text style={[styles.caption, sessionLowestScoreWins && { color: colors.primary }]}>{t.lowestWins}</Text>
@@ -569,7 +596,7 @@ export default function NewGameScreen({ route, navigation }: any) {
         </>
       )}
 
-      <Pressable
+      <Pressable accessibilityRole="button"
         style={({ pressed }) => [
           styles.btnPrimary, styles.btnPrimaryBig, styles.startButtonLayout,
           (!isValidPlayerCount || duplicateNames.size > 0) && styles.startButtonDisabled,

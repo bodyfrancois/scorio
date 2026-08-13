@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from '../i18n';
 import { makeSharedStyles } from '../theme/styles';
 
 const PAD_ROWS = [
@@ -17,7 +18,8 @@ type Props = {
 };
 
 export default function NumericKeypad({ onKeyPress, onBackspace }: Props) {
-  const { colors } = useTheme();
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
   const styles = useMemo(() => makeSharedStyles(colors), [colors]);
 
   return (
@@ -34,13 +36,15 @@ export default function NumericKeypad({ onKeyPress, onBackspace }: Props) {
                   key={ci}
                   style={({ pressed }) => [styles.keyCard, pressed && styles.keyPressed]}
                   onPress={onBackspace}
+                  accessibilityRole="button"
+                  accessibilityLabel={t.eraseDigit}
                 >
                   <Ionicons name="backspace-outline" size={22} color={colors.textSecondary} />
                 </Pressable>
               );
             }
             return (
-              <Pressable
+              <Pressable accessibilityRole="button"
                 key={ci}
                 style={({ pressed }) => [styles.keyCard, pressed && styles.keyPressed]}
                 onPress={() => onKeyPress(key)}

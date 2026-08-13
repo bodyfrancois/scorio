@@ -46,9 +46,10 @@ interface SingleDiceProps {
   size: number;
   color: string;
   onPress: () => void;
+  rollHint: string;
 }
 
-function SingleDice({ type, value, size, color, onPress }: SingleDiceProps) {
+function SingleDice({ type, value, size, color, onPress, rollHint }: SingleDiceProps) {
   const [display, setDisplay] = useState<number | null>(value);
   const prevRef = useRef<number | null>(value);
 
@@ -94,7 +95,13 @@ function SingleDice({ type, value, size, color, onPress }: SingleDiceProps) {
   });
 
   return (
-    <Pressable onPress={onPress} style={{ padding: 6 }}>
+    <Pressable
+      onPress={onPress}
+      style={{ padding: 6 }}
+      accessibilityRole="button"
+      accessibilityLabel={`${type}${value !== null ? ` : ${value}` : ''}`}
+      accessibilityHint={rollHint}
+    >
       {({ pressed }) => (
         <Animated.View
           style={{
@@ -179,6 +186,7 @@ export default function DiceRollerScreen() {
               size={size}
               color={color}
               onPress={() => rollSingle(i)}
+              rollHint={t.rollSingle}
             />
           ))}
         </View>
@@ -201,7 +209,7 @@ export default function DiceRollerScreen() {
 
       {/* Footer — bouton lancer */}
       <View style={{ paddingHorizontal: 20, paddingBottom: 32, paddingTop: 12 }}>
-        <Pressable
+        <Pressable accessibilityRole="button"
           style={({ pressed }) => [
             styles.btnPrimary,
             styles.btnPrimaryBig,

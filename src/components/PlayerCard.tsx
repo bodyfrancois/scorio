@@ -53,12 +53,16 @@ export default function PlayerCard(props: Props) {
           <Pressable
             style={({ pressed }) => [{ padding: 8, borderRadius: 8, backgroundColor: colors.surfaceAlt }, pressed && s.pressed]}
             onPress={props.onEdit}
+            accessibilityRole="button"
+            accessibilityLabel={`${t.edit} ${props.name}`}
           >
             <IconPen size={18} color={colors.textSecondary} />
           </Pressable>
           <Pressable
             style={({ pressed }) => [{ padding: 8, borderRadius: 8, backgroundColor: colors.surfaceAlt }, pressed && s.pressed]}
             onPress={props.onDelete}
+            accessibilityRole="button"
+            accessibilityLabel={`${t.deletePlayer} ${props.name}`}
           >
             <Ionicons name="trash-outline" size={18} color={colors.danger} />
           </Pressable>
@@ -69,7 +73,7 @@ export default function PlayerCard(props: Props) {
 
   if (props.variant === 'stats') {
     return (
-      <Pressable
+      <Pressable accessibilityRole="button"
         style={({ pressed }) => [
           { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
           pressed && { opacity: 0.72 },

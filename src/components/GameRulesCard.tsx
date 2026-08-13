@@ -20,7 +20,7 @@ export default function GameRulesCard({ config }: Props) {
     <View style={styles.card}>
       <View style={styles.rulesCardHeader}>
         {config.image && (
-          <Image source={config.image} style={styles.rulesImage} resizeMode="cover" />
+          <Image source={config.image} style={styles.rulesImage} resizeMode="cover" accessible={false} />
         )}
         <View style={styles.rulesCardMeta}>
           <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{config.name}</Text>
@@ -61,6 +61,8 @@ export default function GameRulesCard({ config }: Props) {
               LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
               setExpanded(prev => !prev);
             }}
+            accessibilityRole="button"
+            accessibilityState={{ expanded }}
           >
             <Text style={styles.addBtnText}>
               {expanded ? t.hideRules : t.showRules}

@@ -632,7 +632,7 @@ export const makeAboutStyles = (c: typeof lightColors) => ({
       backgroundColor: c.primary,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
-      marginBottom: S.base,
+      marginBottom: S.xs,
     },
     iconLetter: {
       color: c.white,

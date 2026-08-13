@@ -21,13 +21,13 @@ export default function FavoritesSheet({ visible, favorites, onClose, onSelect }
   const styles = useMemo(() => makeNewGameStyles(colors), [colors]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={e => e.stopPropagation()}>
-          <Text style={[styles.labelPrimary, { marginBottom: 4 }]}>{t.fromFavorites}</Text>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <Pressable accessible={false} style={styles.overlay} onPress={onClose}>
+        <Pressable accessible={false} style={styles.sheet} onPress={e => e.stopPropagation()}>
+          <Text style={[styles.labelPrimary, { marginBottom: 4 }]} accessibilityRole="header">{t.fromFavorites}</Text>
           <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 580 }}>
             {favorites.map((fav, i) => (
-              <Pressable
+              <Pressable accessibilityRole="button"
                 key={fav.name}
                 style={({ pressed }) => [
                   styles.favItem,

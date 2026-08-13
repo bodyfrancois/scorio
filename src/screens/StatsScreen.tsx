@@ -204,6 +204,9 @@ export default function StatsScreen({ navigation }: any) {
           onPress={() => setFilterVisible(true)}
           style={({ pressed }) => [styles.hdrBtn, { marginRight: 16 }, pressed && { opacity: 0.72 }]}
           hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t.filterGames}
+          accessibilityState={{ selected: isFiltered }}
         >
           <Ionicons name="filter-outline" size={20} color={colors.white} />
           {isFiltered && <View style={styles.hdrPoint} />}

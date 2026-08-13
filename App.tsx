@@ -35,8 +35,10 @@ import StatsScreen from './src/screens/StatsScreen';
 import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
+import SupportScreen from './src/screens/SupportScreen';
 import CustomDrawer from './src/components/CustomDrawer';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
+import { useTranslation } from './src/i18n';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -44,10 +46,14 @@ const Drawer = createDrawerNavigator();
 /* ---------------- FLÈCHE CUSTOM ---------------- */
 
 function CustomBackButton({ navigation }: any) {
+  const { language } = useTheme();
+  const t = useTranslation(language);
   return (
     <Pressable
       onPress={() => navigation.goBack()}
       style={{ marginLeft: 16, width: 34, height: 34, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' }}
+      accessibilityRole="button"
+      accessibilityLabel={t.back}
     >
       <Ionicons name="chevron-back" size={22} color="#fff" />
     </Pressable>
@@ -93,7 +99,8 @@ const logoStyles = StyleSheet.create({
 /* ---------------- DRAWER ---------------- */
 
 function MainDrawer() {
-  const { colors } = useTheme();
+  const { colors, language } = useTheme();
+  const t = useTranslation(language);
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
@@ -112,6 +119,8 @@ function MainDrawer() {
           <Pressable
             onPress={() => navigation.openDrawer()}
             style={{ paddingHorizontal: 16 }}
+            accessibilityRole="button"
+            accessibilityLabel={t.openMenu}
           >
             <Ionicons name="menu-outline" size={24} color="#fff" />
           </Pressable>
@@ -222,6 +231,21 @@ function AppInner() {
           component={DiceRollerScreen}
           options={({ navigation }: any) => ({
             title: 'Lancer les dés',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Soutenir le projet */}
+        <Stack.Screen
+          name="Support"
+          component={SupportScreen}
+          options={({ navigation }: any) => ({
+            title: 'Soutenir le projet',
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
