@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.bodyfrancois.scorup</string>
+          <string>com.scorup.app</string>
         </array>
       </dict>
       <dict>

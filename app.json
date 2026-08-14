@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bodyfrancois.scorup"
+      "bundleIdentifier": "com.scorup.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.scorup"
+      "package": "com.scorup.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,11 +31,11 @@
     "plugins": [
       "@react-native-community/datetimepicker"
     ],
+    "owner": "fbo44",
     "extra": {
       "eas": {
-        "projectId": "f3284c79-4a3b-49f1-9ac0-448eb0a18a7b"
+        "projectId": "47501adf-a3e4-414d-bf12-e63dd3e47ecf"
       }
-    },
-    "owner": "fbo44"
+    }
   }
 }

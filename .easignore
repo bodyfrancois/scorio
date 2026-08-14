@@ -1,0 +1,12 @@
+# Fichiers inutiles au build, exclus de l'archive envoyée à EAS
+# (le dossier store/ contient des screenshots haute résolution qui alourdissent
+# inutilement chaque upload — voir https://expo.fyi/eas-build-archive)
+
+store/
+dist/
+.expo/
+.vscode/
+*.md
+privacy-policy.html
+support.html
+create_cornhole.sh
