@@ -231,9 +231,40 @@ Ajoute en fin de description Play Store, si tu veux capter les recherches longue
 
 À adapter en EN au moment de faire le jeu de captures anglais si tu publies en anglais.
 
-## 8. Fiche store — EN (bonus)
+## 8. Fiche store — EN
 
-Le code contient déjà des traductions `en` dans `src/i18n/index.ts` — l'app est prête à être publiée en anglais aussi. Si tu publies en EN, duplique la fiche store en anglais (`Scorup replaces pen and paper for board game scoring...`) — je peux te la rédiger si tu veux cibler ce marché, dis-le-moi.
+Le code contient déjà des traductions `en` dans `src/i18n/index.ts` — l'app est prête à être publiée en anglais aussi.
+
+Dans App Store Connect : App Information → sélecteur de langue → **+ Add Localization** → **English (U.S.)** (pour Name/Subtitle), puis même chose sur la page de version 1.0 (pour Description/Keywords/Screenshots).
+
+- Nom : `Scorup`
+- Sous-titre (30 car. max) : `Score & rules for board games`
+- Mots-clés (100 car. max) : `uno,skyjo,scrabble,belote,tarot,cornhole,ligretto,scorekeeper,scorepad,game night,family games`
+- Description :
+
+```
+Scorup replaces pen and paper for all your board game nights.
+
+Pick your game, add your players, and Scorup shows a smart scoresheet
+that follows the official rules: automatic point calculation, bonus
+and penalty handling, who starts each round, and round-by-round
+guidance.
+
+Games included: Belote, Tarot, Skyjo, Uno, Scrabble, Cornhole,
+Ligretto, and many more — plus a free mode to build your own scoring
+rules for any game.
+
+✓ Automatic scoring, bonuses and penalties
+✓ Follows each game's official rules
+✓ Full history of your past games, stored on your device
+✓ Per-player stats
+✓ Works fully offline, no connection needed
+✓ No data sent anywhere, no ads
+
+No more recounting a round three times or losing the scoresheet at
+the bottom of the game box: Scorup handles the math, you handle
+the fun.
+```
 
 ---
 
