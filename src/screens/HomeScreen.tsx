@@ -16,6 +16,7 @@ import { getAvailableGames } from '../core/gameEngine';
 import { RootStackParamList } from '../types/navigations';
 import { makeHomeStyles } from '../theme/styles';
 import { IllustrationCartes } from './HistoryScreen';
+import { localizeGameConfig } from '../utils/gameLocalization';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -31,9 +32,9 @@ export default function HomeScreen() {
 
   const filteredGames = useMemo(() => {
     return games.filter((game) =>
-      normalize(game.name).includes(normalize(searchQuery))
+      normalize(localizeGameConfig(game, language).displayName).includes(normalize(searchQuery))
     );
-  }, [searchQuery, games]);
+  }, [searchQuery, games, language]);
 
   const handleStartGame = (gameName: string) => {
     const game = games.find(g => g.name === gameName);
@@ -74,7 +75,9 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {filteredGames.map((game) => (
+      {filteredGames.map((game) => {
+        const { displayName, cardSubtitle } = localizeGameConfig(game, language);
+        return (
         <Pressable accessibilityRole="button"
           key={game.name}
           style={({ pressed }) => [
@@ -94,10 +97,10 @@ export default function HomeScreen() {
           ) : null}
 
           <View style={styles.cardContent}>
-            <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{game.name}</Text>
+            <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{displayName}</Text>
 
-            {game.cardSubtitle ? (
-              <Text style={styles.caption} numberOfLines={1}>{game.cardSubtitle}</Text>
+            {cardSubtitle ? (
+              <Text style={styles.caption} numberOfLines={1}>{cardSubtitle}</Text>
             ) : (
               <View style={styles.gameInfoRow}>
                 <Ionicons name="people-outline" size={13} color={colors.textSecondary} />
@@ -126,7 +129,8 @@ export default function HomeScreen() {
             <Text style={styles.btnPrimaryTextSmall}>{t.play}</Text>
           </View>
         </Pressable>
-      ))}
+        );
+      })}
 
       
       {/* Footer */}

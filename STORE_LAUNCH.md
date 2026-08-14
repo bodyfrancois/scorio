@@ -215,6 +215,22 @@ Ajoute en fin de description Play Store, si tu veux capter les recherches longue
 
 ---
 
+## 7bis. Textes pour les screenshots (accroches courtes)
+
+À poser en surimpression sur chaque capture (Figma/Canva), pas un champ à remplir dans App Store Connect — juste le texte marketing sur l'image elle-même.
+
+| Écran | Accroche | Sous-ligne (optionnelle) |
+|---|---|---|
+| Accueil | Tous vos jeux, un seul endroit | Belote, Tarot, Skyjo, Uno, Scrabble... et bien d'autres |
+| Paramètres du jeu | Une partie prête en 30 secondes | Joueurs, équipes, règles : tout se configure en un instant |
+| Tableau de score | Le calcul, c'est pour nous | Bonus, malus, manches : tout est automatique |
+| Popin finale | Le classement, sans discussion possible | Fini les comptes refaits trois fois |
+| Historique | Chaque partie, gardée en mémoire | Retrouvez vos scores passés à tout moment |
+| Statistique | Qui gagne vraiment, chez vous ? | Vos stats, partie après partie |
+| Favoris | Vos joueurs, toujours sous la main | Plus besoin de retaper les noms à chaque partie |
+
+À adapter en EN au moment de faire le jeu de captures anglais si tu publies en anglais.
+
 ## 8. Fiche store — EN (bonus)
 
 Le code contient déjà des traductions `en` dans `src/i18n/index.ts` — l'app est prête à être publiée en anglais aussi. Si tu publies en EN, duplique la fiche store en anglais (`Scorup replaces pen and paper for board game scoring...`) — je peux te la rédiger si tu veux cibler ce marché, dis-le-moi.

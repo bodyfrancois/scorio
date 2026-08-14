@@ -14,4 +14,16 @@ export const freeLibreConfig: GameConfig = {
   cardSubtitle: 'Partie sur mesure, règles libres',
   cardHighlight: true,
   description: "Créez votre partie sur mesure avec vos propres règles. Compatible avec n'importe quel jeu de société !",
+  translations: {
+    fr: {
+      name: 'Mode Libre',
+      cardSubtitle: 'Partie sur mesure, règles libres',
+      description: "Créez votre partie sur mesure avec vos propres règles. Compatible avec n'importe quel jeu de société !",
+    },
+    en: {
+      name: 'Free Mode',
+      cardSubtitle: 'Custom game, free-form rules',
+      description: 'Create your own custom game with your own rules. Compatible with any board game!',
+    },
+  },
 };

@@ -9,4 +9,16 @@ export const diceConfig: GameConfig = {
   lowestScoreWins: false,
   image: require('./asset/logo.png'), // ✅ image locale au module
   description: 'Lance des dés de toutes sortes — D4, D6, D8, D10, D12, D20. Clique pour lancer, recommence autant que tu veux.',
+  translations: {
+    fr: {
+      name: 'Dés',
+      cardSubtitle: 'Lanceur de dés',
+      description: 'Lance des dés de toutes sortes — D4, D6, D8, D10, D12, D20. Clique pour lancer, recommence autant que tu veux.',
+    },
+    en: {
+      name: 'Dice',
+      cardSubtitle: 'Dice roller',
+      description: 'Roll dice of every kind — D4, D6, D8, D10, D12, D20. Tap to roll, and roll again as many times as you like.',
+    },
+  },
 };

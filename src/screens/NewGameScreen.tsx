@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -35,6 +35,10 @@ export default function NewGameScreen({ route, navigation }: any) {
 
   const { gameName } = route.params ?? { gameName: 'Jeu' };
   const { config } = getGameEngine(gameName);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t.newGame });
+  }, [navigation, t.newGame]);
 
   const [players, setPlayers] = useState<string[]>(['']);
   const [playerColorKeys, setPlayerColorKeys] = useState<(string | null)[]>([null]);

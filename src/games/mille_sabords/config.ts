@@ -13,6 +13,92 @@ export const milleSabordsConfig: GameConfig = {
   scoreStep: 100,
   description: "Jeu de dés et de prise de risque très amusant sur le thème des pirates",
   image: require('./asset/logo.png'), // ✅ image locale au module
+  translations: {
+    fr: {
+      name: 'Mille Sabords',
+      description: "Jeu de dés et de prise de risque très amusant sur le thème des pirates",
+      detailedRules: `
+  1. Objectif du jeu
+
+Dans Mille Sabords, vous incarnez un pirate qui doit faire le plus de butin possible en lançant des dés.
+À votre tour, vous lancez les 6 dés et vous devez faire des combinaisons pour marquer des points.
+Vous pouvez décider de continuer à lancer les dés restants pour augmenter votre score, mais attention : si vous ne faites aucune combinaison à un lancer, vous perdez tous les points accumulés pendant ce tour !
+
+  ---
+
+  2. Manches et tours
+
+Le jeu se joue en plusieurs manches. À chaque manche, les joueurs jouent à tour de rôle dans le sens des aiguilles d'une montre.
+À votre tour, vous lancez les dés et vous marquez des points en fonction des combinaisons obtenues (voir ci-dessous).
+Après chaque lancer, si vous avez marqué des points, vous pouvez choisir de relancer les dés restants pour essayer d'augmenter votre score.
+Cependant, si à un lancer vous n'obtenez aucune combinaison, vous perdez tous les points accumulés pendant ce tour et votre tour se termine immédiatement.
+
+---
+
+  3. Combinaisons et points
+
+Voici les différentes combinaisons et leur valeur en points :
+
+- 1 : 100 points
+- 5 : 50 points
+- Trois dés identiques (autres que 1 ou 5) : valeur du dé x 100 points (ex : trois 4 = 400 points)
+- Trois 1 : 1000 points
+- Quatre dés identiques : double de la valeur des trois dés identiques (ex : quatre 4 = 800 points)
+- Cinq dés identiques : triple de la valeur des trois dés identiques (ex : cinq 4 = 1200 points)
+- Six dés identiques : quadruple de la valeur des trois dés identiques (ex : six 4 = 1600 points)
+
+---
+
+  4. Fin de la partie
+
+La partie se termine lorsqu'un joueur atteint ou dépasse le score limite (6000 points par défaut).
+Le joueur avec le score le plus élevé à la fin de la partie est déclaré vainqueur.
+
+`,
+    },
+    en: {
+      name: 'Mille Sabords',
+      description: "A fun dice and risk-taking game with a pirate theme",
+      detailedRules: `
+  1. Goal of the game
+
+In Mille Sabords, you play a pirate trying to gather as much loot as possible by rolling dice.
+On your turn, you roll all 6 dice and must form combinations to score points.
+You can choose to keep rolling the remaining dice to increase your score, but be careful: if a roll produces no combination, you lose all the points accumulated during this turn!
+
+  ---
+
+  2. Rounds and turns
+
+The game is played over several rounds. In each round, players take turns in clockwise order.
+On your turn, you roll the dice and score points based on the combinations obtained (see below).
+After each roll, if you scored points, you can choose to reroll the remaining dice to try to increase your score.
+However, if a roll produces no combination, you lose all the points accumulated during this turn and your turn ends immediately.
+
+---
+
+  3. Combinations and points
+
+Here are the different combinations and their point values:
+
+- 1: 100 points
+- 5: 50 points
+- Three matching dice (other than 1 or 5): value of the die x 100 points (e.g.: three 4s = 400 points)
+- Three 1s: 1000 points
+- Four matching dice: double the value of three matching dice (e.g.: four 4s = 800 points)
+- Five matching dice: triple the value of three matching dice (e.g.: five 4s = 1200 points)
+- Six matching dice: quadruple the value of three matching dice (e.g.: six 4s = 1600 points)
+
+---
+
+  4. End of the game
+
+The game ends when a player reaches or exceeds the score limit (6000 points by default).
+The player with the highest score at the end of the game is declared the winner.
+
+`,
+    },
+  },
   detailedRules: `
   1. Objectif du jeu
 

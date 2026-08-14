@@ -5,6 +5,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeNewGameStyles } from '../theme/styles';
 import { GameConfig } from '../core/types';
+import { localizeGameConfig } from '../utils/gameLocalization';
 
 type Props = {
   config: GameConfig;
@@ -15,6 +16,7 @@ export default function GameRulesCard({ config }: Props) {
   const t = useTranslation(language);
   const styles = useMemo(() => makeNewGameStyles(colors), [colors]);
   const [expanded, setExpanded] = useState(false);
+  const { displayName, description, detailedRules } = localizeGameConfig(config, language);
 
   return (
     <View style={styles.card}>
@@ -23,7 +25,7 @@ export default function GameRulesCard({ config }: Props) {
           <Image source={config.image} style={styles.rulesImage} resizeMode="cover" accessible={false} />
         )}
         <View style={styles.rulesCardMeta}>
-          <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{config.name}</Text>
+          <Text style={[styles.itemTitle, { marginBottom: 6 }]}>{displayName}</Text>
           <View style={styles.rulesInfoRow}>
             <Ionicons name="people-outline" size={13} color={colors.textMuted} />
             <Text style={styles.muted}>
@@ -49,11 +51,11 @@ export default function GameRulesCard({ config }: Props) {
         </View>
       </View>
 
-      {config.description && (
-        <Text style={styles.bodySecondary}>{config.description}</Text>
+      {description && (
+        <Text style={styles.bodySecondary}>{description}</Text>
       )}
 
-      {config.detailedRules && (
+      {detailedRules && (
         <>
           <Pressable
             style={styles.expandButton}
@@ -75,7 +77,7 @@ export default function GameRulesCard({ config }: Props) {
           </Pressable>
           {expanded && (
             <Text style={[styles.bodySecondary, { marginTop: 10, lineHeight: 20 }]}>
-              {config.detailedRules}
+              {detailedRules}
             </Text>
           )}
         </>

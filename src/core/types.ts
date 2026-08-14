@@ -25,6 +25,13 @@ export type TeamConfig = {
   maxPlayersPerTeam: number;
 };
 
+export type GameTranslation = {
+  name: string;
+  description?: string;
+  detailedRules?: string;
+  cardSubtitle?: string;
+};
+
 export interface GameConfig {
   name: string;
   minPlayers: number;
@@ -35,6 +42,11 @@ export interface GameConfig {
   cardSubtitle?: string;
   description?: string;
   detailedRules?: string;
+  /** Traductions du nom/description/règles affichés. `name` reste l'identifiant technique inchangé. */
+  translations?: {
+    fr: GameTranslation;
+    en: GameTranslation;
+  };
   scoreLimit?: number;
   roundLimit?: number;
   roundTotal?: number;

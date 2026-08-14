@@ -19,6 +19,7 @@ import { useTranslation } from '../i18n';
 import { makeScoreboardStyles } from '../theme/styles';
 import PlayerAvatar from '../components/PlayerAvatar';
 import { getAvatarColorByIndex } from '../utils/avatarColors';
+import { localizeGameConfig } from '../utils/gameLocalization';
 
 const ROUND_COL = 36;
 const PLAYER_COL = 90;
@@ -35,6 +36,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const engine = getGameEngine(gameName);
   const { config } = engine;
   const effectiveLowestScoreWins: boolean = sessionLowestScoreWins ?? config.lowestScoreWins;
+  const localizedConfig = localizeGameConfig(config, language);
 
   const { width: screenWidth } = useWindowDimensions();
   const playerColWidth = players.length <= 3
@@ -298,7 +300,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
             <View style={styles.rulesSheetHeader}>
               <Text style={styles.subheading} accessibilityRole="header">
-                {t.rules} {config.name ? `– ${config.name}` : ''}
+                {t.rules} {localizedConfig.displayName ? `– ${localizedConfig.displayName}` : ''}
               </Text>
               <Pressable
                 onPress={() => setRulesModalVisible(false)}
@@ -310,11 +312,11 @@ export default function ScoreboardScreen({ route, navigation }: any) {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              {config.description && (
-                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{config.description}</Text>
+              {localizedConfig.description && (
+                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{localizedConfig.description}</Text>
               )}
-              {config.detailedRules && (
-                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{config.detailedRules}</Text>
+              {localizedConfig.detailedRules && (
+                <Text style={[styles.bodySecondary, { lineHeight: 20 }]}>{localizedConfig.detailedRules}</Text>
               )}
             </ScrollView>
 

@@ -19,7 +19,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeAboutStyles } from '../theme/styles';
 
-const DONATION_URL = 'https://ko-fi.com/misterbuddy';
+const DONATION_URL = 'https://ko-fi.com/scorup';
 const FEEDBACK_EMAIL = 'scorup.support@gmail.com';
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 const APP_BUILD = Platform.OS === 'ios'
