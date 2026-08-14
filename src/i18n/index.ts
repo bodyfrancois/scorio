@@ -205,7 +205,7 @@ const translations = {
     privacyPolicyTitle: 'Politique de confidentialité',
     privacyPolicyUpdated: 'Dernière mise à jour : 13 août 2026',
     privacyPolicyBody:
-      "Cette politique de confidentialité s'applique à l'application mobile Scorup (ci-après « l'Application »), éditée par [Ton nom légal complet] (ci-après « l'Éditeur »), disponible sur l'App Store et le Google Play Store.\n\n" +
+      "Cette politique de confidentialité s'applique à l'application mobile Scorup (ci-après « l'Application »), éditée par BODY François (ci-après « l'Éditeur »), disponible sur l'App Store et le Google Play Store.\n\n" +
       "1. Résumé\n" +
       "Scorup ne collecte, n'enregistre sur un serveur, ne transmet et ne vend aucune donnée personnelle. Toutes les informations que vous saisissez restent uniquement sur votre appareil.\n\n" +
       "2. Quelles données sont traitées\n" +
