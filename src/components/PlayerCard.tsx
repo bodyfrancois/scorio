@@ -25,6 +25,7 @@ type StatsProps = {
   variant: 'stats';
   player: PlayerStats;
   rank: number; // 0-based index → displayed as rank+1
+  isFavorite?: boolean;
   onPress: () => void;
 };
 
@@ -82,7 +83,12 @@ export default function PlayerCard(props: Props) {
       >
         <MedalBadge rank={props.rank + 1} />
         <View style={{ flex: 1 , paddingVertical: 5}}>
-          <Text style={s.itemTitle}>{props.player.name}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={s.itemTitle}>{props.player.name}</Text>
+            {props.isFavorite && (
+              <Ionicons name="star" size={14} color={colors.primary} />
+            )}
+          </View>
           <Text style={[s.muted, { marginTop: 2 }]}>
             {props.player.wins} {t.statsVictories} / {props.player.games} {t.statsParties}
           </Text>

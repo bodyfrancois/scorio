@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import SplashScreen from './src/screens/SplashScreen';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -39,6 +39,7 @@ import SupportScreen from './src/screens/SupportScreen';
 import CustomDrawer from './src/components/CustomDrawer';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { useTranslation } from './src/i18n';
+import { initPurchases } from './src/core/purchases';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -262,6 +263,10 @@ function AppInner() {
 /* ---------------- APP ROOT ---------------- */
 
 export default function App() {
+  useEffect(() => {
+    initPurchases();
+  }, []);
+
   return (
     <ThemeProvider>
       <AppInner />

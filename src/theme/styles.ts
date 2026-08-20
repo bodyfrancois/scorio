@@ -251,6 +251,15 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       fontSize: FS.base,
       fontWeight: FW.bold,
     },
+    /** Bouton destructif plein (rouge uni, texte blanc) — popins de confirmation centrées */
+    btnDangerFull: {
+      backgroundColor: c.danger,
+      shadowColor: c.danger,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 0,
+      elevation: 8,
+    },
     btnDisabled: {
       opacity: 0.3,
       shadowColor: c.shadowPrimary,
@@ -579,7 +588,7 @@ export const makeSharedStyles = (c: typeof lightColors) =>
       // ───  ────────────────────────────────────────────────
 
     footer: {
-      marginTop: S['4xl'],
+      marginTop: S['md'],
       alignItems: 'center' as const,
       gap: S.sm,
     },
@@ -1211,14 +1220,6 @@ export const makeHistoryStyles = (c: typeof lightColors) => ({
     logoLetter:   { fontSize: FS.lg, fontWeight: FW.bold, color: c.primary },
     playerName:   { flex: 1, fontSize: FS.sm, fontWeight: FW.medium, color: c.text },
     seeMore:      { marginTop: 10, alignItems: 'center' as const },
-    btnDangerFull: {
-      backgroundColor: c.danger,
-      shadowColor: c.danger,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.4,
-      shadowRadius: 0,
-      elevation: 8,
-    },
     // Main HistoryScreen
     list:         { paddingHorizontal: S.base, paddingBottom: S.xl, paddingTop: S.sm },
     emptyCenter:  { flex: 1, alignItems: 'center' as const, justifyContent: 'center' as const, gap: S.sm },

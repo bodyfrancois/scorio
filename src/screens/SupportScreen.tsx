@@ -10,16 +10,23 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  StyleSheet,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
+import type { PurchasesStoreProduct } from 'react-native-purchases';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeAboutStyles } from '../theme/styles';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
+import { DONATION_TIERS } from '../config/donations';
+import { fetchDonationProducts, purchaseDonation, isPurchasesConfigured } from '../core/purchases';
 
-const DONATION_URL = 'https://ko-fi.com/scorup';
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const FEEDBACK_EMAIL = 'scorup.support@gmail.com';
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 const APP_BUILD = Platform.OS === 'ios'
@@ -46,8 +53,48 @@ export default function SupportScreen({ route }: any) {
   const [feedbackCategory, setFeedbackCategory] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [categoryPickerVisible, setCategoryPickerVisible] = useState(false);
+  const categoryPickerAnim = useSheetAnimation(categoryPickerVisible);
   const [feedbackStatus, setFeedbackStatus] = useState<FeedbackStatus>('idle');
   const [feedbackErrors, setFeedbackErrors] = useState<{ category?: boolean; text?: boolean }>({});
+
+  // ---- Dons (IAP) ----
+  const [donateSheetVisible, setDonateSheetVisible] = useState(false);
+  const donateSheetAnim = useSheetAnimation(donateSheetVisible);
+  const [donationProducts, setDonationProducts] = useState<PurchasesStoreProduct[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [purchasingId, setPurchasingId] = useState<string | null>(null);
+  const [donateResult, setDonateResult] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const openDonateSheet = async () => {
+    setDonateSheetVisible(true);
+    if (donationProducts.length === 0 && isPurchasesConfigured()) {
+      setProductsLoading(true);
+      try {
+        const products = await fetchDonationProducts();
+        setDonationProducts(products);
+      } finally {
+        setProductsLoading(false);
+      }
+    }
+  };
+
+  const handlePickAmount = async (productId: string) => {
+    const product = donationProducts.find((p) => p.identifier === productId);
+    if (!product) return; // produit pas encore chargé / indisponible — bouton désactivé dans ce cas
+    setPurchasingId(productId);
+    const result = await purchaseDonation(product);
+    setPurchasingId(null);
+    if (result.status === 'success') {
+      setDonateSheetVisible(false);
+      setDonateResult('success');
+      setTimeout(() => setDonateResult('idle'), 5000);
+    } else if (result.status === 'error') {
+      setDonateSheetVisible(false);
+      setDonateResult('error');
+      setTimeout(() => setDonateResult('idle'), 5000);
+    }
+    // 'cancelled' → on laisse simplement la sheet ouverte, aucun message
+  };
 
   const categories = [t.feedbackCatNewGame, t.feedbackCatBug, t.feedbackCatOther];
 
@@ -109,9 +156,23 @@ export default function SupportScreen({ route }: any) {
             <Text style={[styles.body, {textAlign: 'center', lineHeight: 22, marginBottom: 24 }]}>
               {t.aboutDonateHint}
             </Text>
+
+            {donateResult === 'success' && (
+              <View style={[styles.feedbackStatusBox, { backgroundColor: colors.primarySubtle, alignSelf: 'stretch', marginBottom: 16 }]}>
+                <Ionicons name="checkmark-circle" size={18} color={colors.primary} />
+                <Text style={[styles.feedbackStatusText, { color: colors.primary }]}>{t.donateSuccessBody}</Text>
+              </View>
+            )}
+            {donateResult === 'error' && (
+              <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.danger, alignSelf: 'stretch', marginBottom: 16 }]}>
+                <Ionicons name="alert-circle" size={18} color={colors.danger} />
+                <Text style={[styles.feedbackStatusText, { color: colors.danger }]}>{t.donateErrorBody}</Text>
+              </View>
+            )}
+
             <Pressable
               style={({ pressed }) => [styles.btnPrimary, { alignSelf: 'stretch' }, pressed && styles.pressed]}
-              onPress={() => Linking.openURL(DONATION_URL)}
+              onPress={openDonateSheet}
               accessibilityRole="button"
             >
               <Text style={styles.btnPrimaryText}>{t.aboutDonateCTA}</Text>
@@ -196,13 +257,14 @@ export default function SupportScreen({ route }: any) {
       </ScrollView>
 
       <Modal
-        visible={categoryPickerVisible}
+        visible={categoryPickerAnim.rendered}
         transparent
-        animationType="slide"
+        animationType="none"
         onRequestClose={() => setCategoryPickerVisible(false)}
       >
-        <Pressable accessible={false} style={styles.overlay} onPress={() => setCategoryPickerVisible(false)}>
-          <Pressable accessible={false} style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+        <AnimatedPressable accessible={false} style={[styles.overlay, StyleSheet.absoluteFillObject, categoryPickerAnim.overlayStyle]} onPress={() => setCategoryPickerVisible(false)} />
+        <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+          <Animated.View style={[styles.sheet, categoryPickerAnim.sheetStyle]}>
             <Text style={[styles.labelPrimary, { marginBottom: 4 }]} accessibilityRole="header">{t.feedbackCategory}</Text>
             {categories.map((cat, i) => (
               <Pressable
@@ -230,8 +292,55 @@ export default function SupportScreen({ route }: any) {
                 )}
               </Pressable>
             ))}
-          </Pressable>
-        </Pressable>
+          </Animated.View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={donateSheetAnim.rendered}
+        transparent
+        animationType="none"
+        onRequestClose={() => setDonateSheetVisible(false)}
+      >
+        <AnimatedPressable accessible={false} style={[styles.overlay, StyleSheet.absoluteFillObject, donateSheetAnim.overlayStyle]} onPress={() => setDonateSheetVisible(false)} />
+        <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+          <Animated.View style={[styles.sheet, donateSheetAnim.sheetStyle]}>
+            <Text style={[styles.labelPrimary, { marginBottom: 12 }]} accessibilityRole="header">
+              {t.donateSheetTitle}
+            </Text>
+
+            {!isPurchasesConfigured() && (
+              <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.danger, marginBottom: 12 }]}>
+                <Ionicons name="alert-circle" size={18} color={colors.danger} />
+                <Text style={[styles.feedbackStatusText, { color: colors.danger }]}>{t.donateUnavailable}</Text>
+              </View>
+            )}
+
+            {DONATION_TIERS.map((tier, i) => {
+              const product = donationProducts.find((p) => p.identifier === tier.productId);
+              const label = product?.priceString ?? tier.fallbackLabel;
+              const disabled = productsLoading || !product || purchasingId !== null;
+              return (
+                <Pressable
+                  key={tier.productId}
+                  style={[
+                    styles.dropdownOption,
+                    i === DONATION_TIERS.length - 1 && styles.dropdownOptionLast,
+                    disabled && !purchasingId && { opacity: productsLoading ? 0.5 : 1 },
+                  ]}
+                  onPress={() => handlePickAmount(tier.productId)}
+                  disabled={disabled}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.dropdownOptionText}>{label}</Text>
+                  {purchasingId === tier.productId && (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  )}
+                </Pressable>
+              );
+            })}
+          </Animated.View>
+        </View>
       </Modal>
     </KeyboardAvoidingView>
   );

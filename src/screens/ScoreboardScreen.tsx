@@ -5,6 +5,8 @@ import {
   ScrollView,
   Pressable,
   Modal,
+  Animated,
+  StyleSheet,
   useWindowDimensions,
 } from 'react-native';
 
@@ -20,6 +22,7 @@ import { makeScoreboardStyles } from '../theme/styles';
 import PlayerAvatar from '../components/PlayerAvatar';
 import { getAvatarColorByIndex } from '../utils/avatarColors';
 import { localizeGameConfig } from '../utils/gameLocalization';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
 
 const ROUND_COL = 36;
 const PLAYER_COL = 90;
@@ -59,6 +62,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
   const [rulesModalVisible, setRulesModalVisible] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
+  const rulesAnim = useSheetAnimation(rulesModalVisible);
   const [pendingNavAction, setPendingNavAction] = useState<any>(null);
 
   const getAvatarColor = (i: number) => teamColors?.[i] ?? playerColors?.[i] ?? getAvatarColorByIndex(i, colors);
@@ -290,13 +294,14 @@ export default function ScoreboardScreen({ route, navigation }: any) {
 
       {/* Modal règles */}
       <Modal
-        visible={rulesModalVisible}
+        visible={rulesAnim.rendered}
         transparent
-        animationType="slide"
+        animationType="none"
         onRequestClose={() => setRulesModalVisible(false)}
       >
-        <View style={styles.overlay}>
-          <View style={styles.rulesSheet}>
+        <Animated.View style={[styles.overlay, StyleSheet.absoluteFillObject, rulesAnim.overlayStyle]} />
+        <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+          <Animated.View style={[styles.rulesSheet, rulesAnim.sheetStyle]}>
 
             <View style={styles.rulesSheetHeader}>
               <Text style={styles.subheading} accessibilityRole="header">
@@ -320,7 +325,7 @@ export default function ScoreboardScreen({ route, navigation }: any) {
               )}
             </ScrollView>
 
-          </View>
+          </Animated.View>
         </View>
       </Modal>
 

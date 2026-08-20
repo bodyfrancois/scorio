@@ -4,11 +4,14 @@ import {
   Text,
   Pressable,
   Modal,
+  Animated,
+  StyleSheet,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeScoreLimitModalStyles } from '../theme/styles';
 import NumericKeypad from './NumericKeypad';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
 
 type Props = {
   visible: boolean;
@@ -46,6 +49,8 @@ export default function ScoreLimitModal({
     if (visible) setInput(String(currentValue));
   }, [visible, currentValue]);
 
+  const { rendered, overlayStyle, sheetStyle } = useSheetAnimation(visible);
+
   const pressKey = (key: string) => {
     if (input.length >= 5) return;
     setInput((prev) => prev + key);
@@ -71,9 +76,10 @@ export default function ScoreLimitModal({
   const isValid = !isNaN(parsedValue) && parsedValue >= minValue;
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={cancel}>
-      <View style={styles.overlay}>
-        <View style={styles.sheet}>
+    <Modal visible={rendered} transparent animationType="none" onRequestClose={cancel}>
+      <Animated.View style={[styles.overlay, StyleSheet.absoluteFillObject, overlayStyle]} />
+      <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+        <Animated.View style={[styles.sheet, sheetStyle]}>
 
           <Text style={[styles.labelPrimary, { marginBottom: 6 }]} accessibilityRole="header">{title}</Text>
           <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>{subtitle}</Text>
@@ -101,7 +107,7 @@ export default function ScoreLimitModal({
             </Pressable>
           </View>
 
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );

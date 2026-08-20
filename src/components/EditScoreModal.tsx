@@ -5,6 +5,8 @@ import {
   Pressable,
   Modal,
   ScrollView,
+  Animated,
+  StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
@@ -12,6 +14,7 @@ import { useTranslation } from '../i18n';
 import { makeEditScoreModalStyles } from '../theme/styles';
 import { QuickAction, QuickActionGroup } from '../core/types';
 import NumericKeypad from './NumericKeypad';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
 
 type Props = {
   visible: boolean;
@@ -145,10 +148,13 @@ export default function EditScoreModal({
     onClose();
   };
 
+  const { rendered, overlayStyle, sheetStyle } = useSheetAnimation(visible);
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.sheet}>
+    <Modal visible={rendered} transparent animationType="none" onRequestClose={onClose}>
+      <Animated.View style={[styles.overlay, StyleSheet.absoluteFillObject, overlayStyle]} />
+      <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+        <Animated.View style={[styles.sheet, sheetStyle]}>
 
           <Text style={[styles.labelPrimary, { marginBottom: 6 }]} accessibilityRole="header">{t.round} {roundNumber}</Text>
           <Text style={[styles.bodySecondary, { marginBottom: 20 }]}>
@@ -295,7 +301,7 @@ export default function EditScoreModal({
             </Pressable>
           </View>
 
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );

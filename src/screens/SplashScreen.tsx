@@ -47,9 +47,6 @@ export default function SplashScreen({ onFinish }: Props) {
         </View>
       </View>
 
-      <Text style={[styles.credit, { color: colors.textOnDark }]}>
-        by @MisterBuddy
-      </Text>
     </Animated.View>
   );
 }

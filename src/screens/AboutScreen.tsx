@@ -41,7 +41,6 @@ export default function AboutScreen() {
         <Text style={[styles.bodySecondary, { lineHeight: 22 }]}>{t.privacyPolicyBody}</Text>
       </View>
 
-      <Text style={[styles.muted, { textAlign: 'center', marginTop: 45 }]}>by @MisterBuddy</Text>
     </ScrollView>
   );
 }

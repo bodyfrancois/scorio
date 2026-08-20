@@ -1,12 +1,43 @@
 # Fichiers inutiles au build, exclus de l'archive envoyée à EAS
-# (le dossier store/ contient des screenshots haute résolution qui alourdissent
-# inutilement chaque upload — voir https://expo.fyi/eas-build-archive)
+# ATTENTION : .easignore remplace entièrement .gitignore pour EAS Build
+# (ne s'additionne pas) — donc tout ce que .gitignore excluait doit être
+# redéclaré ici explicitement, sinon ça se retrouve dans l'archive.
+# https://expo.fyi/eas-build-archive
 
+# Node (plusieurs centaines de Mo, jamais nécessaire — EAS réinstalle à neuf)
+node_modules/
+
+# iOS build artifacts (régénérés par EAS à chaque build)
+ios/build/
+ios/Pods/
+ios/DerivedData/
+*.xcworkspace/xcuserdata
+*.xcodeproj/xcuserdata
+
+# Android build artifacts
+android/build/
+android/.gradle/
+android/app/build/
+
+# macOS / logs / env
+.DS_Store
+*.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+.env
+.env.local
+
+# Marketing / doc, hors périmètre du build
 store/
 dist/
 .expo/
 .vscode/
 *.md
 privacy-policy.html
+privacy-policy-en.html
 support.html
+support-en.html
+logo-scorup.png
 create_cornhole.sh

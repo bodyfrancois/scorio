@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
+import { View, Text, Pressable, Modal, ScrollView, Animated, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
@@ -7,6 +7,9 @@ import { makeNewGameStyles } from '../theme/styles';
 import { FavoritePlayer } from '../storage/favoritePlayers';
 import PlayerAvatar from './PlayerAvatar';
 import { getAvatarColorByKey } from '../utils/avatarColors';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
   visible: boolean;
@@ -19,11 +22,13 @@ export default function FavoritesSheet({ visible, favorites, onClose, onSelect }
   const { colors, language } = useTheme();
   const t = useTranslation(language);
   const styles = useMemo(() => makeNewGameStyles(colors), [colors]);
+  const { rendered, overlayStyle, sheetStyle } = useSheetAnimation(visible);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable accessible={false} style={styles.overlay} onPress={onClose}>
-        <Pressable accessible={false} style={styles.sheet} onPress={e => e.stopPropagation()}>
+    <Modal visible={rendered} transparent animationType="none" onRequestClose={onClose}>
+      <AnimatedPressable accessible={false} style={[styles.overlay, StyleSheet.absoluteFillObject, overlayStyle]} onPress={onClose} />
+      <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+        <Animated.View style={[styles.sheet, sheetStyle]}>
           <Text style={[styles.labelPrimary, { marginBottom: 4 }]} accessibilityRole="header">{t.fromFavorites}</Text>
           <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 580 }}>
             {favorites.map((fav, i) => (
@@ -42,8 +47,8 @@ export default function FavoritesSheet({ visible, favorites, onClose, onSelect }
               </Pressable>
             ))}
           </ScrollView>
-        </Pressable>
-      </Pressable>
+        </Animated.View>
+      </View>
     </Modal>
   );
 }

@@ -51,3 +51,8 @@ export const getHistory = async (): Promise<
 export const clearHistory = async () => {
   await AsyncStorage.removeItem(HISTORY_KEY);
 };
+
+/* Remplacer tout l'historique (utilisé par l'import) */
+export const setHistory = async (history: GameHistoryItem[]) => {
+  await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,14 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  StyleSheet,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makePlayersStyles } from '../theme/styles';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
 import {
   loadFavorites,
   addFavorite,
@@ -48,9 +51,9 @@ export default function PlayersScreen() {
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     loadFavorites().then(setFavorites);
-  }, []);
+  }, []));
 
   const openAdd = () => {
     setInputValue('');
@@ -93,6 +96,8 @@ export default function PlayersScreen() {
       !(modal?.type === 'add' && favorites.some((p) => p.name === inputValue.trim()))
     : true;
 
+  const addEditAnim = useSheetAnimation(isAddOrEdit);
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -127,13 +132,14 @@ export default function PlayersScreen() {
       </ScrollView>
 
       {/* Modal Ajout / Édition */}
-      <Modal visible={isAddOrEdit} transparent animationType="slide" onRequestClose={closeModal}>
+      <Modal visible={addEditAnim.rendered} transparent animationType="none" onRequestClose={closeModal}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.overlay}>
-            <View style={styles.sheet}>
+          <Animated.View style={[styles.overlay, StyleSheet.absoluteFillObject, addEditAnim.overlayStyle]} />
+          <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+            <Animated.View style={[styles.sheet, addEditAnim.sheetStyle]}>
               <Text style={[styles.subheading, { marginBottom: 20 }]} accessibilityRole="header">
                 {modal?.type === 'add' ? t.addFavorite : t.editFavorite}
               </Text>
@@ -173,35 +179,37 @@ export default function PlayersScreen() {
                   <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
                 </Pressable>
               </View>
-            </View>
+            </Animated.View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Modal Suppression */}
-      <Modal visible={modal?.type === 'delete'} transparent animationType="slide" onRequestClose={closeModal}>
-        <View style={styles.overlay}>
-          <View style={styles.sheet}>
-            <Text style={[styles.subheading, { marginBottom: 20 }]} accessibilityRole="header">{t.confirmDeletePlayer}</Text>
-            <Text style={[styles.caption, { marginBottom: 20, lineHeight: 20 }]}>
-              {modal?.type === 'delete' ? `"${modal.name}"` : ''}
-            </Text>
-            <View style={styles.buttons}>
-              <Pressable accessibilityRole="button"
-                style={({ pressed }) => [styles.btn, styles.btnDanger, pressed && styles.pressed]}
-                onPress={handleConfirm}
-              >
-                <Text style={styles.btnDangerText}>{t.deletePlayer}</Text>
-              </Pressable>
-              <Pressable accessibilityRole="button"
-                style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
-                onPress={closeModal}
-              >
-                <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
-              </Pressable>
+      {/* Modal Suppression — même popin centrée que la suppression de l'historique */}
+      <Modal visible={modal?.type === 'delete'} transparent animationType="fade" onRequestClose={closeModal}>
+        <Pressable accessible={false} style={styles.overlayCenter} onPress={closeModal}>
+          <Pressable accessible={false} onPress={(e) => e.stopPropagation()}>
+            <View style={styles.modalCard}>
+              <Text style={[styles.subheading, { marginBottom: 8 }]} accessibilityRole="header">{t.confirmDeletePlayer}</Text>
+              <Text style={[styles.caption, { marginBottom: 24, lineHeight: 20 }]}>
+                {modal?.type === 'delete' ? `"${modal.name}"` : ''}
+              </Text>
+              <View style={styles.buttons}>
+                <Pressable accessibilityRole="button"
+                  style={({ pressed }) => [styles.btn, styles.btnSecondary, pressed && styles.pressed]}
+                  onPress={closeModal}
+                >
+                  <Text style={styles.btnSecondaryText}>{t.cancel}</Text>
+                </Pressable>
+                <Pressable accessibilityRole="button"
+                  style={({ pressed }) => [styles.btn, styles.btnDangerFull, pressed && styles.pressed]}
+                  onPress={handleConfirm}
+                >
+                  <Text style={styles.btnPrimaryText}>{t.deletePlayer}</Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );

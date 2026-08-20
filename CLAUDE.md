@@ -231,4 +231,59 @@ use context7 for: react-native, expo, react-navigation, async-storage, react-nat
 
 ---
 
+## 8. Contexte produit & état de déploiement
+
+*Dernière mise à jour : 16 août 2026. Section vivante — mettre à jour au fil des sessions de déploiement/publication. Guide détaillé pas-à-pas : voir `STORE_LAUNCH.md` à la racine du repo.*
+
+### Identité de l'app
+
+- Nom : **Scorup** — assistant de score universel pour jeux de société (remplace papier/crayon, calcule automatiquement points/bonus/malus selon les règles officielles de chaque jeu).
+- Bundle ID **identique iOS et Android** : `com.scorup.app` (changé depuis `com.bodyfrancois.scorup` / `com.anonymous.scorio`, cf. historique ci-dessous).
+- Compte EAS/Expo : owner `fbo44`. Projet EAS recréé de zéro à cause d'un mismatch de slug historique ("scorio" côté serveur vs "scorup" en local) — `extra.eas.projectId` régénéré via `eas init`.
+- App Store Connect : app créée, App ID Apple `6801548595`.
+- Éditeur légal (personne physique, compte individuel) : **BODY François**. Utilisé dans le copyright (`© 2026 François Body`) et les pages de politique de confidentialité.
+- Contact support dédié (pas l'email perso) : `scorup.support@gmail.com`.
+
+### État iOS
+
+- Compte Apple Developer Program individuel actif (99$/an).
+- Build 4 (logos corrigés + fix chiffrement) soumis le 16 août — **rejeté le 19 août 2026, Guideline 3.1.1** : le lien de don externe (Ko-fi) doit passer par In-App Purchase hors storefront US. Voir point IAP ci-dessous.
+- `eas.json` → `submit.production` laissé vide intentionnellement : `eas submit` prompt les identifiants (appleId/ascAppId/appleTeamId) à la volée plutôt que de les stocker en config.
+
+### Dons — migration Ko-fi → In-App Purchase (en cours, suite au rejet Apple du 19/08)
+
+- Le lien Ko-fi externe est **retiré du code** (`DONATION_URL` supprimé de `SupportScreen.tsx`) — plus aucun lien de paiement externe dans le binaire.
+- Remplacé par un vrai IAP consommable (7 paliers, 0,99€ à 49,99€, aucune fonctionnalité débloquée — pur don) via **RevenueCat** (`react-native-purchases` + `react-native-purchases-ui`, v10.7.2).
+- Fichiers ajoutés : `src/config/donations.ts` (liste des `productId`), `src/core/purchases.ts` (init + achat), sheet de sélection de montant dans `SupportScreen.tsx`.
+- IDs produits attendus (à créer identiques dans App Store Connect **et** Google Play Console avant que ça fonctionne) : `com.scorup.app.tip_099` / `tip_199` / `tip_299` / `tip_499` / `tip_999` / `tip_1999` / `tip_4999`.
+- Clés RevenueCat via env vars `EXPO_PUBLIC_REVENUECAT_IOS_KEY` / `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` (voir `.env.example`) — **pas encore renseignées**, compte RevenueCat pas encore créé. Sans ces clés, `initPurchases()` log un warning et les dons restent indisponibles (message `donateUnavailable` affiché à l'utilisateur), sans crasher l'app.
+- **Reste à faire avant le prochain build** : créer compte RevenueCat, créer les 7 produits IAP dans App Store Connect (fait ? à confirmer) et Google Play Console, renseigner les clés API, puis `pod install` côté iOS (nouveau module natif) avant tout nouveau build EAS.
+
+### État Android
+
+- Bundle/package corrigé (`com.scorup.app`), mais **rien d'autre entamé** côté Play Store.
+- Reste à faire : créer le compte Google Play Console (25$, vérification d'identité obligatoire depuis sept. 2026 pour tout nouveau compte), lancer le test fermé 12 testeurs/14 jours (obligatoire pour tout nouveau compte perso), puis build + submit EAS Android.
+
+### Pages légales (hébergées via GitHub Pages, repo `bodyfrancois/scorup`, branche main, racine)
+
+- `privacy-policy.html` / `privacy-policy-en.html`
+- `support.html` / `support-en.html`
+- URLs live : `https://bodyfrancois.github.io/scorup/{privacy-policy,support}[-en].html`
+
+### Points ouverts / à surveiller
+
+- **Adresse DSA "trader"** : non tranché. Si la règle UE s'applique (distribution en France/UE), l'adresse physique du compte développeur peut s'afficher publiquement sur la fiche store. Option envisagée mais pas actée : domiciliation d'entreprise plutôt que l'adresse perso.
+- **Logo Flip 7** : conservé tel quel malgré une ressemblance avec le branding officiel du jeu (gros "7" jaune/doré) — risque accepté explicitement par l'utilisateur, pas une omission.
+- Logos revus/rendus plus génériques pour réduire le risque de marque : Uno, Skyjo, Scrabble, Ligretto, 6 qui prend, Pili Pili. Les jeux traditionnels/génériques (Tarot, Belote, Palet, Cornhole, Mille Sabords, 5 Rois, Fléchettes 301, Hilo, Speedbac, Dice) n'ont pas de marque déposée unique à risquer.
+
+### Pièges techniques déjà rencontrés (éviter de les refaire)
+
+- **`.easignore` remplace entièrement `.gitignore`** pour EAS Build (ne s'additionne pas) — si `.easignore` existe, il doit dupliquer tout le contenu utile de `.gitignore` (node_modules/, ios/Pods/, ios/build/, android/build/, android/.gradle/) sous peine d'archives de build énormes (on est passé de 157 Mo à 281 Mo en oubliant ça).
+- Projet en mode **prebuild/bare** (dossiers `ios/`/`android/` committés) : éditer `app.json` seul ne suffit pas pour `orientation`, `icon`, `userInterfaceStyle`, `splash`, `ios`, `android`, `plugins` — EAS Build ne les resynchronise pas. Il faut éditer les fichiers natifs directement (`ios/*.xcodeproj/project.pbxproj`, `ios/*/Info.plist`, `android/app/build.gradle`, `android/app/src/main/java/.../MainActivity.kt` etc.).
+- Renommage de bundle ID Android = déplacer le dossier Kotlin (`android/app/src/main/java/<ancien package>/` → `<nouveau package>/`) et mettre à jour la ligne `package` en tête de chaque fichier `.kt`, en plus de `build.gradle`.
+- `react-native-reanimated` v4 nécessite le package séparé `react-native-worklets` **et** le plugin babel `react-native-worklets/plugin` (pas `react-native-reanimated/plugin`) — sinon crash silencieux en prod.
+- `ITSAppUsesNonExemptEncryption = false` ajouté dans `Info.plist` (+ `app.json` → `ios.config.usesNonExemptEncryption`) pour éviter la question de conformité chiffrement à chaque soumission.
+
+---
+
 *Mettre à jour ce fichier quand le stack ou les conventions évoluent.*

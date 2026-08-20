@@ -1,9 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
-import { View, Text, Pressable, Modal } from 'react-native';
+import { View, Text, Pressable, Modal, Animated, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeSharedStyles } from '../theme/styles';
 import { DropdownSelect, DropdownGame } from './Dropdown';
+import { useSheetAnimation } from '../hooks/useSheetAnimation';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type FilterState = {
   game: string | null;
@@ -31,14 +34,17 @@ export default function FilterModal({ visible, value, gameOptions, availableYear
   const [local, setLocal] = useState<FilterState>(value);
   useEffect(() => { if (visible) setLocal(value); }, [visible, value]);
 
+  const { rendered, overlayStyle, sheetStyle } = useSheetAnimation(visible);
+
   const monthLabels = language === 'fr' ? MONTH_LABELS_FR : MONTH_LABELS_EN;
   const monthOptions = monthLabels.map((label, i) => ({ label, value: i }));
   const yearOptions = availableYears.map((y) => ({ label: String(y), value: y }));
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable accessible={false} style={s.overlay} onPress={onClose} />
-      <View style={s.sheet}>
+    <Modal visible={rendered} transparent animationType="none" onRequestClose={onClose}>
+      <AnimatedPressable accessible={false} style={[s.overlay, StyleSheet.absoluteFillObject, overlayStyle]} onPress={onClose} />
+      <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
+      <Animated.View style={[s.sheet, sheetStyle]}>
         <View style={s.sheetHandle} />
         <Text style={[s.subheading, { marginBottom: 20 }]} accessibilityRole="header">{t.filterGames}</Text>
 
@@ -88,6 +94,7 @@ export default function FilterModal({ visible, value, gameOptions, availableYear
             <Text style={s.btnPrimaryText}>{t.apply}</Text>
           </Pressable>
         </View>
+      </Animated.View>
       </View>
     </Modal>
   );

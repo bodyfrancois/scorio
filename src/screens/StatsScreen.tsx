@@ -17,6 +17,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeStatsStyles } from '../theme/styles';
 import { getHistory, GameHistoryItem } from '../storage/historyStorage';
+import { loadFavorites } from '../storage/favoritePlayers';
 import {
   computeStats,
   DonutSlice,
@@ -187,11 +188,13 @@ export default function StatsScreen({ navigation }: any) {
   const styles = useMemo(() => makeStatsStyles(colors), [colors]);
 
   const [history, setHistory]           = useState<GameHistoryItem[]>([]);
+  const [favoriteNames, setFavoriteNames] = useState<Set<string>>(new Set());
   const [filter, setFilter]             = useState<FilterState>({ game: null, month: null, year: null });
   const [filterVisible, setFilterVisible] = useState(false);
 
   useFocusEffect(useCallback(() => {
     getHistory().then(setHistory);
+    loadFavorites().then((favs) => setFavoriteNames(new Set(favs.map((f) => f.name))));
   }, []));
 
   const isFiltered = filter.game !== null || filter.month !== null || filter.year !== null;
@@ -299,6 +302,7 @@ export default function StatsScreen({ navigation }: any) {
                         variant="stats"
                         player={player}
                         rank={i}
+                        isFavorite={favoriteNames.has(player.name)}
                         onPress={() => navigation.navigate('PlayerDetail', { player })}
                       />
                     </React.Fragment>
