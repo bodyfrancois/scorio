@@ -1,3 +1,15 @@
+/**
+ * Achats intégrés (dons) — MODULE DORMANT, volontairement non appelé.
+ *
+ * Les dons ont été retirés de l'app : proposer un achat intégré fait basculer
+ * l'éditeur en statut « trader » au sens du DSA, ce qui impose la publication
+ * de son adresse postale sur la fiche App Store dans l'UE. Décision de ne pas
+ * créer de structure pour l'instant (24 août 2026).
+ *
+ * Le code est conservé intact et fonctionnel pour une réintégration ultérieure.
+ * Pour le réactiver : rappeler initPurchases() au démarrage dans App.tsx et
+ * remonter l'UI de dons dans SupportScreen.tsx (cf. historique git).
+ */
 import { Platform } from 'react-native';
 import Purchases, { LOG_LEVEL, PurchasesStoreProduct } from 'react-native-purchases';
 import { DONATION_PRODUCT_IDS } from '../config/donations';
@@ -23,10 +35,12 @@ export function initPurchases() {
     return;
   }
 
-  Purchases.configure({ apiKey });
+  // Le niveau de log doit être posé AVANT configure(), sinon les logs du
+  // démarrage (dont ceux du chargement des produits) sont perdus.
   if (__DEV__) {
     Purchases.setLogLevel(LOG_LEVEL.DEBUG);
   }
+  Purchases.configure({ apiKey });
   configured = true;
 }
 
@@ -37,7 +51,18 @@ export function isPurchasesConfigured() {
 /** Récupère les produits de don disponibles auprès du store (prix localisés inclus). */
 export async function fetchDonationProducts(): Promise<PurchasesStoreProduct[]> {
   if (!configured) return [];
-  return Purchases.getProducts(DONATION_PRODUCT_IDS);
+  const products = await Purchases.getProducts(DONATION_PRODUCT_IDS);
+
+  if (__DEV__ && products.length !== DONATION_PRODUCT_IDS.length) {
+    const returned = products.map((p) => p.identifier);
+    const missing = DONATION_PRODUCT_IDS.filter((id) => !returned.includes(id));
+    console.warn(
+      `[donations] ${products.length}/${DONATION_PRODUCT_IDS.length} produits renvoyés par le store. ` +
+      `Manquants : ${missing.join(', ') || 'aucun'}`
+    );
+  }
+
+  return products;
 }
 
 export type DonationPurchaseResult =

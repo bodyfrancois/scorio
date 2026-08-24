@@ -15,15 +15,11 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
-import type { PurchasesStoreProduct } from 'react-native-purchases';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from '../i18n';
 import { makeAboutStyles } from '../theme/styles';
 import { useSheetAnimation } from '../hooks/useSheetAnimation';
-import { DONATION_TIERS } from '../config/donations';
-import { fetchDonationProducts, purchaseDonation, isPurchasesConfigured } from '../core/purchases';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -34,9 +30,6 @@ const APP_BUILD = Platform.OS === 'ios'
   : Constants.expoConfig?.android?.versionCode?.toString() ?? '1';
 
 type FeedbackStatus = 'idle' | 'sending' | 'success' | 'error';
-
-/** 'unconfirmed' = l'utilisateur a pu être débité sans qu'on puisse le confirmer. */
-type DonateResult = 'idle' | 'success' | 'error' | 'unconfirmed' | 'pending';
 
 export default function SupportScreen({ route }: any) {
   const { colors, language } = useTheme();
@@ -59,69 +52,6 @@ export default function SupportScreen({ route }: any) {
   const categoryPickerAnim = useSheetAnimation(categoryPickerVisible);
   const [feedbackStatus, setFeedbackStatus] = useState<FeedbackStatus>('idle');
   const [feedbackErrors, setFeedbackErrors] = useState<{ category?: boolean; text?: boolean }>({});
-
-  // ---- Dons (IAP) ----
-  const [donateSheetVisible, setDonateSheetVisible] = useState(false);
-  const donateSheetAnim = useSheetAnimation(donateSheetVisible);
-  const [donationProducts, setDonationProducts] = useState<PurchasesStoreProduct[]>([]);
-  const [productsLoading, setProductsLoading] = useState(false);
-  const [purchasingId, setPurchasingId] = useState<string | null>(null);
-  const [donateResult, setDonateResult] = useState<DonateResult>('idle');
-  const [productsLoaded, setProductsLoaded] = useState(false);
-  const [productsError, setProductsError] = useState(false);
-
-  const loadDonationProducts = async () => {
-    if (!isPurchasesConfigured()) return;
-    setProductsLoading(true);
-    setProductsError(false);
-    try {
-      const products = await fetchDonationProducts();
-      setDonationProducts(products);
-    } catch (error: any) {
-      console.warn('[donations] fetchDonationProducts failed:', error?.message ?? error);
-      setDonationProducts([]);
-      setProductsError(true);
-    } finally {
-      setProductsLoaded(true);
-      setProductsLoading(false);
-    }
-  };
-
-  const openDonateSheet = async () => {
-    setDonateSheetVisible(true);
-    if (donationProducts.length === 0) {
-      await loadDonationProducts();
-    }
-  };
-
-  const handlePickAmount = async (productId: string) => {
-    const product = donationProducts.find((p) => p.identifier === productId);
-    if (!product) return; // produit pas encore chargé / indisponible — bouton désactivé dans ce cas
-    setPurchasingId(productId);
-    const result = await purchaseDonation(product);
-    setPurchasingId(null);
-
-    // 'cancelled' → on laisse simplement la sheet ouverte, aucun message
-    if (result.status === 'cancelled') return;
-
-    const outcome: DonateResult =
-      result.status === 'success' ? 'success'
-      : result.status === 'pending' ? 'pending'
-      : result.charged === 'maybe' ? 'unconfirmed'
-      : 'error';
-
-    setDonateSheetVisible(false);
-    setDonateResult(outcome);
-    // Les messages ambigus restent affichés plus longtemps : ils demandent une action.
-    setTimeout(() => setDonateResult('idle'), outcome === 'success' || outcome === 'error' ? 5000 : 12000);
-  };
-
-  // Dons indisponibles : SDK non configuré, erreur de chargement, ou store qui ne
-  // renvoie aucun produit (produits non validés côté App Store / Play Console).
-  const donationsUnavailable =
-    !isPurchasesConfigured() ||
-    productsError ||
-    (productsLoaded && !productsLoading && donationProducts.length === 0);
 
   const categories = [t.feedbackCatNewGame, t.feedbackCatBug, t.feedbackCatOther];
 
@@ -168,57 +98,6 @@ export default function SupportScreen({ route }: any) {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Donate */}
-        <View style={[styles.card, { padding: 0 }]}>
-          <LinearGradient
-            colors={[colors.white, colors.white]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 3, y: -1 }}
-            style={{ borderRadius: 16, padding: 24, alignItems: 'center', overflow: 'hidden' }}
-          >
-            <Ionicons name="heart" size={56} color={colors.primary} style={{ marginBottom: 14 }} />
-            <Text style={[styles.itemTitle, {fontSize: 20, textAlign: 'center', marginBottom: 20 }]}>
-              {t.aboutDonate}
-            </Text>
-            <Text style={[styles.body, {textAlign: 'center', lineHeight: 22, marginBottom: 24 }]}>
-              {t.aboutDonateHint}
-            </Text>
-
-            {donateResult === 'success' && (
-              <View style={[styles.feedbackStatusBox, { backgroundColor: colors.primarySubtle, alignSelf: 'stretch', marginBottom: 16 }]}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.primary} />
-                <Text style={[styles.feedbackStatusText, { color: colors.primary }]}>{t.donateSuccessBody}</Text>
-              </View>
-            )}
-            {donateResult === 'error' && (
-              <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.danger, alignSelf: 'stretch', marginBottom: 16 }]}>
-                <Ionicons name="alert-circle" size={18} color={colors.danger} />
-                <Text style={[styles.feedbackStatusText, { color: colors.danger }]}>{t.donateErrorBody}</Text>
-              </View>
-            )}
-            {donateResult === 'unconfirmed' && (
-              <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.textMuted, alignSelf: 'stretch', marginBottom: 16 }]}>
-                <Ionicons name="help-circle" size={18} color={colors.textMuted} />
-                <Text style={[styles.feedbackStatusText, { color: colors.textMuted }]}>{t.donateUnconfirmedBody}</Text>
-              </View>
-            )}
-            {donateResult === 'pending' && (
-              <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.textMuted, alignSelf: 'stretch', marginBottom: 16 }]}>
-                <Ionicons name="time-outline" size={18} color={colors.textMuted} />
-                <Text style={[styles.feedbackStatusText, { color: colors.textMuted }]}>{t.donatePendingBody}</Text>
-              </View>
-            )}
-
-            <Pressable
-              style={({ pressed }) => [styles.btnPrimary, { alignSelf: 'stretch' }, pressed && styles.pressed]}
-              onPress={openDonateSheet}
-              accessibilityRole="button"
-            >
-              <Text style={styles.btnPrimaryText}>{t.aboutDonateCTA}</Text>
-            </Pressable>
-          </LinearGradient>
-        </View>
-
         {/* Feedback */}
         <Text
           style={[styles.sectionLabel, { marginTop: 24 }]}
@@ -335,69 +214,6 @@ export default function SupportScreen({ route }: any) {
         </View>
       </Modal>
 
-      <Modal
-        visible={donateSheetAnim.rendered}
-        transparent
-        animationType="none"
-        onRequestClose={() => setDonateSheetVisible(false)}
-      >
-        <AnimatedPressable accessible={false} style={[styles.overlay, StyleSheet.absoluteFillObject, donateSheetAnim.overlayStyle]} onPress={() => setDonateSheetVisible(false)} />
-        <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
-          <Animated.View style={[styles.sheet, donateSheetAnim.sheetStyle]}>
-            <Text style={[styles.labelPrimary, { marginBottom: 12 }]} accessibilityRole="header">
-              {t.donateSheetTitle}
-            </Text>
-
-            {donationsUnavailable ? (
-              <View style={{ gap: 12, marginBottom: 4 }}>
-                <View style={[styles.feedbackStatusBox, { borderWidth: 1, borderColor: colors.danger }]}>
-                  <Ionicons name="alert-circle" size={18} color={colors.danger} />
-                  <Text style={[styles.feedbackStatusText, { color: colors.danger }]}>{t.donateUnavailable}</Text>
-                </View>
-                {isPurchasesConfigured() && (
-                  <Pressable
-                    style={({ pressed }) => [styles.btnPrimary, pressed && styles.pressed]}
-                    onPress={loadDonationProducts}
-                    accessibilityRole="button"
-                  >
-                    <Text style={styles.btnPrimaryText}>{t.donateRetry}</Text>
-                  </Pressable>
-                )}
-              </View>
-            ) : productsLoading ? (
-              <View style={{ paddingVertical: 24, alignItems: 'center', gap: 10 }}>
-                <ActivityIndicator size="small" color={colors.primary} />
-                <Text style={styles.caption}>{t.donateLoadingAmounts}</Text>
-              </View>
-            ) : (
-              DONATION_TIERS.map((tier, i) => {
-                const product = donationProducts.find((p) => p.identifier === tier.productId);
-                if (!product) return null;
-                const label = product.priceString ?? tier.fallbackLabel;
-                const disabled = purchasingId !== null;
-                return (
-                  <Pressable
-                    key={tier.productId}
-                    style={[
-                      styles.dropdownOption,
-                      i === DONATION_TIERS.length - 1 && styles.dropdownOptionLast,
-                      disabled && { opacity: 0.5 },
-                    ]}
-                    onPress={() => handlePickAmount(tier.productId)}
-                    disabled={disabled}
-                    accessibilityRole="button"
-                  >
-                    <Text style={styles.dropdownOptionText}>{label}</Text>
-                    {purchasingId === tier.productId && (
-                      <ActivityIndicator size="small" color={colors.primary} />
-                    )}
-                  </Pressable>
-                );
-              })
-            )}
-          </Animated.View>
-        </View>
-      </Modal>
     </KeyboardAvoidingView>
   );
 }

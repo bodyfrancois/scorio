@@ -12,7 +12,7 @@ import IconPlayers from './icons/IconPlayers';
 import IconStats from './icons/IconStats';
 import IconSettings from './icons/IconSettings';
 import IconAbout from './icons/IconAbout';
-import IconHeart from './icons/IconHeart';
+import IconPen from './icons/IconPen';
 
 const version = Constants.expoConfig?.version ?? '1.0.0';
 const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? '1';
@@ -30,7 +30,7 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
     { name: 'Joueurs',       label: t.playersMenu, Icon: IconPlayers },
     { name: 'Statistiques',  label: t.statistics,  Icon: IconStats },
     { name: 'Paramètres',    label: t.settings,    Icon: IconSettings },
-    { name: 'Support',       label: t.aboutDonate, Icon: IconHeart },
+    { name: 'Support',       label: t.contact,     Icon: IconPen },
     { name: 'A propos',      label: t.about,       Icon: IconAbout },
   ];
 

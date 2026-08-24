@@ -9,6 +9,7 @@ const translations = {
     statistics: 'Statistiques',
     settings: 'Paramètres',
     about: 'A propos',
+    contact: 'Contact',
 
     // Accessibilité (labels lecteur d'écran, boutons icône seule)
     back: 'Retour',
@@ -282,6 +283,7 @@ const translations = {
     statistics: 'Statistics',
     settings: 'Settings',
     about: 'About',
+    contact: 'Contact',
 
     // Accessibility (screen reader labels, icon-only buttons)
     back: 'Back',
