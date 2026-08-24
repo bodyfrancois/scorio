@@ -235,6 +235,10 @@ const translations = {
     donateErrorTitle: 'Le paiement a échoué',
     donateErrorBody: "Une erreur s'est produite, aucune somme n'a été débitée. Réessayez plus tard.",
     donateUnavailable: "Les dons sont momentanément indisponibles. Réessayez plus tard.",
+    donateLoadingAmounts: 'Chargement des montants…',
+    donateRetry: 'Réessayer',
+    donateUnconfirmedBody: "Nous n'avons pas pu confirmer votre don. Si votre compte a été débité, la transaction est bien passée — inutile de réessayer. En cas de doute, vérifiez votre historique d'achats App Store ou écrivez-nous.",
+    donatePendingBody: "Votre paiement est en attente de validation (autorisation d'achat ou vérification bancaire). Il se finalisera automatiquement, ne réessayez pas.",
 
     privacyPolicyTitle: 'Politique de confidentialité',
     privacyPolicyUpdated: 'Dernière mise à jour : 13 août 2026',
@@ -504,6 +508,10 @@ const translations = {
     donateErrorTitle: 'Payment failed',
     donateErrorBody: 'Something went wrong, you have not been charged. Please try again later.',
     donateUnavailable: 'Donations are temporarily unavailable. Please try again later.',
+    donateLoadingAmounts: 'Loading amounts…',
+    donateRetry: 'Try again',
+    donateUnconfirmedBody: "We couldn't confirm your donation. If your account was charged, the transaction went through — no need to try again. If you're unsure, check your App Store purchase history or get in touch.",
+    donatePendingBody: 'Your payment is awaiting approval (purchase authorisation or bank verification). It will complete automatically — please do not try again.',
 
     privacyPolicyTitle: 'Privacy Policy',
     privacyPolicyUpdated: 'Last updated: August 13, 2026',

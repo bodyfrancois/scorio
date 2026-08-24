@@ -43,7 +43,37 @@ export async function fetchDonationProducts(): Promise<PurchasesStoreProduct[]> 
 export type DonationPurchaseResult =
   | { status: 'success' }
   | { status: 'cancelled' }
-  | { status: 'error'; message: string };
+  /** Paiement accepté par le store mais pas encore validé (Demander à acheter, 3D Secure…). */
+  | { status: 'pending' }
+  /**
+   * Échec de l'achat. `charged` indique si l'utilisateur a pu être débité :
+   * - 'no'    → la transaction StoreKit n'a jamais abouti, aucun débit possible.
+   * - 'maybe' → StoreKit a pu accepter le paiement mais la validation côté
+   *             RevenueCat a échoué. Ne jamais affirmer « aucun débit » ici.
+   */
+  | { status: 'error'; charged: 'no' | 'maybe'; code: string; message: string };
+
+/**
+ * Codes d'erreur qui surviennent AVANT que StoreKit n'accepte le paiement.
+ * Dans ces cas, on peut affirmer sans risque que rien n'a été débité.
+ * Codes issus de PURCHASES_ERROR_CODE (react-native-purchases).
+ */
+const ERROR_CODES_BEFORE_PAYMENT = new Set<string>([
+  '2',  // STORE_PROBLEM_ERROR
+  '3',  // PURCHASE_NOT_ALLOWED_ERROR
+  '4',  // PURCHASE_INVALID_ERROR
+  '5',  // PRODUCT_NOT_AVAILABLE_FOR_PURCHASE_ERROR
+  '6',  // PRODUCT_ALREADY_PURCHASED_ERROR
+  '15', // OPERATION_ALREADY_IN_PROGRESS_ERROR
+  '18', // INELIGIBLE_ERROR
+  '23', // CONFIGURATION_ERROR
+  '24', // UNSUPPORTED_ERROR
+  '32', // PRODUCT_REQUEST_TIMED_OUT_ERROR
+  '33', // API_ENDPOINT_BLOCKED
+]);
+
+const ERROR_CODE_PAYMENT_PENDING = '20'; // PAYMENT_PENDING_ERROR
+const ERROR_CODE_CANCELLED = '1';        // PURCHASE_CANCELLED_ERROR
 
 /** Lance l'achat natif pour un produit de don donné. */
 export async function purchaseDonation(product: PurchasesStoreProduct): Promise<DonationPurchaseResult> {
@@ -51,9 +81,24 @@ export async function purchaseDonation(product: PurchasesStoreProduct): Promise<
     await Purchases.purchaseStoreProduct(product);
     return { status: 'success' };
   } catch (error: any) {
-    if (error?.userCancelled) {
+    const code = String(error?.code ?? '');
+
+    if (error?.userCancelled || code === ERROR_CODE_CANCELLED) {
       return { status: 'cancelled' };
     }
-    return { status: 'error', message: error?.message ?? 'unknown error' };
+    if (code === ERROR_CODE_PAYMENT_PENDING) {
+      return { status: 'pending' };
+    }
+
+    // Tout ce qui n'est pas explicitement pré-paiement est traité comme
+    // potentiellement débité (erreurs réseau / backend / reçu, et inconnues).
+    const charged = ERROR_CODES_BEFORE_PAYMENT.has(code) ? 'no' : 'maybe';
+
+    console.warn(
+      `[purchases] Échec achat ${product.identifier} — code=${code} charged=${charged}: ` +
+      (error?.underlyingErrorMessage || error?.message || 'unknown error')
+    );
+
+    return { status: 'error', charged, code, message: error?.message ?? 'unknown error' };
   }
 }
