@@ -233,36 +233,69 @@ use context7 for: react-native, expo, react-navigation, async-storage, react-nat
 
 ## 8. Contexte produit & état de déploiement
 
-*Dernière mise à jour : 16 août 2026. Section vivante — mettre à jour au fil des sessions de déploiement/publication. Guide détaillé pas-à-pas : voir `STORE_LAUNCH.md` à la racine du repo.*
+*Dernière mise à jour : 24 août 2026. Section vivante — mettre à jour au fil des sessions de déploiement/publication. Guide détaillé pas-à-pas : voir `STORE_LAUNCH.md` à la racine du repo.*
 
 ### Identité de l'app
 
-- Nom : **Scorup** — assistant de score universel pour jeux de société (remplace papier/crayon, calcule automatiquement points/bonus/malus selon les règles officielles de chaque jeu).
-- Bundle ID **identique iOS et Android** : `com.scorup.app` (changé depuis `com.bodyfrancois.scorup` / `com.anonymous.scorio`, cf. historique ci-dessous).
+- Nom : **Scorup** — assistant de score universel pour jeux de société (remplace papier/crayon, calcule automatiquement points/bonus/malus selon les règles officielles de chaque jeu). 17 jeux.
+- Bundle ID **identique iOS et Android** : `com.scorup.app` (changé depuis `com.bodyfrancois.scorup` / `com.anonymous.scorio`).
 - Compte EAS/Expo : owner `fbo44`. Projet EAS recréé de zéro à cause d'un mismatch de slug historique ("scorio" côté serveur vs "scorup" en local) — `extra.eas.projectId` régénéré via `eas init`.
-- App Store Connect : app créée, App ID Apple `6801548595`.
+- App Store Connect : app créée, App ID Apple `6801548595`. Apple Team `G9WRT4J6C5` (François BODY, Individual).
 - Éditeur légal (personne physique, compte individuel) : **BODY François**. Utilisé dans le copyright (`© 2026 François Body`) et les pages de politique de confidentialité.
 - Contact support dédié (pas l'email perso) : `scorup.support@gmail.com`.
 
+### DÉCISION MAJEURE du 24 août 2026 — pas de dons dans l'app
+
+**L'app est 100 % gratuite : aucun achat intégré, aucun abonnement, aucune pub, aucun lien de paiement externe.**
+
+Raison : proposer un achat intégré fait basculer l'éditeur en statut **« trader » au sens du DSA**, ce qui impose la publication de nom + **adresse postale** + téléphone sur la fiche App Store dans l'UE. Le statut trader ne dépend pas d'avoir une société — une personne physique qui monétise est trader. Sans structure juridique, la seule adresse déclarable est le domicile. L'utilisateur ne souhaite pas créer d'auto-entreprise + domiciliation (~180-360 €/an) pour une app sans audience établie.
+
+Chaîne à retenir : **dons ⇒ trader ⇒ adresse publique**. Les seules issues sont : pas de dons, ou structure + domiciliation commerciale.
+
+Conséquences dans le code (commits `f26b607b` et `73691df7`) :
+
+- UI de dons retirée de `SupportScreen.tsx` ; `initPurchases()` n'est plus appelé dans `App.tsx`.
+- `src/core/purchases.ts` et `src/config/donations.ts` **conservés intacts et documentés** (en-tête explicatif dans `purchases.ts`) pour réintégration ultérieure. Les dépendances `react-native-purchases` / `-ui` restent installées.
+- Écran renommé : label du drawer et titre de page passés de « Soutenir le projet » à **« Contact »**, nouvelle icône `IconMail` (enveloppe outline). L'écran ne contient plus que le formulaire de feedback (mailto).
+- Textes i18n de dons laissés en place (inutilisés, sans impact).
+
+**Si les dons sont réintégrés un jour** : rappeler `initPurchases()` au démarrage, remonter l'UI (cf. historique git), recréer/rattacher les 7 produits IAP, ET traiter le statut trader DSA au préalable.
+
 ### État iOS
 
-- Compte Apple Developer Program individuel actif (99$/an).
-- Build 4 (logos corrigés + fix chiffrement) soumis le 16 août — **rejeté le 19 août 2026, Guideline 3.1.1** : le lien de don externe (Ko-fi) doit passer par In-App Purchase hors storefront US. Voir point IAP ci-dessous.
-- `eas.json` → `submit.production` laissé vide intentionnellement : `eas submit` prompt les identifiants (appleId/ascAppId/appleTeamId) à la volée plutôt que de les stocker en config.
+- Compte Apple Developer Program individuel actif (99 $/an).
+- Historique des rejets : **3.1.1** le 19 août (lien de don externe Ko-fi → supprimé), puis demande d'infos **2.1** (traitée : note de review, age rating 4+, Paid Apps Agreement signé), puis **2.1(b)** (boutons de montants de don morts).
+- Le rejet 2.1(b) avait **deux causes cumulées**, toutes deux comprises et résolues :
+  1. `EXPO_PUBLIC_REVENUECAT_IOS_KEY` absente du build → SDK non configuré → `getProducts()` renvoyait `[]` → tous les boutons `disabled`.
+  2. Contrat Paid Apps inactif au moment de la review (activé seulement le 24 août) → StoreKit ne servait aucun produit.
+- Les deux motifs de rejet sont désormais **sans objet** puisqu'il n'y a plus aucun mécanisme de paiement.
+- Builds : 6 (reviewé, rejeté), 7/9/10 annulés, **11** = premier build sans dons (commit `73691df7`).
+- `eas.json` → `submit.production` laissé vide intentionnellement : `eas submit` prompt les identifiants à la volée plutôt que de les stocker en config.
 
-### Dons — migration Ko-fi → In-App Purchase (en cours, suite au rejet Apple du 19/08)
+### Statut DSA « trader » — EN ATTENTE, point bloquant avant publication
 
-- Le lien Ko-fi externe est **retiré du code** (`DONATION_URL` supprimé de `SupportScreen.tsx`) — plus aucun lien de paiement externe dans le binaire.
-- Remplacé par un vrai IAP consommable (7 paliers, 0,99€ à 49,99€, aucune fonctionnalité débloquée — pur don) via **RevenueCat** (`react-native-purchases` + `react-native-purchases-ui`, v10.7.2).
-- Fichiers ajoutés : `src/config/donations.ts` (liste des `productId`), `src/core/purchases.ts` (init + achat), sheet de sélection de montant dans `SupportScreen.tsx`.
-- IDs produits attendus (à créer identiques dans App Store Connect **et** Google Play Console avant que ça fonctionne) : `com.scorup.app.tip_099` / `tip_199` / `tip_299` / `tip_499` / `tip_999` / `tip_1999` / `tip_4999`.
-- Clés RevenueCat via env vars `EXPO_PUBLIC_REVENUECAT_IOS_KEY` / `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` (voir `.env.example`) — **pas encore renseignées**, compte RevenueCat pas encore créé. Sans ces clés, `initPurchases()` log un warning et les dons restent indisponibles (message `donateUnavailable` affiché à l'utilisateur), sans crasher l'app.
-- **Reste à faire avant le prochain build** : créer compte RevenueCat, créer les 7 produits IAP dans App Store Connect (fait ? à confirmer) et Google Play Console, renseigner les clés API, puis `pod install` côté iOS (nouveau module natif) avant tout nouveau build EAS.
+- Déclaration trader soumise (avec adresse perso) avant la décision de retirer les dons. Statut : **« En cours de vérification »** dans App Store Connect → Business → Conformité.
+- **Non modifiable** pendant la vérification, et il n'existe **pas** de champ trader au niveau de l'app (vérifié : rien dans Informations sur l'app). Seul recours : le support Apple.
+- Mail de demande de correction en non-trader envoyé via Business → Contactez-nous.
+- **Rien n'est publié tant que l'app n'est pas en ligne.** D'où la règle : **soumettre en publication MANUELLE**, ne déclencher la mise en vente qu'une fois le statut passé en non-trader.
+
+### Contrat & fiscalité (tous actifs depuis le 24 août 2026)
+
+- Contrat applications gratuites : Actif. Contrat applications payantes : Actif (24 août 2026 – 13 août 2027).
+- Compte bancaire BODY (3701), France, EUR : Actif. W-8BEN + Certificate of Foreign Status : Actifs.
+- À savoir si les dons reviennent : des revenus **récurrents** relèvent d'une activité habituelle → immatriculation probablement nécessaire (URSSAF / comptable à consulter). Apple, lui, n'exige aucune société.
+
+### Configuration RevenueCat (en place, actuellement inutilisée)
+
+- App « Scorup (App Store) », bundle `com.scorup.app`. Clé publique iOS présente comme variable d'env EAS `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (environnement `production`, créée le 20 août).
+- In-app purchase key `.p8` (Key ID `D3M3VDY92H`) : « Valid credentials ». Shared Secret renseigné. App Store Connect API key uploadée → les 7 produits sont passés de « Could not check » à « Ready to Submit ».
+- Clé Android `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` : **jamais créée**.
+- Les 7 produits IAP (`com.scorup.app.tip_099` / `_199` / `_299` / `_499` / `_999` / `_1999` / `_4999`) existent dans App Store Connect en « Ready to Submit ». **À détacher de la soumission de version** — sinon Apple examine des produits absents du binaire.
 
 ### État Android
 
 - Bundle/package corrigé (`com.scorup.app`), mais **rien d'autre entamé** côté Play Store.
-- Reste à faire : créer le compte Google Play Console (25$, vérification d'identité obligatoire depuis sept. 2026 pour tout nouveau compte), lancer le test fermé 12 testeurs/14 jours (obligatoire pour tout nouveau compte perso), puis build + submit EAS Android.
+- Reste à faire : créer le compte Google Play Console (25 $, vérification d'identité obligatoire depuis sept. 2026), lancer le test fermé 12 testeurs/14 jours (obligatoire pour tout nouveau compte perso), puis build + submit EAS Android.
 
 ### Pages légales (hébergées via GitHub Pages, repo `bodyfrancois/scorup`, branche main, racine)
 
@@ -272,17 +305,20 @@ use context7 for: react-native, expo, react-navigation, async-storage, react-nat
 
 ### Points ouverts / à surveiller
 
-- **Adresse DSA "trader"** : non tranché. Si la règle UE s'applique (distribution en France/UE), l'adresse physique du compte développeur peut s'afficher publiquement sur la fiche store. Option envisagée mais pas actée : domiciliation d'entreprise plutôt que l'adresse perso.
-- **Logo Flip 7** : conservé tel quel malgré une ressemblance avec le branding officiel du jeu (gros "7" jaune/doré) — risque accepté explicitement par l'utilisateur, pas une omission.
+- **Statut DSA non-trader** : voir ci-dessus. C'est le seul point qui bloque la mise en vente.
+- **Logo Flip 7** : conservé tel quel malgré une ressemblance avec le branding officiel du jeu (gros « 7 » jaune/doré) — risque accepté explicitement par l'utilisateur, pas une omission.
 - Logos revus/rendus plus génériques pour réduire le risque de marque : Uno, Skyjo, Scrabble, Ligretto, 6 qui prend, Pili Pili. Les jeux traditionnels/génériques (Tarot, Belote, Palet, Cornhole, Mille Sabords, 5 Rois, Fléchettes 301, Hilo, Speedbac, Dice) n'ont pas de marque déposée unique à risquer.
 
 ### Pièges techniques déjà rencontrés (éviter de les refaire)
 
-- **`.easignore` remplace entièrement `.gitignore`** pour EAS Build (ne s'additionne pas) — si `.easignore` existe, il doit dupliquer tout le contenu utile de `.gitignore` (node_modules/, ios/Pods/, ios/build/, android/build/, android/.gradle/) sous peine d'archives de build énormes (on est passé de 157 Mo à 281 Mo en oubliant ça).
+- **EAS Build archive l'état COMMITÉ de git**, pas le dossier de travail. Un fichier modifié mais non commité n'est pas dans le build (piège vécu : build 7 construit sans aucune des corrections). Et `git commit -am` **n'ajoute pas les fichiers neufs** (piège vécu : `IconMail.tsx` absent du commit → import cassé). Toujours `git status --porcelain` avant de builder : aucune ligne `??` ni ` M` qui compte.
+- **Un profil de build EAS ne charge les variables d'env du serveur que s'il déclare `"environment": "..."`** dans `eas.json`. Sans ce champ, la variable existe côté EAS mais n'est jamais injectée — silencieusement. Signal fiable au lancement du build : la ligne `Environment variables ... loaded from the "production" environment on EAS`. Le champ `environment` renvoyé par `eas build:list --json` vaut toujours `None` et **n'est pas un indicateur fiable**.
+- **`.easignore` remplace entièrement `.gitignore`** pour EAS Build (ne s'additionne pas) — s'il existe, il doit dupliquer tout le contenu utile de `.gitignore` (node_modules/, ios/Pods/, ios/build/, android/build/, android/.gradle/) sous peine d'archives énormes (157 Mo → 281 Mo en l'oubliant). Taille saine actuelle : ~70 Mo.
 - Projet en mode **prebuild/bare** (dossiers `ios/`/`android/` committés) : éditer `app.json` seul ne suffit pas pour `orientation`, `icon`, `userInterfaceStyle`, `splash`, `ios`, `android`, `plugins` — EAS Build ne les resynchronise pas. Il faut éditer les fichiers natifs directement (`ios/*.xcodeproj/project.pbxproj`, `ios/*/Info.plist`, `android/app/build.gradle`, `android/app/src/main/java/.../MainActivity.kt` etc.).
 - Renommage de bundle ID Android = déplacer le dossier Kotlin (`android/app/src/main/java/<ancien package>/` → `<nouveau package>/`) et mettre à jour la ligne `package` en tête de chaque fichier `.kt`, en plus de `build.gradle`.
 - `react-native-reanimated` v4 nécessite le package séparé `react-native-worklets` **et** le plugin babel `react-native-worklets/plugin` (pas `react-native-reanimated/plugin`) — sinon crash silencieux en prod.
 - `ITSAppUsesNonExemptEncryption = false` ajouté dans `Info.plist` (+ `app.json` → `ios.config.usesNonExemptEncryption`) pour éviter la question de conformité chiffrement à chaque soumission.
+- **Logs JS vs natifs** : les `console.warn` sortent dans le terminal Metro, pas dans la console Xcode. Les logs natifs (RevenueCat p. ex.) sortent dans Xcode. Chercher au mauvais endroit fait conclure à tort à une absence d'erreur.
 
 ---
 
