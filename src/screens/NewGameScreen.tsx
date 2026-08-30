@@ -395,7 +395,7 @@ export default function NewGameScreen({ route, navigation }: any) {
                         key={playerIndex}
                         style={[
                           styles.teamPlayerCard,
-                          focusedKey === focusKey && styles.playerCardFocused,
+                          focusedKey === focusKey && styles.teamPlayerCardFocused,
                           duplicateNames.has(player.trim().toLowerCase()) && styles.playerCardDuplicate,
                         ]}
                       >

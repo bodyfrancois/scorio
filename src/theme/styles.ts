@@ -802,6 +802,9 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
     sectionLabelNoMargin: {
       marginBottom: 0,
     },
+    /**
+     * Section d'une équipe dans « Nouvelle partie ».
+     */
     teamSection: {
       marginTop: S.base,
       backgroundColor: c.card,
@@ -837,6 +840,20 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
     playerList: {
       gap: S.sm,
     },
+    /**
+     * Ligne joueur d'une équipe.
+     *
+     * IMPORTANT — les propriétés d'ombre sont déclarées ici avec `shadowOpacity: 0`
+     * alors qu'aucune ombre n'est visible. Ce n'est pas superflu : au focus, le style
+     * `playerCardFocused` vient poser une ombre sur cette ligne. Si la vue ne déclarait
+     * aucune ombre au départ, React Native recréerait la vue native pour en ajouter une,
+     * ce qui remonte le TextInput enfant et lui fait perdre le focus dans l'instant —
+     * le champ devenait alors impossible à remplir. En déclarant l'ombre dès le départ,
+     * le focus ne fait que modifier ses valeurs, sans recréer la vue.
+     *
+     * Les lignes du mode individuel n'avaient pas le bug parce qu'elles héritent déjà
+     * d'une ombre via `card`.
+     */
     teamPlayerCard: {
       flexDirection: 'row' as const,
       alignItems: 'center' as const,
@@ -847,11 +864,28 @@ export const makeNewGameStyles = (c: typeof lightColors) => ({
       gap: S.md,
       borderWidth: 1,
       borderColor: 'transparent',
+      shadowColor: c.shadowCard,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0,
+      shadowRadius: 0,
+      elevation: 0,
     },
     playerCardFocused: {
       borderColor: c.borderActive,
       shadowColor: c.borderActive,
       shadowOpacity: 1,
+    },
+    /**
+     * Focus d'une ligne joueur d'équipe : bordure seule, sans ombre portée.
+     *
+     * Ne pas y ajouter de propriété d'ombre. `teamPlayerCard` en déclare déjà
+     * (avec une opacité nulle) uniquement pour que la vue native ne soit pas
+     * recréée au focus — voir le commentaire là-bas. Modifier l'ombre ici
+     * ramènerait l'ombre à l'écran ; la supprimer de `teamPlayerCard`
+     * ramènerait le bug de perte de focus.
+     */
+    teamPlayerCardFocused: {
+      borderColor: c.borderActive,
     },
     playerCardDuplicate: {
       borderColor: c.danger,
