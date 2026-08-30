@@ -42,9 +42,10 @@ export default function ScoreboardScreen({ route, navigation }: any) {
   const localizedConfig = localizeGameConfig(config, language);
 
   const { width: screenWidth } = useWindowDimensions();
-  const playerColWidth = players.length <= 3
-    ? (screenWidth - ROUND_COL) / players.length
-    : PLAYER_COL;
+  // Les colonnes joueurs remplissent toujours la largeur disponible, avec PLAYER_COL
+  // comme plancher. Au-delà de ce que l'écran peut afficher, le ScrollView horizontal
+  // prend le relais. Pas de seuil sur le nombre de joueurs : valable iPhone comme iPad.
+  const playerColWidth = Math.max(PLAYER_COL, (screenWidth - ROUND_COL) / players.length);
 
   const [scores, setScores] = useState(engine.initializeScores(players));
   const [baseScores, setBaseScores] = useState(engine.initializeScores(players));

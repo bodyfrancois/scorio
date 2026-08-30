@@ -22,6 +22,12 @@ type Props = {
   subtitle?: string;
   unit?: string;
   minValue?: number;
+  /**
+   * Ouvre la feuille avec un champ vide au lieu de la valeur courante.
+   * Le pavé ajoute les chiffres à la suite : partir de la valeur oblige à tout
+   * effacer avant de ressaisir, ce qui n'a de sens que pour une correction.
+   */
+  startEmpty?: boolean;
 };
 
 
@@ -34,6 +40,7 @@ export default function ScoreLimitModal({
   subtitle: subtitleProp,
   unit: unitProp,
   minValue = 1,
+  startEmpty = false,
 }: Props) {
   const { colors, language } = useTheme();
   const t = useTranslation(language);
@@ -43,11 +50,11 @@ export default function ScoreLimitModal({
   const subtitle = subtitleProp ?? t.scoreLimitSubtitle;
   const unit = unitProp ?? 'pts';
 
-  const [input, setInput] = useState(String(currentValue));
+  const [input, setInput] = useState(startEmpty ? '' : String(currentValue));
 
   useEffect(() => {
-    if (visible) setInput(String(currentValue));
-  }, [visible, currentValue]);
+    if (visible) setInput(startEmpty ? '' : String(currentValue));
+  }, [visible, currentValue, startEmpty]);
 
   const { rendered, overlayStyle, sheetStyle } = useSheetAnimation(visible);
 

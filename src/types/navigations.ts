@@ -9,5 +9,9 @@ export type RootStackParamList = {
   };
   DiceSetup: undefined;
   DiceRoller: { diceCount: number; diceType: DiceType };
+  CoinToss: undefined;
+  Timer: undefined;
+  Wheel: undefined;
+  Buzzer: undefined;
   Support: undefined;
 };

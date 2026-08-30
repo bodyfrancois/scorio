@@ -8,6 +8,13 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// Hauteur de la zone titre/boutons du header, SOUS la status bar.
+// La hauteur totale du header vaut insets.top + cette valeur : jamais de valeur
+// en dur, sinon la zone de contenu rétrécit sur les appareils à grande encoche
+// (Dynamic Island : inset 59-62 pt contre 47 pt sur iPhone 13) et le titre est rogné.
+const HEADER_CONTENT_HEIGHT = 64;
 
 const HEADER_GRADIENT_COLORS: [string, string, string] = ['#5B2D9E', '#7B3FBE', '#A855F7'];
 const HEADER_GRADIENT_START = { x: 0.15, y: 0 };
@@ -36,6 +43,10 @@ import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import SupportScreen from './src/screens/SupportScreen';
+import CoinTossScreen from './src/screens/CoinTossScreen';
+import TimerScreen from './src/screens/TimerScreen';
+import WheelScreen from './src/screens/WheelScreen';
+import BuzzerScreen from './src/screens/BuzzerScreen';
 import CustomDrawer from './src/components/CustomDrawer';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { useTranslation } from './src/i18n';
@@ -99,6 +110,7 @@ const logoStyles = StyleSheet.create({
 /* ---------------- DRAWER ---------------- */
 
 function MainDrawer() {
+  const insets = useSafeAreaInsets();
   const { colors, language } = useTheme();
   const t = useTranslation(language);
   return (
@@ -111,10 +123,7 @@ function MainDrawer() {
         headerTintColor: '#fff',
         headerTitleStyle: { color: '#fff' },
         headerShadowVisible: false,
-        headerStyle: { height: 110 },
-        headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20  },
-        headerLeftContainerStyle: { paddingBottom: 20, paddingTop: 20  },
-        headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20  },
+        headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT },
         headerLeft: () => (
           <Pressable
             onPress={() => navigation.openDrawer()}
@@ -140,6 +149,7 @@ function MainDrawer() {
 /* ---------------- APP INNER (needs ThemeContext) ---------------- */
 
 function AppInner() {
+  const insets = useSafeAreaInsets();
   const { isDark, colors } = useTheme();
   const [splashDone, setSplashDone] = useState(false);
 
@@ -171,9 +181,7 @@ function AppInner() {
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
-            headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -187,9 +195,7 @@ function AppInner() {
             headerTitleAlign: 'center',
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
-            headerLeftContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -203,9 +209,7 @@ function AppInner() {
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
-            headerRightContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -219,8 +223,7 @@ function AppInner() {
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -234,8 +237,63 @@ function AppInner() {
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Mini-jeu — Pile ou Face */}
+        <Stack.Screen
+          name="CoinToss"
+          component={CoinTossScreen}
+          options={({ navigation }: any) => ({
+            title: 'Pile ou Face',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Mini-jeu — Chrono & minuteur */}
+        <Stack.Screen
+          name="Timer"
+          component={TimerScreen}
+          options={({ navigation }: any) => ({
+            title: 'Chrono & minuteur',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Mini-jeu — Roue */}
+        <Stack.Screen
+          name="Wheel"
+          component={WheelScreen}
+          options={({ navigation }: any) => ({
+            title: 'Roue',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+            headerLeft: () => <CustomBackButton navigation={navigation} />,
+          })}
+        />
+
+        {/* Mini-jeu — Buzzer */}
+        <Stack.Screen
+          name="Buzzer"
+          component={BuzzerScreen}
+          options={({ navigation }: any) => ({
+            title: 'Buzzer',
+            headerBackground: () => <HeaderGradient />,
+            headerTintColor: '#fff',
+            headerTitleStyle: { color: '#fff' },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -249,8 +307,7 @@ function AppInner() {
             headerBackground: () => <HeaderGradient />,
             headerTintColor: '#fff',
             headerTitleStyle: { color: '#fff' },
-            headerStyle: { height: 110, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
-            headerTitleContainerStyle: { paddingBottom: 20, paddingTop: 20 },
+            headerStyle: { height: insets.top + HEADER_CONTENT_HEIGHT, elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
             headerLeft: () => <CustomBackButton navigation={navigation} />,
           })}
         />
@@ -263,8 +320,10 @@ function AppInner() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppInner />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AppInner />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

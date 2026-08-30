@@ -17,6 +17,7 @@ import { RootStackParamList } from '../types/navigations';
 import { makeHomeStyles } from '../theme/styles';
 import { IllustrationCartes } from './HistoryScreen';
 import { localizeGameConfig } from '../utils/gameLocalization';
+import MiniGamesRow from '../components/MiniGamesRow';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -125,6 +126,9 @@ export default function HomeScreen() {
 
       {/* Section label */}
       <Text style={styles.sectionLabel}>{t.gameList}</Text>
+
+      {/* Mini-jeux : outils rapides, rangée scrollable */}
+      <MiniGamesRow />
 
       {/* Liste des jeux — état vide */}
       {filteredGames.length === 0 && (
